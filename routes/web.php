@@ -5,6 +5,8 @@ use App\Http\Controllers\JobListingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::view('/cron', 'cron')->name('cron');
+Route::view('/applied-to', 'applied-to')->name('applied-to');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');

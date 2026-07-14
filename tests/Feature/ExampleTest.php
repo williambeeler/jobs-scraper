@@ -91,6 +91,21 @@ class ExampleTest extends TestCase
             ->assertSee('No jobs were first scraped on July 13, 2026.');
     }
 
+    public function test_public_navigation_pages_are_available(): void
+    {
+        $this->get(route('cron'))
+            ->assertOk()
+            ->assertSee(config('app.name'))
+            ->assertSee('Cron')
+            ->assertSee('Applied to');
+
+        $this->get(route('applied-to'))
+            ->assertOk()
+            ->assertSee(config('app.name'))
+            ->assertSee('Cron')
+            ->assertSee('Applied to');
+    }
+
     private function createListing(
         string $title,
         string $url,

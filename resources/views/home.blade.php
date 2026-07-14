@@ -1,42 +1,15 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
 
-        <title>{{ $selectedDate->format('F j, Y') }} Jobs | {{ config('app.name') }}</title>
+@section('title', $selectedDate->format('F j, Y').' Jobs | '.config('app.name'))
 
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-        >
-    </head>
-    <body class="bg-light">
-        <main class="container py-5">
+@section('content')
+    <main class="container py-5">
             <header class="mb-4">
                 <p class="mb-2 text-uppercase text-secondary fw-semibold small">
                     {{ $isToday ? "Today's scraped jobs" : 'Scraped jobs by date' }}
                 </p>
 
-                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-2">
-                    <h1 class="display-5 fw-bold mb-0">{{ $selectedDate->format('l, F j, Y') }}</h1>
-
-                    <form method="GET" action="{{ route('home') }}" class="d-flex align-items-center gap-2">
-                        <label for="job-date" class="form-label mb-0 text-nowrap fw-semibold">Choose date</label>
-                        <input
-                            type="date"
-                            class="form-control"
-                            id="job-date"
-                            name="date"
-                            value="{{ $selectedDate->toDateString() }}"
-                            aria-label="Choose a job scrape date"
-                            onchange="this.form.submit()"
-                        >
-                        <noscript>
-                            <button type="submit" class="btn btn-primary">View</button>
-                        </noscript>
-                    </form>
-                </div>
+                <h1 class="display-5 fw-bold mb-2">{{ $selectedDate->format('l, F j, Y') }}</h1>
 
                 <p class="text-secondary mb-0">
                     {{ trans_choice(':count job listing|:count job listings', $listings->count(), ['count' => $listings->count()]) }}
@@ -79,6 +52,5 @@
                     @endforeach
                 </div>
             @endif
-        </main>
-    </body>
-</html>
+    </main>
+@endsection
