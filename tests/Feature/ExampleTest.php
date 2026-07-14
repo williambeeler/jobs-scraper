@@ -33,8 +33,53 @@ class ExampleTest extends TestCase
             ->assertOk()
             ->assertViewIs('home')
             ->assertSee('Monday, July 13, 2026')
+            ->assertSee('value="2026-07-13"', false)
             ->assertSee($todaysListing->title)
             ->assertDontSee($oldListing->title);
+    }
+
+    public function test_home_page_can_list_jobs_created_on_a_selected_date(): void
+    {
+        Carbon::setTestNow('2026-07-13 12:00:00');
+
+        $todaysListing = $this->createListing(
+            title: 'Today WordPress Developer',
+            url: 'https://example.com/jobs/today',
+            lastSeenAt: now(),
+            createdAt: now(),
+        );
+        $selectedDateListing = $this->createListing(
+            title: 'Sunday Laravel Developer',
+            url: 'https://example.com/jobs/sunday',
+            lastSeenAt: now(),
+            createdAt: now()->subDay(),
+        );
+
+        $this->get(route('home', ['date' => '2026-07-12']))
+            ->assertOk()
+            ->assertSee('Sunday, July 12, 2026')
+            ->assertSee('value="2026-07-12"', false)
+            ->assertSee($selectedDateListing->title)
+            ->assertDontSee($todaysListing->title);
+    }
+
+    public function test_home_page_uses_chicago_date_after_utc_has_advanced_to_the_next_day(): void
+    {
+        Carbon::setTestNow('2026-07-14 00:51:00 UTC');
+
+        $listing = $this->createListing(
+            title: 'Evening WordPress Developer',
+            url: 'https://example.com/jobs/evening',
+            lastSeenAt: now(),
+            createdAt: now(),
+        );
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('Monday, July 13, 2026')
+            ->assertSee('value="2026-07-13"', false)
+            ->assertSee($listing->title)
+            ->assertSee('First scraped: 7:51 PM');
     }
 
     public function test_home_page_has_an_empty_state_when_no_jobs_were_scraped_today(): void
@@ -43,7 +88,7 @@ class ExampleTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('No jobs have been scraped today yet.');
+            ->assertSee('No jobs were first scraped on July 13, 2026.');
     }
 
     private function createListing(
