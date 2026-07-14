@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\JobListingStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -18,6 +19,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $posted_at
  * @property string|null $posted_relative
  * @property string|null $salary
+ * @property JobListingStatus|null $status
+ * @property Carbon|null $status_changed_at
  * @property Carbon $first_seen_at
  * @property Carbon $last_seen_at
  * @property Carbon|null $created_at
@@ -37,6 +40,8 @@ class JobListing extends Model
         'posted_at',
         'posted_relative',
         'salary',
+        'status',
+        'status_changed_at',
         'first_seen_at',
         'last_seen_at',
     ];
@@ -53,6 +58,8 @@ class JobListing extends Model
     {
         return [
             'posted_at' => 'date',
+            'status' => JobListingStatus::class,
+            'status_changed_at' => 'datetime',
             'first_seen_at' => 'datetime',
             'last_seen_at' => 'datetime',
         ];

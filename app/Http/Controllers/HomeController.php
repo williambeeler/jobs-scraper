@@ -21,6 +21,7 @@ class HomeController extends Controller
             : Carbon::now($displayTimezone)->startOfDay();
 
         $listings = JobListing::query()
+            ->whereNull('status')
             ->whereBetween('created_at', [
                 $selectedDate->copy()->startOfDay()->utc(),
                 $selectedDate->copy()->endOfDay()->utc(),

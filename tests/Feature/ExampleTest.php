@@ -35,6 +35,10 @@ class ExampleTest extends TestCase
             ->assertSee('Monday, July 13, 2026')
             ->assertSee('value="2026-07-13"', false)
             ->assertSee($todaysListing->title)
+            ->assertSee('Not Interested')
+            ->assertSee('Applied')
+            ->assertSee('data-job-status-form', false)
+            ->assertSee('fetch(form.action', false)
             ->assertDontSee($oldListing->title);
     }
 
@@ -173,6 +177,57 @@ class ExampleTest extends TestCase
         $this->artisan('jobs:run-schedules')
             ->expectsOutput('No scrape configurations are due.')
             ->assertSuccessful();
+    }
+
+    public function test_marking_a_job_as_applied_hides_it_from_home_and_lists_it_on_applied_page(): void
+    {
+        Carbon::setTestNow('2026-07-13 12:00:00 UTC');
+        $listing = $this->createListing(
+            title: 'Applied WordPress Developer',
+            url: 'https://example.com/jobs/applied',
+            lastSeenAt: now(),
+            createdAt: now(),
+        );
+
+        $this->postJson(route('jobs.status', $listing), ['status' => 'applied'])
+            ->assertOk()
+            ->assertJson(['status' => 'applied']);
+
+        $this->assertDatabaseHas('job_listings', [
+            'id' => $listing->id,
+            'status' => 'applied',
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee($listing->title);
+
+        $this->get(route('applied-to'))
+            ->assertOk()
+            ->assertSee($listing->title)
+            ->assertSee('Applied: Jul 13, 2026 7:00 AM');
+    }
+
+    public function test_marking_a_job_not_interested_hides_it_without_listing_it_as_applied(): void
+    {
+        Carbon::setTestNow('2026-07-13 12:00:00 UTC');
+        $listing = $this->createListing(
+            title: 'Declined WordPress Developer',
+            url: 'https://example.com/jobs/declined',
+            lastSeenAt: now(),
+            createdAt: now(),
+        );
+
+        $this->post(route('jobs.status', $listing), ['status' => 'not_interested'])
+            ->assertRedirect(route('home'));
+
+        $this->assertDatabaseHas('job_listings', [
+            'id' => $listing->id,
+            'status' => 'not_interested',
+        ]);
+
+        $this->get(route('home'))->assertDontSee($listing->title);
+        $this->get(route('applied-to'))->assertDontSee($listing->title);
     }
 
     private function createListing(
