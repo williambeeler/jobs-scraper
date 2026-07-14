@@ -106,6 +106,59 @@ class ExampleTest extends TestCase
             ->assertSee('Applied to');
     }
 
+    public function test_scrape_configuration_can_be_saved_and_listed(): void
+    {
+        $this->post(route('cron.store'), [
+            'keywords' => 'wordpress developer remote',
+            'sources' => ['linkedin', 'indeed'],
+            'max_days' => 5,
+            'interval_hours' => 6,
+            'is_active' => true,
+        ])->assertRedirect(route('cron'))
+            ->assertSessionHas('status', 'Scrape configuration saved.');
+
+        $this->assertDatabaseHas('scrape_schedules', [
+            'keywords' => 'wordpress developer remote',
+            'max_days' => 5,
+            'interval_hours' => 6,
+            'is_active' => true,
+        ]);
+
+        $this->get(route('cron'))
+            ->assertOk()
+            ->assertSee('wordpress developer remote')
+            ->assertSee('Linkedin')
+            ->assertSee('Indeed')
+            ->assertSee('Every 6 hours');
+    }
+
+    public function test_saving_the_same_keyword_and_source_combination_updates_it(): void
+    {
+        $configuration = [
+            'keywords' => 'laravel remote',
+            'sources' => ['linkedin', 'indeed'],
+            'max_days' => 5,
+            'interval_hours' => 6,
+            'is_active' => true,
+        ];
+
+        $this->post(route('cron.store'), $configuration)
+            ->assertRedirect(route('cron'));
+
+        $this->post(route('cron.store'), [
+            ...$configuration,
+            'sources' => ['indeed', 'linkedin'],
+            'interval_hours' => 12,
+        ])->assertRedirect(route('cron'))
+            ->assertSessionHas('status', 'Scrape configuration updated.');
+
+        $this->assertDatabaseCount('scrape_schedules', 1);
+        $this->assertDatabaseHas('scrape_schedules', [
+            'keywords' => 'laravel remote',
+            'interval_hours' => 12,
+        ]);
+    }
+
     private function createListing(
         string $title,
         string $url,

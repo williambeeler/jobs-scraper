@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property int|null $scrape_schedule_id
  * @property string $keywords
  * @property int $max_days
  * @property string[] $sources
@@ -22,6 +24,7 @@ use Illuminate\Support\Carbon;
 class ScrapeRun extends Model
 {
     protected $fillable = [
+        'scrape_schedule_id',
         'keywords',
         'max_days',
         'sources',
@@ -33,6 +36,14 @@ class ScrapeRun extends Model
         'started_at',
         'completed_at',
     ];
+
+    /**
+     * @return BelongsTo<ScrapeSchedule, $this>
+     */
+    public function scrapeSchedule(): BelongsTo
+    {
+        return $this->belongsTo(ScrapeSchedule::class);
+    }
 
     /**
      * @return BelongsToMany<JobListing, $this>

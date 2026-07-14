@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobListingController;
+use App\Http\Controllers\ScrapeScheduleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
-Route::view('/cron', 'cron')->name('cron');
+Route::get('/cron', [ScrapeScheduleController::class, 'index'])->name('cron');
+Route::post('/cron', [ScrapeScheduleController::class, 'store'])->name('cron.store');
 Route::view('/applied-to', 'applied-to')->name('applied-to');
 
 Route::middleware(['auth', 'verified'])->group(function () {
