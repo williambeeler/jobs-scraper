@@ -64,6 +64,13 @@ class JobListingTest extends TestCase
             ->assertExitCode(Command::INVALID);
     }
 
+    public function test_scrape_command_rejects_an_unknown_schedule(): void
+    {
+        $this->artisan('jobs:scrape', ['--schedule' => 999999])
+            ->expectsOutputToContain('The --schedule option must reference an existing scrape schedule.')
+            ->assertExitCode(Command::INVALID);
+    }
+
     /**
      * @param  array<string, mixed>  $attributes
      */

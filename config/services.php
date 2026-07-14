@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'scrape_cron' => [
+        'token' => env('SCRAPE_CRON_TOKEN'),
+    ],
+
 ];

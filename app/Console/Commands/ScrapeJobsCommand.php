@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Data\JobListingData;
 use App\Models\JobListing;
 use App\Models\ScrapeRun;
+use App\Models\ScrapeSchedule;
 use App\Services\JobScraping\HttpClient;
 use App\Services\JobScraping\IndeedScraper;
 use App\Services\JobScraping\JobSourceScraper;
@@ -19,7 +20,8 @@ class ScrapeJobsCommand extends Command
     protected $signature = 'jobs:scrape
         {--keywords=wordpress remote : Search keywords}
         {--days=5 : Maximum listing age in days}
-        {--source=* : Sources to scrape (repeat or use comma-separated values)}';
+        {--source=* : Sources to scrape (repeat or use comma-separated values)}
+        {--schedule= : Associate this run with a stored scrape schedule}';
 
     protected $description = 'Scrape remote job listings and store them in the database';
 
@@ -49,7 +51,15 @@ class ScrapeJobsCommand extends Command
             return self::INVALID;
         }
 
+        $schedule = $this->selectedSchedule();
+        if ($this->option('schedule') !== null && $schedule === null) {
+            $this->error('The --schedule option must reference an existing scrape schedule.');
+
+            return self::INVALID;
+        }
+
         $run = ScrapeRun::query()->create([
+            'scrape_schedule_id' => $schedule?->id,
             'keywords' => $keywords,
             'max_days' => $days,
             'sources' => $sources,
@@ -112,6 +122,18 @@ class ScrapeJobsCommand extends Command
         }
 
         return $status === 'failed' ? self::FAILURE : self::SUCCESS;
+    }
+
+    private function selectedSchedule(): ?ScrapeSchedule
+    {
+        $scheduleId = $this->option('schedule');
+        if ($scheduleId === null) {
+            return null;
+        }
+
+        $validatedId = filter_var($scheduleId, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+        return $validatedId === false ? null : ScrapeSchedule::query()->find($validatedId);
     }
 
     /**

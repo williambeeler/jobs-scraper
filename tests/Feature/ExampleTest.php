@@ -159,6 +159,22 @@ class ExampleTest extends TestCase
         ]);
     }
 
+    public function test_cron_run_endpoint_requires_the_configured_bearer_token(): void
+    {
+        config(['services.scrape_cron.token' => 'test-cron-token']);
+
+        $this->get(route('cron.run'))->assertForbidden();
+        $this->withToken('wrong-token')->get(route('cron.run'))->assertForbidden();
+        $this->withToken('test-cron-token')->get(route('cron.run'))->assertNoContent();
+    }
+
+    public function test_schedule_runner_succeeds_when_no_configurations_are_due(): void
+    {
+        $this->artisan('jobs:run-schedules')
+            ->expectsOutput('No scrape configurations are due.')
+            ->assertSuccessful();
+    }
+
     private function createListing(
         string $title,
         string $url,
