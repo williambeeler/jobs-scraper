@@ -48,6 +48,10 @@
                         class="nav-link {{ request()->routeIs('company-preferences.*') ? 'active fw-semibold' : '' }}"
                         href="{{ route('company-preferences.index') }}"
                     >Companies</a>
+                    <a
+                        class="nav-link {{ request()->routeIs('excluded-terms.*') ? 'active fw-semibold' : '' }}"
+                        href="{{ route('excluded-terms.index') }}"
+                    >Excluded terms</a>
                 </div>
 
                 <form method="GET" action="{{ route('home') }}" class="d-flex align-items-center gap-2 ms-auto">

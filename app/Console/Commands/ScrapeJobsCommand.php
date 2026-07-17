@@ -6,6 +6,7 @@ use App\Data\JobListingData;
 use App\Enums\CompanyPreferenceType;
 use App\Enums\JobListingStatus;
 use App\Models\CompanyPreference;
+use App\Models\ExcludedTerm;
 use App\Models\JobListing;
 use App\Models\ScrapeRun;
 use App\Models\ScrapeSchedule;
@@ -186,10 +187,10 @@ class ScrapeJobsCommand extends Command
         $now = now();
 
         $companyKey = JobListing::companyKey($data->company);
-        $isBlacklisted = $companyKey !== null && CompanyPreference::query()
+        $isBlacklisted = ($companyKey !== null && CompanyPreference::query()
             ->where('company_key', $companyKey)
             ->where('type', CompanyPreferenceType::Blacklist)
-            ->exists();
+            ->exists()) || ExcludedTerm::matches($data->title);
 
         $listing->fill([
             'title' => $data->title,

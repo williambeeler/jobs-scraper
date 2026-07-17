@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\CompanyPreferenceController;
+use App\Http\Controllers\ExcludedTermController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\JobListingStatusController;
@@ -16,6 +17,7 @@ Route::post('/jobs/{jobListing}/company-preference', [CompanyPreferenceControlle
 Route::get('/company-preferences', [CompanyPreferenceController::class, 'index'])->name('company-preferences.index');
 Route::delete('/company-preferences/{companyPreference}', [CompanyPreferenceController::class, 'destroy'])
     ->name('company-preferences.destroy');
+Route::resource('excluded-terms', ExcludedTermController::class)->except('show');
 Route::get('/cron', [ScrapeScheduleController::class, 'index'])->name('cron');
 Route::post('/cron', [ScrapeScheduleController::class, 'store'])->name('cron.store');
 Route::get('/cron/run', RunScrapeSchedulesController::class)->name('cron.run');

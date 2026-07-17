@@ -64,8 +64,15 @@ class JobListing extends Model
 
     public function scopeVisible(Builder $query): Builder
     {
-        return $query->whereNotIn('company_key', CompanyPreference::query()
-            ->select('company_key')->where('type', CompanyPreferenceType::Blacklist));
+        return $query
+            ->where(function (Builder $query): void {
+                $query->whereNull('company_key')->orWhereNotIn('company_key', CompanyPreference::query()
+                    ->select('company_key')->where('type', CompanyPreferenceType::Blacklist));
+            })
+            ->whereNotExists(function ($query): void {
+                $query->selectRaw('1')->from('excluded_terms')
+                    ->whereRaw('instr(lower(job_listings.title), excluded_terms.term_key) > 0');
+            });
     }
 
     public static function companyKey(?string $company): ?string
