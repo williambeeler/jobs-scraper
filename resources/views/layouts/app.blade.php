@@ -10,6 +10,18 @@
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
             rel="stylesheet"
         >
+        <style>
+            .job-row-whitelisted {
+                position: relative;
+                background: linear-gradient(to bottom, #fff 15%, #fff8df 100%);
+                border-left: 4px solid #d5a72e;
+            }
+            .job-row-star {
+                color: #b8860b;
+                font-size: 1.15rem;
+                line-height: 1;
+            }
+        </style>
     </head>
     <body class="bg-light">
         @php
@@ -32,6 +44,10 @@
                         class="nav-link {{ request()->routeIs('applied-to') ? 'active fw-semibold' : '' }}"
                         href="{{ route('applied-to') }}"
                     >Applied to</a>
+                    <a
+                        class="nav-link {{ request()->routeIs('company-preferences.*') ? 'active fw-semibold' : '' }}"
+                        href="{{ route('company-preferences.index') }}"
+                    >Companies</a>
                 </div>
 
                 <form method="GET" action="{{ route('home') }}" class="d-flex align-items-center gap-2 ms-auto">

@@ -12,6 +12,7 @@ class AppliedJobController extends Controller
     {
         return view('applied-to', [
             'listings' => JobListing::query()
+                ->visible()
                 ->where('status', JobListingStatus::Applied)
                 ->orderByDesc('status_changed_at')
                 ->get(),

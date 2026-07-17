@@ -17,6 +17,7 @@ class JobListingController extends Controller
         ]);
 
         $listings = JobListing::query()
+            ->visible()
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
                     $query->where('title', 'like', "%{$search}%")
@@ -43,6 +44,7 @@ class JobListingController extends Controller
 
     public function show(JobListing $jobListing): Response
     {
+        abort_unless(JobListing::query()->visible()->whereKey($jobListing)->exists(), 404);
         return Inertia::render('job-listings/Show', [
             'listing' => $this->listingData($jobListing),
         ]);

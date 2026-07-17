@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\CompanyPreferenceType;
 use App\Enums\JobListingStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -34,6 +36,7 @@ class JobListing extends Model
         'source',
         'title',
         'company',
+        'company_key',
         'location',
         'url',
         'url_hash',
@@ -52,6 +55,26 @@ class JobListing extends Model
     public function scrapeRuns(): BelongsToMany
     {
         return $this->belongsToMany(ScrapeRun::class);
+    }
+
+    public function companyPreference(): HasOne
+    {
+        return $this->hasOne(CompanyPreference::class, 'company_key', 'company_key');
+    }
+
+    public function scopeVisible(Builder $query): Builder
+    {
+        return $query->whereNotIn('company_key', CompanyPreference::query()
+            ->select('company_key')->where('type', CompanyPreferenceType::Blacklist));
+    }
+
+    public static function companyKey(?string $company): ?string
+    {
+        if ($company === null || trim($company) === '') {
+            return null;
+        }
+
+        return mb_strtolower(trim((string) preg_replace('/\s+/', ' ', $company)));
     }
 
     protected function casts(): array

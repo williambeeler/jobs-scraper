@@ -34,7 +34,7 @@
                 id="job-list"
             >
                 @foreach ($listings as $listing)
-                        <div class="list-group-item p-4" data-job-row>
+                        <div class="list-group-item p-4 {{ $listing->is_whitelisted ? 'job-row-whitelisted' : '' }}" data-job-row>
                             <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                                 <div class="flex-grow-1">
                                     <h2 class="h5 mb-2">
@@ -53,6 +53,26 @@
                                         @endif
                                     </p>
 
+                                    @if ($listing->company)
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <form method="POST" action="{{ route('jobs.company-preference', $listing) }}">
+                                                @csrf
+                                                <input type="hidden" name="type" value="whitelist">
+                                                <button type="submit" class="btn btn-sm {{ $listing->is_whitelisted ? 'btn-warning' : 'btn-outline-warning' }}">
+                                                    <span aria-hidden="true">&#9733;</span>
+                                                    {{ $listing->is_whitelisted ? 'Whitelisted' : 'Whitelist company' }}
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('jobs.company-preference', $listing) }}">
+                                                @csrf
+                                                <input type="hidden" name="type" value="blacklist">
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                    Blacklist company
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
+
                                     <div class="d-flex flex-wrap gap-3 small text-body-secondary">
                                         <span>Posted: {{ $listing->posted_relative ?: ($listing->posted_at?->format('M j, Y') ?? 'Unknown') }}</span>
                                         @if ($listing->salary)
@@ -63,6 +83,9 @@
                                 </div>
 
                                 <div class="d-flex flex-column align-items-md-end gap-2 flex-shrink-0">
+                                    @if ($listing->is_whitelisted)
+                                        <span class="job-row-star" title="Whitelisted company" aria-label="Whitelisted company">&#9733;</span>
+                                    @endif
                                     <span class="badge text-bg-primary align-self-start align-self-md-end">{{ $listing->source }}</span>
 
                                     <form
