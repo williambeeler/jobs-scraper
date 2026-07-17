@@ -30,7 +30,7 @@ class ExampleTest extends TestCase
             createdAt: now()->subDay(),
         );
 
-        $this->get(route('home'))
+        $this->get(route('jobs'))
             ->assertOk()
             ->assertViewIs('home')
             ->assertSee('Monday, July 13, 2026')
@@ -60,7 +60,7 @@ class ExampleTest extends TestCase
             createdAt: now()->subDay(),
         );
 
-        $this->get(route('home', ['date' => '2026-07-12']))
+        $this->get(route('jobs', ['date' => '2026-07-12']))
             ->assertOk()
             ->assertSee('Sunday, July 12, 2026')
             ->assertSee('value="2026-07-12"', false)
@@ -79,7 +79,7 @@ class ExampleTest extends TestCase
             createdAt: now(),
         );
 
-        $this->get(route('home'))
+        $this->get(route('jobs'))
             ->assertOk()
             ->assertSee('Monday, July 13, 2026')
             ->assertSee('value="2026-07-13"', false)
@@ -91,7 +91,7 @@ class ExampleTest extends TestCase
     {
         Carbon::setTestNow('2026-07-13 12:00:00');
 
-        $this->get(route('home'))
+        $this->get(route('jobs'))
             ->assertOk()
             ->assertSee('No jobs were first scraped on July 13, 2026.');
     }
@@ -100,15 +100,15 @@ class ExampleTest extends TestCase
     {
         $this->get(route('cron'))
             ->assertOk()
-            ->assertSee(config('app.name'))
-            ->assertSee('Cron')
-            ->assertSee('Applied to');
+            ->assertSee('Job Scraper')
+            ->assertSee('aria-label="Home"', false)
+            ->assertSee('aria-label="Settings"', false);
 
         $this->get(route('applied-to'))
             ->assertOk()
-            ->assertSee(config('app.name'))
-            ->assertSee('Cron')
-            ->assertSee('Applied to');
+            ->assertSee('Job Scraper')
+            ->assertSee('aria-label="Jobs"', false)
+            ->assertSee('aria-label="Bible"', false);
     }
 
     public function test_scrape_configuration_can_be_saved_and_listed(): void
@@ -199,7 +199,7 @@ class ExampleTest extends TestCase
             'status' => 'applied',
         ]);
 
-        $this->get(route('home'))
+        $this->get(route('jobs'))
             ->assertOk()
             ->assertDontSee($listing->title);
 
@@ -227,7 +227,7 @@ class ExampleTest extends TestCase
             'status' => 'not_interested',
         ]);
 
-        $this->get(route('home'))->assertDontSee($listing->title);
+        $this->get(route('jobs'))->assertDontSee($listing->title);
         $this->get(route('applied-to'))->assertDontSee($listing->title);
     }
 
@@ -252,7 +252,7 @@ class ExampleTest extends TestCase
 
         $this->assertDatabaseHas('excluded_terms', ['term' => '.NET', 'term_key' => '.net']);
         $this->assertDatabaseHas('job_listings', ['id' => $matching->id, 'status' => 'not_interested']);
-        $this->get(route('home'))->assertDontSee($matching->title)->assertSee($other->title);
+        $this->get(route('jobs'))->assertDontSee($matching->title)->assertSee($other->title);
     }
 
     public function test_excluded_terms_can_be_edited_and_deleted(): void
