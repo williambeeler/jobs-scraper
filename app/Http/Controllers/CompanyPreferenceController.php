@@ -6,10 +6,10 @@ use App\Enums\CompanyPreferenceType;
 use App\Enums\JobListingStatus;
 use App\Models\CompanyPreference;
 use App\Models\JobListing;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
 
 class CompanyPreferenceController extends Controller

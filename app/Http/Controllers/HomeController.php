@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobListing;
 use App\Enums\CompanyPreferenceType;
+use App\Models\JobListing;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;

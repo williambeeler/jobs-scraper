@@ -198,7 +198,7 @@ Then clear the configuration cache:
 php artisan config:clear
 ```
 
-The endpoint checks schedules every five minutes but runs only configurations whose `next_run_at` value is due. See [the local cron setup guide](documentation/local-cron-setup.md) for the exact crontab entry, token generation, verification, logging, removal, and troubleshooting instructions.
+The endpoint checks schedules every five minutes, runs only scrape configurations whose `next_run_at` value is due, and invokes Laravel's scheduler. A database-only backup is scheduled daily at 3:00 AM in `APP_DISPLAY_TIMEZONE`. See [the local cron setup guide](documentation/local-cron-setup.md) for the exact crontab entry, token generation, verification, logging, removal, and troubleshooting instructions.
 
 ## Main routes
 

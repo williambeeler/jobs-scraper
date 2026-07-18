@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppliedJobController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CompanyPreferenceController;
 use App\Http\Controllers\ExcludedTermController;
 use App\Http\Controllers\HomeController;
@@ -13,7 +14,11 @@ Route::view('/', 'welcome')->name('home');
 Route::get('/jobs', HomeController::class)->name('jobs');
 Route::view('/bible', 'coming-soon', ['pageTitle' => 'Bible'])->name('bible');
 Route::view('/learning', 'coming-soon', ['pageTitle' => 'Learning'])->name('learning');
-Route::view('/settings', 'coming-soon', ['pageTitle' => 'Settings'])->name('settings');
+Route::redirect('/settings', '/settings/backup')->name('settings');
+Route::get('/settings/backup', [BackupController::class, 'index'])->name('settings.backup');
+Route::post('/settings/backup', [BackupController::class, 'store'])->name('settings.backup.store');
+Route::delete('/settings/backup', [BackupController::class, 'destroy'])->name('settings.backup.destroy');
+Route::view('/settings/restore', 'settings.restore')->name('settings.restore');
 Route::post('/jobs/{jobListing}/status', JobListingStatusController::class)->name('jobs.status');
 Route::post('/jobs/{jobListing}/company-preference', [CompanyPreferenceController::class, 'store'])
     ->name('jobs.company-preference');
@@ -26,4 +31,5 @@ Route::resource('jobs/excluded-terms', ExcludedTermController::class)
 Route::get('/jobs/cron', [ScrapeScheduleController::class, 'index'])->name('cron');
 Route::post('/jobs/cron', [ScrapeScheduleController::class, 'store'])->name('cron.store');
 Route::get('/jobs/cron/run', RunScrapeSchedulesController::class)->name('cron.run');
+Route::get('/cron/run', RunScrapeSchedulesController::class)->name('cron.run.legacy');
 Route::get('/jobs/applied-to', AppliedJobController::class)->name('applied-to');

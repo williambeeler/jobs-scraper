@@ -21,8 +21,9 @@ class RunScrapeSchedulesController extends Controller
             403,
         );
 
-        $exitCode = Artisan::call('jobs:run-schedules', ['--no-interaction' => true]);
+        $scrapeExitCode = Artisan::call('jobs:run-schedules', ['--no-interaction' => true]);
+        $scheduleExitCode = Artisan::call('schedule:run', ['--no-interaction' => true]);
 
-        return response('', $exitCode === Command::SUCCESS ? 204 : 500);
+        return response('', $scrapeExitCode === Command::SUCCESS && $scheduleExitCode === Command::SUCCESS ? 204 : 500);
     }
 }

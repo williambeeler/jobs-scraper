@@ -111,6 +111,20 @@ class ExampleTest extends TestCase
             ->assertSee('aria-label="Bible"', false);
     }
 
+    public function test_settings_backup_page_has_backup_and_restore_navigation(): void
+    {
+        $this->get(route('settings.backup'))
+            ->assertOk()
+            ->assertSee('Settings')
+            ->assertSee('Create database backup')
+            ->assertSee('Previous backups')
+            ->assertSee(route('settings.restore'), false);
+
+        $this->get(route('settings.restore'))
+            ->assertOk()
+            ->assertSee('Restore controls will be added here');
+    }
+
     public function test_scrape_configuration_can_be_saved_and_listed(): void
     {
         $this->post(route('cron.store'), [

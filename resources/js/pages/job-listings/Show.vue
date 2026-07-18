@@ -34,22 +34,35 @@ defineOptions({
     <Head :title="listing.title" />
 
     <div class="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 p-4 md:p-6">
-        <Link href="/job-listings" class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <Link
+            href="/job-listings"
+            class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+        >
             <ArrowLeft class="size-4" />
             Back to listings
         </Link>
 
         <article class="rounded-xl border bg-card p-6 md:p-8">
-            <div class="flex flex-col items-start justify-between gap-4 sm:flex-row">
+            <div
+                class="flex flex-col items-start justify-between gap-4 sm:flex-row"
+            >
                 <div>
-                    <Badge variant="secondary" class="mb-3">{{ listing.source }}</Badge>
-                    <h1 class="text-2xl font-semibold tracking-tight">{{ listing.title }}</h1>
+                    <Badge variant="secondary" class="mb-3">{{
+                        listing.source
+                    }}</Badge>
+                    <h1 class="text-2xl font-semibold tracking-tight">
+                        {{ listing.title }}
+                    </h1>
                     <p class="mt-2 text-lg text-muted-foreground">
                         {{ listing.company || 'Unknown company' }}
                     </p>
                 </div>
                 <Button as-child>
-                    <a :href="listing.url" target="_blank" rel="noopener noreferrer">
+                    <a
+                        :href="listing.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         View original
                         <ExternalLink class="ml-2 size-4" />
                     </a>
@@ -58,20 +71,38 @@ defineOptions({
 
             <dl class="mt-8 grid gap-6 border-t pt-6 sm:grid-cols-2">
                 <div>
-                    <dt class="text-sm font-medium text-muted-foreground">Location</dt>
-                    <dd class="mt-1">{{ listing.location || 'Not provided' }}</dd>
+                    <dt class="text-sm font-medium text-muted-foreground">
+                        Location
+                    </dt>
+                    <dd class="mt-1">
+                        {{ listing.location || 'Not provided' }}
+                    </dd>
                 </div>
                 <div>
-                    <dt class="text-sm font-medium text-muted-foreground">Posted</dt>
-                    <dd class="mt-1">{{ listing.posted_relative || listing.posted_at || 'Unknown' }}</dd>
+                    <dt class="text-sm font-medium text-muted-foreground">
+                        Posted
+                    </dt>
+                    <dd class="mt-1">
+                        {{
+                            listing.posted_relative ||
+                            listing.posted_at ||
+                            'Unknown'
+                        }}
+                    </dd>
                 </div>
                 <div>
-                    <dt class="text-sm font-medium text-muted-foreground">Salary</dt>
+                    <dt class="text-sm font-medium text-muted-foreground">
+                        Salary
+                    </dt>
                     <dd class="mt-1">{{ listing.salary || 'Not provided' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-sm font-medium text-muted-foreground">Last seen</dt>
-                    <dd class="mt-1">{{ new Date(listing.last_seen_at).toLocaleString() }}</dd>
+                    <dt class="text-sm font-medium text-muted-foreground">
+                        Last seen
+                    </dt>
+                    <dd class="mt-1">
+                        {{ new Date(listing.last_seen_at).toLocaleString() }}
+                    </dd>
                 </div>
             </dl>
         </article>

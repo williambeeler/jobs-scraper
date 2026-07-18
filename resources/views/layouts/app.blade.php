@@ -73,32 +73,26 @@
         @unless (request()->routeIs('home'))
         <nav class="navbar bg-white border-bottom shadow-sm">
             <div class="container d-flex gap-4">
-                <a class="navbar-brand fw-bold mb-0" href="{{ route('jobs') }}">
-                    Job Scraper
-                </a>
-
-                <div class="navbar-nav flex-row gap-3">
-                    <a class="nav-link" href="{{ route('cron') }}">Cron</a>
-                    <a class="nav-link" href="{{ route('applied-to') }}">Applied to</a>
-                    <a class="nav-link" href="{{ route('company-preferences.index') }}">Companies</a>
-                    <a class="nav-link" href="{{ route('excluded-terms.index') }}">Excluded terms</a>
-                </div>
-
-                <form method="GET" action="{{ route('jobs') }}" class="d-flex align-items-center gap-2 ms-auto">
-                    <label for="job-date" class="form-label mb-0 text-nowrap fw-semibold">Choose date</label>
-                    <input
-                        type="date"
-                        class="form-control"
-                        id="job-date"
-                        name="date"
-                        value="{{ $navigationDate->toDateString() }}"
-                        aria-label="Choose a job scrape date"
-                        onchange="this.form.submit()"
-                    >
-                    <noscript>
-                        <button type="submit" class="btn btn-primary">View</button>
-                    </noscript>
-                </form>
+                @if (request()->routeIs('settings.*'))
+                    <a class="navbar-brand fw-bold mb-0" href="{{ route('settings.backup') }}">Settings</a>
+                    <div class="navbar-nav flex-row gap-3">
+                        <a class="nav-link" href="{{ route('settings.backup') }}">Backup</a>
+                        <a class="nav-link" href="{{ route('settings.restore') }}">Restore</a>
+                    </div>
+                @else
+                    <a class="navbar-brand fw-bold mb-0" href="{{ route('jobs') }}">Job Scraper</a>
+                    <div class="navbar-nav flex-row gap-3">
+                        <a class="nav-link" href="{{ route('cron') }}">Cron</a>
+                        <a class="nav-link" href="{{ route('applied-to') }}">Applied to</a>
+                        <a class="nav-link" href="{{ route('company-preferences.index') }}">Companies</a>
+                        <a class="nav-link" href="{{ route('excluded-terms.index') }}">Excluded terms</a>
+                    </div>
+                    <form method="GET" action="{{ route('jobs') }}" class="d-flex align-items-center gap-2 ms-auto">
+                        <label for="job-date" class="form-label mb-0 text-nowrap fw-semibold">Choose date</label>
+                        <input type="date" class="form-control" id="job-date" name="date" value="{{ $navigationDate->toDateString() }}" aria-label="Choose a job scrape date" onchange="this.form.submit()">
+                        <noscript><button type="submit" class="btn btn-primary">View</button></noscript>
+                    </form>
+                @endif
             </div>
         </nav>
         @endunless

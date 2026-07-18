@@ -68,7 +68,9 @@ defineOptions({
 
         <form class="flex flex-col gap-3 sm:flex-row" @submit.prevent="submit">
             <div class="relative flex-1">
-                <Search class="absolute top-2.5 left-3 size-4 text-muted-foreground" />
+                <Search
+                    class="absolute top-2.5 left-3 size-4 text-muted-foreground"
+                />
                 <Input
                     v-model="filters.search"
                     class="pl-9"
@@ -96,35 +98,59 @@ defineOptions({
             >
                 <div class="mb-3 flex items-start justify-between gap-4">
                     <div>
-                        <h2 class="font-semibold leading-snug">{{ listing.title }}</h2>
+                        <h2 class="leading-snug font-semibold">
+                            {{ listing.title }}
+                        </h2>
                         <p class="mt-1 text-sm text-muted-foreground">
                             {{ listing.company || 'Unknown company' }}
                         </p>
                     </div>
                     <Badge variant="secondary">{{ listing.source }}</Badge>
                 </div>
-                <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                    <span>{{ listing.location || 'Location not provided' }}</span>
+                <div
+                    class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"
+                >
+                    <span>{{
+                        listing.location || 'Location not provided'
+                    }}</span>
                     <span v-if="listing.salary">{{ listing.salary }}</span>
-                    <span>{{ listing.posted_relative || listing.posted_at || 'Date unknown' }}</span>
+                    <span>{{
+                        listing.posted_relative ||
+                        listing.posted_at ||
+                        'Date unknown'
+                    }}</span>
                 </div>
             </Link>
         </div>
 
-        <div v-else class="rounded-xl border border-dashed p-12 text-center text-muted-foreground">
+        <div
+            v-else
+            class="rounded-xl border border-dashed p-12 text-center text-muted-foreground"
+        >
             No stored job listings match these filters.
         </div>
 
-        <nav v-if="listings.links.length > 3" class="flex flex-wrap justify-center gap-2">
+        <nav
+            v-if="listings.links.length > 3"
+            class="flex flex-wrap justify-center gap-2"
+        >
             <template v-for="link in listings.links" :key="link.label">
                 <Link
                     v-if="link.url"
                     :href="link.url"
                     class="rounded-md border px-3 py-1.5 text-sm"
-                    :class="link.active ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'"
+                    :class="
+                        link.active
+                            ? 'bg-primary text-primary-foreground'
+                            : 'hover:bg-accent'
+                    "
                     preserve-state
-                >{{ paginationLabel(link.label) }}</Link>
-                <span v-else class="rounded-md border px-3 py-1.5 text-sm opacity-40">
+                    >{{ paginationLabel(link.label) }}</Link
+                >
+                <span
+                    v-else
+                    class="rounded-md border px-3 py-1.5 text-sm opacity-40"
+                >
                     {{ paginationLabel(link.label) }}
                 </span>
             </template>

@@ -45,6 +45,7 @@ class JobListingController extends Controller
     public function show(JobListing $jobListing): Response
     {
         abort_unless(JobListing::query()->visible()->whereKey($jobListing)->exists(), 404);
+
         return Inertia::render('job-listings/Show', [
             'listing' => $this->listingData($jobListing),
         ]);
