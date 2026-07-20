@@ -21,7 +21,7 @@
                 @foreach ($listings as $listing)
                     <a
                         href="{{ $listing->url }}"
-                        class="list-group-item list-group-item-action p-4"
+                        class="list-group-item list-group-item-action p-4 {{ $listing->is_whitelisted ? 'job-row-whitelisted' : '' }}"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -42,7 +42,12 @@
                                     <span>Applied: {{ $listing->status_changed_at?->timezone($displayTimezone)->format('M j, Y g:i A') }}</span>
                                 </div>
                             </div>
-                            <span class="badge text-bg-success align-self-start">{{ $listing->source }}</span>
+                            <div class="d-flex flex-column align-items-md-end gap-2 flex-shrink-0">
+                                @if ($listing->is_whitelisted)
+                                    <span class="job-row-star" title="Whitelisted company" aria-label="Whitelisted company">&#9733;</span>
+                                @endif
+                                <span class="badge text-bg-success align-self-start align-self-md-end">{{ $listing->source }}</span>
+                            </div>
                         </div>
                     </a>
                 @endforeach

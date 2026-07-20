@@ -9,6 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('backup:run --only-db --disable-notifications')
-    ->dailyAt('03:00')
+    ->dailyAt('10:00')
     ->timezone((string) config('app.display_timezone', 'America/Chicago'))
     ->withoutOverlapping();

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CompanyPreference;
 use App\Models\ExcludedTerm;
 use App\Models\JobListing;
 use Carbon\CarbonInterface;
@@ -204,6 +205,13 @@ class ExampleTest extends TestCase
             createdAt: now(),
         );
 
+        $listing->update(['company_key' => JobListing::companyKey($listing->company)]);
+        CompanyPreference::query()->create([
+            'company_name' => $listing->company,
+            'company_key' => $listing->company_key,
+            'type' => 'whitelist',
+        ]);
+
         $this->postJson(route('jobs.status', $listing), ['status' => 'applied'])
             ->assertOk()
             ->assertJson(['status' => 'applied']);
@@ -220,7 +228,10 @@ class ExampleTest extends TestCase
         $this->get(route('applied-to'))
             ->assertOk()
             ->assertSee($listing->title)
-            ->assertSee('Applied: Jul 13, 2026 7:00 AM');
+            ->assertSee('Applied: Jul 13, 2026 7:00 AM')
+            ->assertSee('job-row-whitelisted', false)
+            ->assertSee('aria-label="Whitelisted company"', false)
+            ->assertDontSee('Whitelist company');
     }
 
     public function test_marking_a_job_not_interested_hides_it_without_listing_it_as_applied(): void
