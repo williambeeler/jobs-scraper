@@ -8,14 +8,9 @@ use DOMElement;
 use DOMNode;
 use DOMXPath;
 
-final class ZipRecruiterScraper implements JobSourceScraper
+final class ZipRecruiterScraper extends GoogleSiteSearchScraper
 {
-    public function __construct(
-        private readonly HttpClient $http,
-        private readonly int $maxDays,
-    ) {}
-
-    public function scrape(string $keywords): array
+    protected function scrapeNative(string $keywords): array
     {
         $query = rawurlencode($keywords);
         $url = "https://www.ziprecruiter.com/jobs-search?search={$query}&location=remote&days={$this->maxDays}";
@@ -39,6 +34,23 @@ final class ZipRecruiterScraper implements JobSourceScraper
         }
 
         return ['jobs' => $jobs, 'error' => null];
+    }
+
+    protected function sourceName(): string
+    {
+        return 'ZipRecruiter';
+    }
+
+    protected function googleSite(): string
+    {
+        return 'ziprecruiter.com/jobs';
+    }
+
+    protected function acceptsGoogleUrl(string $url): bool
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+
+        return $host === 'ziprecruiter.com' || str_ends_with($host, '.ziprecruiter.com');
     }
 
     private function isBlockedPage(string $html): bool

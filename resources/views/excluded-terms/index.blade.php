@@ -6,7 +6,7 @@
     <main class="container py-5">
         <header class="mb-4">
             <p class="mb-2 text-uppercase text-secondary fw-semibold small">Job filtering</p>
-            <h1 class="display-5 fw-bold mb-2">Excluded terms</h1>
+            <h1 class="display-5 fw-bold mb-2">Excluded terms ({{ $terms->count() }})</h1>
             <p class="text-secondary mb-0">Jobs whose title contains an excluded term are marked Not Interested and hidden everywhere.</p>
         </header>
 

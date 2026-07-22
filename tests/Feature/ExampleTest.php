@@ -102,6 +102,10 @@ class ExampleTest extends TestCase
         $this->get(route('cron'))
             ->assertOk()
             ->assertSee('Job Scraper')
+            ->assertSee('navbar navbar-expand bg-white', false)
+            ->assertSee('data-bs-toggle="dropdown"', false)
+            ->assertSeeInOrder(['Tools', 'Applied to', 'Settings', 'Companies List', 'Cron', 'Excluded terms'])
+            ->assertSee(route('company-preferences.index'), false)
             ->assertSee('aria-label="Home"', false)
             ->assertSee('aria-label="Settings"', false);
 
@@ -256,6 +260,40 @@ class ExampleTest extends TestCase
         $this->get(route('applied-to'))->assertDontSee($listing->title);
     }
 
+    public function test_applied_jobs_are_grouped_into_lists_by_the_local_application_date(): void
+    {
+        Carbon::setTestNow('2026-07-20 12:00:00 UTC');
+
+        $newer = $this->createListing(
+            title: 'Monday Application',
+            url: 'https://example.com/jobs/monday-application',
+            lastSeenAt: Carbon::parse('2026-07-13 12:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-13 12:00:00 UTC'),
+        );
+        $older = $this->createListing(
+            title: 'Sunday Application',
+            url: 'https://example.com/jobs/sunday-application',
+            lastSeenAt: Carbon::parse('2026-07-12 16:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-12 16:00:00 UTC'),
+        );
+
+        $newer->update(['status' => 'applied', 'status_changed_at' => '2026-07-13 12:00:00 UTC']);
+        $older->update(['status' => 'applied', 'status_changed_at' => '2026-07-12 16:00:00 UTC']);
+
+        $response = $this->get(route('applied-to'))
+            ->assertOk()
+            ->assertSeeInOrder([
+                'Monday, July 13, 2026',
+                '7 days ago',
+                $newer->title,
+                'Sunday, July 12, 2026',
+                '8 days ago',
+                $older->title,
+            ]);
+
+        $this->assertSame(2, substr_count($response->getContent(), 'class="list-group shadow-sm"'));
+    }
+
     public function test_excluded_terms_hide_matching_jobs_and_mark_them_not_interested(): void
     {
         Carbon::setTestNow('2026-07-13 12:00:00 UTC');
@@ -278,6 +316,7 @@ class ExampleTest extends TestCase
         $this->assertDatabaseHas('excluded_terms', ['term' => '.NET', 'term_key' => '.net']);
         $this->assertDatabaseHas('job_listings', ['id' => $matching->id, 'status' => 'not_interested']);
         $this->get(route('jobs'))->assertDontSee($matching->title)->assertSee($other->title);
+        $this->get(route('excluded-terms.index'))->assertOk()->assertSee('Excluded terms (1)');
     }
 
     public function test_excluded_terms_can_be_edited_and_deleted(): void

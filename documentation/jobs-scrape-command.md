@@ -24,6 +24,12 @@ php artisan jobs:scrape
 
 With no options, the command searches LinkedIn, Indeed, and ZipRecruiter for `wordpress remote` listings posted within the last five days.
 
+Indeed and ZipRecruiter first use their native search pages. If a native request is blocked or returns no usable results, both sources fall back to a shared Google site-restricted search. The fallback searches up to two Google result pages, validates every result against the expected job-board domain, removes duplicate and tracking URLs, and stores the remaining links under their original source.
+
+Google fallback results contain only the information exposed in the search result. Their company is therefore unknown, their location is recorded as Remote, and the configured age limit is passed to Google as an `after:` search operator rather than verified against structured posting data.
+
+The fallback uses Google's server-rendered search HTML and does not attempt to bypass a security or JavaScript interstitial. Google can return such an interstitial instead of results; that condition is recorded as a source error so this interim provider can be replaced by a documented search API later.
+
 ## Options
 
 | Option | Default | Description |
@@ -122,7 +128,7 @@ Run Laravel's scheduler in the normal way for the environment, such as through t
 
 ## Troubleshooting
 
-Indeed and ZipRecruiter may return Cloudflare or security challenge pages, and LinkedIn may block automated requests. These are recorded as warnings or failures on the scrape run. Try the command again later or run it from a network that the source accepts.
+Indeed and ZipRecruiter may return Cloudflare or security challenge pages, and LinkedIn may block automated requests. Indeed and ZipRecruiter automatically try Google site search after a native-source failure. If both the native request and Google fallback fail, the combined failure is recorded on the scrape run.
 
 Use verbose mode to see the requested URLs and HTTP status codes:
 

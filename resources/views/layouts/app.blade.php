@@ -71,7 +71,7 @@
         </nav>
 
         @unless (request()->routeIs('home'))
-        <nav class="navbar bg-white border-bottom shadow-sm">
+        <nav class="navbar navbar-expand bg-white border-bottom shadow-sm">
             <div class="container d-flex gap-4">
                 @if (request()->routeIs('settings.*'))
                     <a class="navbar-brand fw-bold mb-0" href="{{ route('settings.backup') }}">Settings</a>
@@ -82,10 +82,24 @@
                 @else
                     <a class="navbar-brand fw-bold mb-0" href="{{ route('jobs') }}">Job Scraper</a>
                     <div class="navbar-nav flex-row gap-3">
-                        <a class="nav-link" href="{{ route('cron') }}">Cron</a>
-                        <a class="nav-link" href="{{ route('applied-to') }}">Applied to</a>
-                        <a class="nav-link" href="{{ route('company-preferences.index') }}">Companies</a>
-                        <a class="nav-link" href="{{ route('excluded-terms.index') }}">Excluded terms</a>
+                        <div class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Tools
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ route('applied-to') }}">Applied to</a></li>
+                            </ul>
+                        </div>
+                        <div class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Settings
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ route('company-preferences.index') }}">Companies List</a></li>
+                                <li><a class="dropdown-item" href="{{ route('cron') }}">Cron</a></li>
+                                <li><a class="dropdown-item" href="{{ route('excluded-terms.index') }}">Excluded terms</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <form method="GET" action="{{ route('jobs') }}" class="d-flex align-items-center gap-2 ms-auto">
                         <label for="job-date" class="form-label mb-0 text-nowrap fw-semibold">Choose date</label>
@@ -99,6 +113,7 @@
 
         @yield('content')
 
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
         @stack('scripts')
     </body>
 </html>

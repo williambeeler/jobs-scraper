@@ -4,14 +4,9 @@ namespace App\Services\JobScraping;
 
 use App\Data\JobListingData;
 
-final class IndeedScraper implements JobSourceScraper
+final class IndeedScraper extends GoogleSiteSearchScraper
 {
-    public function __construct(
-        private readonly HttpClient $http,
-        private readonly int $maxDays,
-    ) {}
-
-    public function scrape(string $keywords): array
+    protected function scrapeNative(string $keywords): array
     {
         $query = rawurlencode($keywords);
         $url = "https://www.indeed.com/jobs?q={$query}&l=remote&fromage={$this->maxDays}&sort=date&radius=0";
@@ -43,6 +38,34 @@ final class IndeedScraper implements JobSourceScraper
         }
 
         return ['jobs' => $jobs, 'error' => null];
+    }
+
+    protected function sourceName(): string
+    {
+        return 'Indeed';
+    }
+
+    protected function googleSite(): string
+    {
+        return 'indeed.com/viewjob';
+    }
+
+    protected function acceptsGoogleUrl(string $url): bool
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+
+        return ($host === 'indeed.com' || str_ends_with($host, '.indeed.com'))
+            && parse_url($url, PHP_URL_PATH) === '/viewjob';
+    }
+
+    protected function normalizeGoogleUrl(string $url): string
+    {
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $parameters);
+        $jobKey = $parameters['jk'] ?? null;
+
+        return is_string($jobKey) && $jobKey !== ''
+            ? 'https://www.indeed.com/viewjob?jk='.rawurlencode($jobKey)
+            : parent::normalizeGoogleUrl($url);
     }
 
     private function isBlockedPage(string $html): bool
