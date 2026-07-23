@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>@yield('title', config('app.name'))</title>
 
@@ -90,6 +91,7 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ route('applied-to') }}">Applied to</a></li>
                                 <li><a class="dropdown-item" href="{{ route('calendar') }}">Calendar</a></li>
+                                <li><a class="dropdown-item" href="{{ route('kanban') }}">Kanban</a></li>
                             </ul>
                         </div>
                         <div class="nav-item dropdown">

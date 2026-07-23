@@ -3,16 +3,20 @@
 namespace App\Models;
 
 use App\Enums\CompanyPreferenceType;
+use App\Enums\JobListingOrigin;
 use App\Enums\JobListingStatus;
+use App\Enums\KanbanStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property string $source
+ * @property JobListingOrigin $listing_origin
  * @property string $title
  * @property string|null $company
  * @property string|null $location
@@ -23,6 +27,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $salary
  * @property JobListingStatus|null $status
  * @property Carbon|null $status_changed_at
+ * @property KanbanStatus $kanban_status
+ * @property Carbon|null $kanban_status_changed_at
  * @property Carbon $first_seen_at
  * @property Carbon $last_seen_at
  * @property Carbon|null $created_at
@@ -34,6 +40,7 @@ class JobListing extends Model
 {
     protected $fillable = [
         'source',
+        'listing_origin',
         'title',
         'company',
         'company_key',
@@ -45,6 +52,8 @@ class JobListing extends Model
         'salary',
         'status',
         'status_changed_at',
+        'kanban_status',
+        'kanban_status_changed_at',
         'first_seen_at',
         'last_seen_at',
     ];
@@ -60,6 +69,11 @@ class JobListing extends Model
     public function companyPreference(): HasOne
     {
         return $this->hasOne(CompanyPreference::class, 'company_key', 'company_key');
+    }
+
+    public function kanbanTransitions(): HasMany
+    {
+        return $this->hasMany(JobListingKanbanTransition::class);
     }
 
     public function scopeVisible(Builder $query): Builder
@@ -87,9 +101,12 @@ class JobListing extends Model
     protected function casts(): array
     {
         return [
+            'listing_origin' => JobListingOrigin::class,
             'posted_at' => 'date',
             'status' => JobListingStatus::class,
             'status_changed_at' => 'datetime',
+            'kanban_status' => KanbanStatus::class,
+            'kanban_status_changed_at' => 'datetime',
             'first_seen_at' => 'datetime',
             'last_seen_at' => 'datetime',
         ];

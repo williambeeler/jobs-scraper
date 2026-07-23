@@ -133,6 +133,104 @@ class ExampleTest extends TestCase
         ]);
     }
 
+    public function test_active_jobs_default_to_the_kanban_backlog_and_not_interested_jobs_are_hidden(): void
+    {
+        $active = $this->createListing(
+            title: 'Active Kanban Job',
+            url: 'https://example.com/jobs/active-kanban',
+            lastSeenAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+        );
+        $hidden = $this->createListing(
+            title: 'Hidden Kanban Job',
+            url: 'https://example.com/jobs/hidden-kanban',
+            lastSeenAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+        );
+        $hidden->update(['status' => 'not_interested']);
+
+        $this->assertSame('backlog', $active->fresh()->kanban_status->value);
+        $this->assertSame('scraped', $active->fresh()->listing_origin->value);
+        $this->get(route('kanban'))
+            ->assertOk()
+            ->assertSee($active->title)
+            ->assertSee('data-not-interested', false)
+            ->assertSee(route('jobs.status', $active), false)
+            ->assertDontSee($hidden->title);
+    }
+
+    public function test_moving_a_kanban_job_to_applied_updates_both_statuses(): void
+    {
+        $listing = $this->createListing(
+            title: 'Kanban Application',
+            url: 'https://example.com/jobs/kanban-application',
+            lastSeenAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+        );
+
+        $this->postJson(route('jobs.kanban-status', $listing), [
+            'kanban_status' => 'applied',
+        ])->assertOk()->assertJson([
+            'kanban_status' => 'applied',
+            'status' => 'applied',
+        ]);
+
+        $listing->refresh();
+        $this->assertSame('applied', $listing->kanban_status->value);
+        $this->assertSame('applied', $listing->status->value);
+
+        $this->postJson(route('jobs.kanban-status', $listing), [
+            'kanban_status' => 'interview',
+        ])->assertOk();
+
+        $listing->refresh();
+        $this->assertSame('interview', $listing->kanban_status->value);
+        $this->assertSame('applied', $listing->status->value);
+        $this->assertNotNull($listing->kanban_status_changed_at);
+        $this->assertDatabaseHas('job_listing_kanban_transitions', [
+            'job_listing_id' => $listing->id,
+            'from_status' => 'backlog',
+            'to_status' => 'applied',
+        ]);
+        $this->assertDatabaseHas('job_listing_kanban_transitions', [
+            'job_listing_id' => $listing->id,
+            'from_status' => 'applied',
+            'to_status' => 'interview',
+        ]);
+        $this->assertDatabaseCount('job_listing_kanban_transitions', 2);
+    }
+
+    public function test_kanban_backlog_lists_whitelisted_company_jobs_first(): void
+    {
+        $regular = $this->createListing(
+            title: 'Newer Regular Backlog Job',
+            url: 'https://example.com/jobs/regular-backlog',
+            lastSeenAt: Carbon::parse('2026-07-22 14:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-22 14:00:00 UTC'),
+        );
+        $regular->update([
+            'company' => 'Regular Company',
+            'company_key' => JobListing::companyKey('Regular Company'),
+        ]);
+
+        $whitelisted = $this->createListing(
+            title: 'Older Whitelisted Backlog Job',
+            url: 'https://example.com/jobs/whitelisted-backlog',
+            lastSeenAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+        );
+        $whitelisted->update(['company_key' => JobListing::companyKey($whitelisted->company)]);
+        CompanyPreference::query()->create([
+            'company_name' => $whitelisted->company,
+            'company_key' => $whitelisted->company_key,
+            'type' => 'whitelist',
+        ]);
+
+        $this->get(route('kanban'))
+            ->assertOk()
+            ->assertSeeInOrder([$whitelisted->title, $regular->title]);
+    }
+
     public function test_public_navigation_pages_are_available(): void
     {
         $this->get(route('cron'))
@@ -150,6 +248,18 @@ class ExampleTest extends TestCase
             ->assertSee('Job Scraper')
             ->assertSee('aria-label="Jobs"', false)
             ->assertSee('aria-label="Bible"', false);
+
+        $this->get(route('kanban'))
+            ->assertOk()
+            ->assertSeeInOrder([
+                'Backlog',
+                'Interested',
+                'Applied To',
+                'Interview',
+                'Job Won',
+                'Rejected',
+            ])
+            ->assertSee('data-kanban-column', false);
     }
 
     public function test_settings_backup_page_has_backup_and_restore_navigation(): void
