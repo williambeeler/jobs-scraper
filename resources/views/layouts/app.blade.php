@@ -43,6 +43,7 @@
                 height: 1.25rem;
             }
         </style>
+        @stack('styles')
     </head>
     <body class="bg-light">
         @php
@@ -88,6 +89,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ route('applied-to') }}">Applied to</a></li>
+                                <li><a class="dropdown-item" href="{{ route('calendar') }}">Calendar</a></li>
                             </ul>
                         </div>
                         <div class="nav-item dropdown">

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\CalendarCountsController;
 use App\Http\Controllers\CompanyPreferenceController;
 use App\Http\Controllers\ExcludedTermController;
 use App\Http\Controllers\HomeController;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 Route::get('/jobs', HomeController::class)->name('jobs');
+Route::view('/jobs/calendar', 'calendar')->name('calendar');
+Route::get('/jobs/calendar/counts', CalendarCountsController::class)->name('calendar.counts');
 Route::view('/bible', 'coming-soon', ['pageTitle' => 'Bible'])->name('bible');
 Route::view('/learning', 'coming-soon', ['pageTitle' => 'Learning'])->name('learning');
 Route::redirect('/settings', '/settings/backup')->name('settings');

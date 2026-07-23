@@ -97,6 +97,42 @@ class ExampleTest extends TestCase
             ->assertSee('No jobs were first scraped on July 13, 2026.');
     }
 
+    public function test_calendar_counts_are_limited_to_the_requested_visible_range(): void
+    {
+        $whitelisted = $this->createListing(
+            title: 'Whitelisted July Job',
+            url: 'https://example.com/jobs/whitelisted-july',
+            lastSeenAt: Carbon::parse('2026-07-14 12:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-14 12:00:00 UTC'),
+        );
+        $whitelisted->update(['company_key' => JobListing::companyKey($whitelisted->company)]);
+        CompanyPreference::query()->create([
+            'company_name' => $whitelisted->company,
+            'company_key' => $whitelisted->company_key,
+            'type' => 'whitelist',
+        ]);
+
+        $this->createListing(
+            title: 'Another July Job',
+            url: 'https://example.com/jobs/another-july',
+            lastSeenAt: Carbon::parse('2026-07-14 15:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-14 15:00:00 UTC'),
+        );
+        $this->createListing(
+            title: 'August Job',
+            url: 'https://example.com/jobs/august',
+            lastSeenAt: Carbon::parse('2026-08-02 12:00:00 UTC'),
+            createdAt: Carbon::parse('2026-08-02 12:00:00 UTC'),
+        );
+
+        $this->getJson(route('calendar.counts', [
+            'start' => '2026-07-01',
+            'end' => '2026-08-01',
+        ]))->assertOk()->assertExactJson([
+            ['date' => '2026-07-14', 'total' => 2, 'whitelisted' => 1],
+        ]);
+    }
+
     public function test_public_navigation_pages_are_available(): void
     {
         $this->get(route('cron'))
