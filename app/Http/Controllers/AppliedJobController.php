@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\CompanyPreferenceType;
+use App\Enums\JobListingOrigin;
 use App\Enums\JobListingStatus;
 use App\Models\JobListing;
 use Illuminate\Contracts\View\View;
@@ -15,6 +16,7 @@ class AppliedJobController extends Controller
         $displayTimezone = (string) config('app.display_timezone', 'America/Chicago');
         $listings = JobListing::query()
             ->visible()
+            ->where('listing_origin', JobListingOrigin::Scraped->value)
             ->where('status', JobListingStatus::Applied)
             ->withExists(['companyPreference as is_whitelisted' => fn ($query) => $query
                 ->where('type', CompanyPreferenceType::Whitelist)])

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\JobListingOrigin;
 use App\Enums\JobListingStatus;
 use App\Models\ExcludedTerm;
 use App\Models\JobListing;
@@ -70,7 +71,9 @@ class ExcludedTermController extends Controller
 
     private function markMatchingListingsNotInterested(string $term): void
     {
-        JobListing::query()->whereRaw('instr(lower(title), ?) > 0', [ExcludedTerm::key($term)])
+        JobListing::query()
+            ->where('listing_origin', JobListingOrigin::Scraped->value)
+            ->whereRaw('instr(lower(title), ?) > 0', [ExcludedTerm::key($term)])
             ->update(['status' => JobListingStatus::NotInterested, 'status_changed_at' => now()]);
     }
 }

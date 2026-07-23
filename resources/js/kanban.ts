@@ -1,5 +1,19 @@
 import Sortable from 'sortablejs';
 
+type BootstrapModalApi = {
+    Modal: {
+        getOrCreateInstance: (element: Element) => { show: () => void };
+    };
+};
+
+const bootstrap = (window as typeof window & { bootstrap?: BootstrapModalApi })
+    .bootstrap;
+const addJobModal = document.querySelector<HTMLElement>('#add-job-modal');
+
+if (addJobModal?.dataset.openOnLoad === 'true') {
+    bootstrap?.Modal.getOrCreateInstance(addJobModal).show();
+}
+
 const csrfToken = document
     .querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
     ?.getAttribute('content');

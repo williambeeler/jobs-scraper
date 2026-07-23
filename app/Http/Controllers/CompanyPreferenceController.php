@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\CompanyPreferenceType;
+use App\Enums\JobListingOrigin;
 use App\Enums\JobListingStatus;
 use App\Models\CompanyPreference;
 use App\Models\JobListing;
@@ -35,10 +36,13 @@ class CompanyPreferenceController extends Controller
         );
 
         if ($type === CompanyPreferenceType::Blacklist) {
-            JobListing::query()->where('company_key', $jobListing->company_key)->update([
-                'status' => JobListingStatus::NotInterested,
-                'status_changed_at' => now(),
-            ]);
+            JobListing::query()
+                ->where('listing_origin', JobListingOrigin::Scraped->value)
+                ->where('company_key', $jobListing->company_key)
+                ->update([
+                    'status' => JobListingStatus::NotInterested,
+                    'status_changed_at' => now(),
+                ]);
         }
 
         if ($request->expectsJson()) {

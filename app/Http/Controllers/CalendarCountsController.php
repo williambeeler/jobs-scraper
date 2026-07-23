@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\CompanyPreferenceType;
+use App\Enums\JobListingOrigin;
 use App\Models\JobListing;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class CalendarCountsController extends Controller
 
         $counts = JobListing::query()
             ->visible()
+            ->where('listing_origin', JobListingOrigin::Scraped->value)
             ->whereNull('status')
             ->withExists(['companyPreference as is_whitelisted' => fn ($query) => $query
                 ->where('type', CompanyPreferenceType::Whitelist)])

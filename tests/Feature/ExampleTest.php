@@ -231,6 +231,66 @@ class ExampleTest extends TestCase
             ->assertSeeInOrder([$whitelisted->title, $regular->title]);
     }
 
+    public function test_custom_jobs_start_interested_and_only_appear_on_the_kanban(): void
+    {
+        Carbon::setTestNow('2026-07-22 12:00:00 UTC');
+
+        $this->post(route('jobs.custom.store'), [
+            'title' => 'Custom Referral Opportunity',
+            'company' => 'Referral Company',
+            'location' => 'Remote',
+            'url' => 'https://example.com/jobs/custom-referral',
+            'source' => 'Referral',
+            'posted_at' => '2026-07-21',
+            'salary' => '$120,000',
+        ])->assertRedirect(route('kanban'))
+            ->assertSessionHas('status', 'Custom job added.');
+
+        $listing = JobListing::query()->where('title', 'Custom Referral Opportunity')->firstOrFail();
+
+        $this->assertSame('custom', $listing->listing_origin->value);
+        $this->assertSame('interested', $listing->kanban_status->value);
+        $this->assertNull($listing->status);
+        $this->assertDatabaseHas('job_listing_kanban_transitions', [
+            'job_listing_id' => $listing->id,
+            'from_status' => 'backlog',
+            'to_status' => 'interested',
+        ]);
+
+        $this->get(route('kanban'))
+            ->assertOk()
+            ->assertSeeInOrder(['Interested', $listing->title, 'Applied To'])
+            ->assertSee('data-listing-origin="custom"', false)
+            ->assertDontSee('Not Interested');
+
+        $this->post(route('excluded-terms.store'), ['term' => 'Referral'])
+            ->assertRedirect(route('excluded-terms.index'));
+        $this->post(route('jobs.company-preference', $listing), ['type' => 'blacklist'])
+            ->assertRedirect();
+
+        $this->assertNull($listing->fresh()->status);
+        $this->get(route('kanban'))
+            ->assertOk()
+            ->assertSee($listing->title);
+
+        $this->get(route('jobs', ['date' => '2026-07-22']))
+            ->assertOk()
+            ->assertDontSee($listing->title);
+
+        $this->getJson(route('calendar.counts', [
+            'start' => '2026-07-01',
+            'end' => '2026-08-01',
+        ]))->assertOk()->assertExactJson([]);
+
+        $this->postJson(route('jobs.kanban-status', $listing), [
+            'kanban_status' => 'applied',
+        ])->assertOk();
+
+        $this->get(route('applied-to'))
+            ->assertOk()
+            ->assertDontSee($listing->title);
+    }
+
     public function test_public_navigation_pages_are_available(): void
     {
         $this->get(route('cron'))

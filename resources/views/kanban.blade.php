@@ -9,8 +9,17 @@
                 <p class="mb-2 text-uppercase text-secondary fw-semibold small">Tools</p>
                 <h1 class="display-5 fw-bold mb-0">Jobs Kanban</h1>
             </div>
-            <button type="button" class="btn btn-primary flex-shrink-0">+ Add Job</button>
+            <button
+                type="button"
+                class="btn btn-primary flex-shrink-0"
+                data-bs-toggle="modal"
+                data-bs-target="#add-job-modal"
+            >+ Add Job</button>
         </header>
+
+        @if (session('status'))
+            <div class="alert alert-success" role="status">{{ session('status') }}</div>
+        @endif
 
         <div class="kanban-board pb-3" aria-label="Jobs Kanban board">
             @foreach ($columns as $column)
@@ -34,6 +43,7 @@
                                 data-job-card
                                 data-update-url="{{ route('jobs.kanban-status', $listing) }}"
                                 data-status-url="{{ route('jobs.status', $listing) }}"
+                                data-listing-origin="{{ $listing->listing_origin->value }}"
                             >
                                 <h3 class="h6 fw-bold mb-2">
                                     <a href="{{ $listing->url }}" target="_blank" rel="noopener noreferrer" data-no-drag>{{ $listing->title }}</a>
@@ -51,14 +61,16 @@
                                         <span>{{ $listing->salary }}</span>
                                     @endif
                                 </div>
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-outline-danger w-100 mt-3 {{ in_array($column['status']->value, ['backlog', 'interested'], true) ? '' : 'd-none' }}"
-                                    data-not-interested
-                                    data-no-drag
-                                >
-                                    Not Interested
-                                </button>
+                                @if ($listing->listing_origin->value === 'scraped')
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger w-100 mt-3 {{ in_array($column['status']->value, ['backlog', 'interested'], true) ? '' : 'd-none' }}"
+                                        data-not-interested
+                                        data-no-drag
+                                    >
+                                        Not Interested
+                                    </button>
+                                @endif
                             </article>
                         @endforeach
                     </div>
@@ -66,6 +78,77 @@
             @endforeach
         </div>
     </main>
+
+    <div
+        class="modal fade"
+        id="add-job-modal"
+        tabindex="-1"
+        aria-labelledby="add-job-modal-title"
+        aria-hidden="true"
+        data-open-on-load="{{ $errors->customJob->any() ? 'true' : 'false' }}"
+    >
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('jobs.custom.store') }}">
+                    @csrf
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="add-job-modal-title">Add Custom Job</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="custom-job-title" class="form-label">Job title</label>
+                                <input
+                                    type="text"
+                                    class="form-control @error('title', 'customJob') is-invalid @enderror"
+                                    id="custom-job-title"
+                                    name="title"
+                                    value="{{ old('title') }}"
+                                    required
+                                >
+                                @error('title', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="custom-job-company" class="form-label">Company</label>
+                                <input type="text" class="form-control @error('company', 'customJob') is-invalid @enderror" id="custom-job-company" name="company" value="{{ old('company') }}">
+                                @error('company', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="custom-job-location" class="form-label">Location</label>
+                                <input type="text" class="form-control @error('location', 'customJob') is-invalid @enderror" id="custom-job-location" name="location" value="{{ old('location') }}">
+                                @error('location', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-12">
+                                <label for="custom-job-url" class="form-label">Job URL</label>
+                                <input type="url" class="form-control @error('url', 'customJob') is-invalid @enderror" id="custom-job-url" name="url" value="{{ old('url') }}" required>
+                                @error('url', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="custom-job-source" class="form-label">Source</label>
+                                <input type="text" class="form-control @error('source', 'customJob') is-invalid @enderror" id="custom-job-source" name="source" value="{{ old('source', 'Custom') }}" required>
+                                @error('source', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="custom-job-posted-at" class="form-label">Posted date</label>
+                                <input type="date" class="form-control @error('posted_at', 'customJob') is-invalid @enderror" id="custom-job-posted-at" name="posted_at" value="{{ old('posted_at') }}">
+                                @error('posted_at', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="custom-job-salary" class="form-label">Salary</label>
+                                <input type="text" class="form-control @error('salary', 'customJob') is-invalid @enderror" id="custom-job-salary" name="salary" value="{{ old('salary') }}">
+                                @error('salary', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Job</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('styles')

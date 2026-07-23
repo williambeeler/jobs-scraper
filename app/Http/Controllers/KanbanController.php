@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\CompanyPreferenceType;
+use App\Enums\JobListingOrigin;
 use App\Enums\JobListingStatus;
 use App\Enums\KanbanStatus;
 use App\Models\JobListing;
@@ -22,7 +23,11 @@ class KanbanController extends Controller
         ]);
 
         $listings = JobListing::query()
-            ->visible()
+            ->where(fn ($query) => $query
+                ->where('listing_origin', JobListingOrigin::Custom->value)
+                ->orWhere(fn ($query) => $query
+                    ->where('listing_origin', JobListingOrigin::Scraped->value)
+                    ->visible()))
             ->where(fn ($query) => $query
                 ->whereNull('status')
                 ->orWhere('status', JobListingStatus::Applied))
