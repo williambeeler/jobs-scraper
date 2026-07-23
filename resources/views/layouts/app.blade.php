@@ -75,7 +75,12 @@
         @unless (request()->routeIs('home'))
         <nav class="navbar navbar-expand bg-white border-bottom shadow-sm">
             <div class="container d-flex gap-4">
-                @if (request()->routeIs('settings.*'))
+                @if (request()->routeIs('learning', 'learning-topics.*'))
+                    <a class="navbar-brand fw-bold mb-0" href="{{ route('learning') }}">Learning Center</a>
+                    <div class="navbar-nav flex-row gap-3">
+                        <a class="nav-link active" href="{{ route('learning') }}">Topic agenda</a>
+                    </div>
+                @elseif (request()->routeIs('settings.*'))
                     <a class="navbar-brand fw-bold mb-0" href="{{ route('settings.backup') }}">Settings</a>
                     <div class="navbar-nav flex-row gap-3">
                         <a class="nav-link" href="{{ route('settings.backup') }}">Backup</a>
