@@ -22,13 +22,13 @@ The migration creates:
 php artisan jobs:scrape
 ```
 
-With no options, the command searches LinkedIn, Indeed, and ZipRecruiter for `wordpress remote` listings posted within the last five days.
+With no options, the command searches LinkedIn, Dice, and Working Nomads for `wordpress remote` and sweeps all listings from WordPress Jobs and LaraJobs posted within the last five days.
 
-Indeed and ZipRecruiter first use their native search pages. If a native request is blocked or returns no usable results, both sources fall back to a shared Google site-restricted search. The fallback searches up to two Google result pages, validates every result against the expected job-board domain, removes duplicate and tracking URLs, and stores the remaining links under their original source.
+Dice uses its server-rendered search results. The scraper accepts only cards whose displayed location contains `Remote` and whose displayed relative posting age is within the configured limit.
 
-Google fallback results contain only the information exposed in the search result. Their company is therefore unknown, their location is recorded as Remote, and the configured age limit is passed to Google as an `after:` search operator rather than verified against structured posting data.
+Working Nomads uses its public jobs API and applies keywords locally to titles, companies, categories, tags, and locations. Because all Working Nomads listings are remote, the word `remote` is treated as implicit rather than as a required match.
 
-The fallback uses Google's server-rendered search HTML and does not attempt to bypass a security or JavaScript interstitial. Google can return such an interstitial instead of results; that condition is recorded as a source error so this interim provider can be replaced by a documented search API later.
+WordPress Jobs and LaraJobs are full-board sources. They ignore `--keywords`, collect every listing within the configured age limit, and rely on WordPress Jobs' server-rendered cards and LaraJobs' public RSS feed respectively.
 
 ## Options
 
@@ -36,7 +36,7 @@ The fallback uses Google's server-rendered search HTML and does not attempt to b
 | --- | --- | --- |
 | `--keywords=...` | `wordpress remote` | Search phrase sent to each selected source. |
 | `--days=...` | `5` | Maximum listing age in days. Must be a positive integer. |
-| `--source=...` | All sources | Limits the scrape to `linkedin`, `indeed`, or `ziprecruiter`. May be repeated or comma-separated. |
+| `--source=...` | All sources | Limits the scrape to `linkedin`, `dice`, `working_nomads`, `wordpress_jobs`, or `larajobs`. May be repeated or comma-separated. |
 | `-v`, `--verbose` | Off | Shows each HTTP request and response status. This is Artisan's standard verbosity option. |
 
 Use `php artisan jobs:scrape --help` to display the command's built-in help.
@@ -61,16 +61,22 @@ Search only LinkedIn:
 php artisan jobs:scrape --source=linkedin
 ```
 
+Sweep all recent WordPress Jobs listings:
+
+```bash
+php artisan jobs:scrape --source=wordpress_jobs
+```
+
 Search multiple sources by repeating the option:
 
 ```bash
-php artisan jobs:scrape --source=linkedin --source=indeed
+php artisan jobs:scrape --source=linkedin --source=dice
 ```
 
 Search multiple sources using a comma-separated value:
 
 ```bash
-php artisan jobs:scrape --source=linkedin,ziprecruiter
+php artisan jobs:scrape --source=linkedin,dice
 ```
 
 Show HTTP diagnostic information:
@@ -128,7 +134,7 @@ Run Laravel's scheduler in the normal way for the environment, such as through t
 
 ## Troubleshooting
 
-Indeed and ZipRecruiter may return Cloudflare or security challenge pages, and LinkedIn may block automated requests. Indeed and ZipRecruiter automatically try Google site search after a native-source failure. If both the native request and Google fallback fail, the combined failure is recorded on the scrape run.
+LinkedIn may block automated requests. Dice and WordPress Jobs may change their server-rendered markup, Working Nomads may change its public API, and LaraJobs may change its RSS feed. These failures are recorded on the scrape run.
 
 Use verbose mode to see the requested URLs and HTTP status codes:
 

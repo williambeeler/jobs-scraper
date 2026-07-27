@@ -10,11 +10,13 @@ use App\Models\ExcludedTerm;
 use App\Models\JobListing;
 use App\Models\ScrapeRun;
 use App\Models\ScrapeSchedule;
+use App\Services\JobScraping\DiceScraper;
 use App\Services\JobScraping\HttpClient;
-use App\Services\JobScraping\IndeedScraper;
 use App\Services\JobScraping\JobSourceScraper;
+use App\Services\JobScraping\LaraJobsScraper;
 use App\Services\JobScraping\LinkedInScraper;
-use App\Services\JobScraping\ZipRecruiterScraper;
+use App\Services\JobScraping\WordPressJobsScraper;
+use App\Services\JobScraping\WorkingNomadsScraper;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Throwable;
@@ -33,24 +35,25 @@ class ScrapeJobsCommand extends Command
     {
         $keywords = trim((string) $this->option('keywords'));
         $days = filter_var($this->option('days'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        $sources = $this->selectedSources();
+        $allowedSources = ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs'];
+        $unknownSources = array_values(array_diff($sources, $allowedSources));
 
-        if ($keywords === '') {
-            $this->error('The --keywords option cannot be empty.');
+        if ($unknownSources !== []) {
+            $this->error('Unknown source(s): '.implode(', ', $unknownSources).'.');
+
+            return self::INVALID;
+        }
+
+        $keywordSources = array_intersect($sources, ['linkedin', 'dice', 'working_nomads']);
+        if ($keywords === '' && $keywordSources !== []) {
+            $this->error('The --keywords option cannot be empty for keyword-based sources.');
 
             return self::INVALID;
         }
 
         if ($days === false) {
             $this->error('The --days option must be a positive integer.');
-
-            return self::INVALID;
-        }
-
-        $sources = $this->selectedSources();
-        $allowedSources = ['linkedin', 'indeed', 'ziprecruiter'];
-        $unknownSources = array_values(array_diff($sources, $allowedSources));
-        if ($unknownSources !== []) {
-            $this->error('Unknown source(s): '.implode(', ', $unknownSources).'.');
 
             return self::INVALID;
         }
@@ -147,7 +150,7 @@ class ScrapeJobsCommand extends Command
     {
         $options = $this->option('source');
         if ($options === []) {
-            return ['linkedin', 'indeed', 'ziprecruiter'];
+            return ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs'];
         }
 
         $sources = [];
@@ -169,8 +172,10 @@ class ScrapeJobsCommand extends Command
     {
         return [
             'linkedin' => new LinkedInScraper($http, $days),
-            'indeed' => new IndeedScraper($http, $days),
-            'ziprecruiter' => new ZipRecruiterScraper($http, $days),
+            'dice' => new DiceScraper($http, $days),
+            'working_nomads' => new WorkingNomadsScraper($http, $days),
+            'wordpress_jobs' => new WordPressJobsScraper($http, $days),
+            'larajobs' => new LaraJobsScraper($http, $days),
         ];
     }
 

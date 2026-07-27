@@ -5,9 +5,11 @@ namespace Tests\Feature;
 use App\Models\CompanyPreference;
 use App\Models\ExcludedTerm;
 use App\Models\JobListing;
+use App\Models\ScrapeSchedule;
 use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -340,7 +342,7 @@ class ExampleTest extends TestCase
     {
         $this->post(route('cron.store'), [
             'keywords' => 'wordpress developer remote',
-            'sources' => ['linkedin', 'indeed'],
+            'sources' => ['linkedin', 'dice'],
             'max_days' => 5,
             'interval_hours' => 6,
             'is_active' => true,
@@ -357,8 +359,8 @@ class ExampleTest extends TestCase
         $this->get(route('cron'))
             ->assertOk()
             ->assertSee('wordpress developer remote')
-            ->assertSee('Linkedin')
-            ->assertSee('Indeed')
+            ->assertSee('LinkedIn')
+            ->assertSee('Dice')
             ->assertSee('Every 6 hours');
     }
 
@@ -366,7 +368,7 @@ class ExampleTest extends TestCase
     {
         $configuration = [
             'keywords' => 'laravel remote',
-            'sources' => ['linkedin', 'indeed'],
+            'sources' => ['linkedin', 'dice'],
             'max_days' => 5,
             'interval_hours' => 6,
             'is_active' => true,
@@ -377,7 +379,7 @@ class ExampleTest extends TestCase
 
         $this->post(route('cron.store'), [
             ...$configuration,
-            'sources' => ['indeed', 'linkedin'],
+            'sources' => ['dice', 'linkedin'],
             'interval_hours' => 12,
         ])->assertRedirect(route('cron'))
             ->assertSessionHas('status', 'Scrape configuration updated.');
@@ -387,6 +389,140 @@ class ExampleTest extends TestCase
             'keywords' => 'laravel remote',
             'interval_hours' => 12,
         ]);
+    }
+
+    public function test_full_board_sources_can_be_saved_in_a_scrape_configuration(): void
+    {
+        $this->post(route('cron.store'), [
+            'keywords' => '',
+            'sources' => ['wordpress_jobs', 'larajobs'],
+            'max_days' => 7,
+            'interval_hours' => 12,
+            'is_active' => true,
+        ])->assertRedirect(route('cron'));
+
+        $this->get(route('cron'))
+            ->assertOk()
+            ->assertSee('WordPress Jobs')
+            ->assertSee('LaraJobs');
+    }
+
+    public function test_keyword_search_sources_still_require_keywords(): void
+    {
+        $this->post(route('cron.store'), [
+            'keywords' => '',
+            'sources' => ['linkedin'],
+            'max_days' => 7,
+            'interval_hours' => 12,
+            'is_active' => true,
+        ])->assertSessionHasErrors('keywords');
+    }
+
+    public function test_working_nomads_can_be_saved_as_a_keyword_source(): void
+    {
+        $this->post(route('cron.store'), [
+            'keywords' => 'wordpress remote',
+            'sources' => ['working_nomads'],
+            'max_days' => 7,
+            'interval_hours' => 12,
+            'is_active' => true,
+        ])->assertRedirect(route('cron'));
+
+        $this->get(route('cron'))
+            ->assertOk()
+            ->assertSee('Working Nomads');
+    }
+
+    public function test_cron_page_lists_configurations_before_the_form(): void
+    {
+        $this->get(route('cron'))
+            ->assertOk()
+            ->assertSeeInOrder(['Saved configurations', 'Add configuration']);
+    }
+
+    public function test_scrape_configuration_can_be_edited_and_updated(): void
+    {
+        $schedule = ScrapeSchedule::query()->create([
+            'keywords' => 'wordpress remote',
+            'sources' => ['linkedin'],
+            'configuration_hash' => hash('sha256', 'wordpress remote|linkedin'),
+            'max_days' => 5,
+            'interval_hours' => 6,
+            'is_active' => true,
+        ]);
+
+        $this->get(route('cron.edit', $schedule))
+            ->assertOk()
+            ->assertSee('Edit configuration')
+            ->assertSee('value="wordpress remote"', false)
+            ->assertSee('Update configuration');
+
+        $this->put(route('cron.update', $schedule), [
+            'keywords' => 'laravel remote',
+            'sources' => ['dice', 'working_nomads'],
+            'max_days' => 3,
+            'interval_hours' => 12,
+            'is_active' => false,
+        ])->assertRedirect(route('cron'))
+            ->assertSessionHas('status', 'Scrape configuration updated.');
+
+        $this->assertDatabaseHas('scrape_schedules', [
+            'id' => $schedule->id,
+            'keywords' => 'laravel remote',
+            'max_days' => 3,
+            'interval_hours' => 12,
+            'is_active' => false,
+        ]);
+    }
+
+    public function test_scrape_configuration_can_be_deleted(): void
+    {
+        $schedule = ScrapeSchedule::query()->create([
+            'keywords' => '',
+            'sources' => ['larajobs'],
+            'configuration_hash' => hash('sha256', '|larajobs'),
+            'max_days' => 5,
+            'interval_hours' => 6,
+            'is_active' => true,
+        ]);
+
+        $this->delete(route('cron.destroy', $schedule))
+            ->assertRedirect(route('cron'))
+            ->assertSessionHas('status', 'Scrape configuration deleted.');
+
+        $this->assertDatabaseMissing('scrape_schedules', ['id' => $schedule->id]);
+    }
+
+    public function test_scrape_configuration_can_be_run_manually(): void
+    {
+        Carbon::setTestNow('2026-07-27 10:30:00');
+        $schedule = ScrapeSchedule::query()->create([
+            'keywords' => 'laravel remote',
+            'sources' => ['working_nomads'],
+            'configuration_hash' => hash('sha256', 'laravel remote|working_nomads'),
+            'max_days' => 5,
+            'interval_hours' => 6,
+            'is_active' => true,
+        ]);
+
+        Artisan::shouldReceive('call')
+            ->once()
+            ->with('jobs:scrape', [
+                '--keywords' => 'laravel remote',
+                '--days' => 5,
+                '--source' => ['working_nomads'],
+                '--schedule' => $schedule->id,
+                '--no-interaction' => true,
+            ])
+            ->andReturn(0);
+
+        $this->post(route('cron.schedule.run', $schedule))
+            ->assertRedirect(route('cron'))
+            ->assertSessionHas('status', 'Scrape configuration completed.');
+
+        $schedule->refresh();
+        $this->assertTrue($schedule->last_ran_at?->equalTo(now()));
+        $this->assertTrue($schedule->next_run_at?->equalTo(now()->addHours(6)));
     }
 
     public function test_cron_run_endpoint_requires_the_configured_bearer_token(): void

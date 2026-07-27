@@ -1,10 +1,11 @@
 # Job Scraper
 
-Job Scraper is a Laravel application for collecting remote job listings from LinkedIn, Indeed, and ZipRecruiter. Scraped jobs are stored in a database, deduplicated, organized by the day they were first discovered, and presented in a simple Bootstrap interface for reviewing and tracking applications.
+Job Scraper is a Laravel application for collecting job listings from LinkedIn, Dice, Working Nomads, WordPress Jobs, and LaraJobs. Scraped jobs are stored in a database, deduplicated, organized by the day they were first discovered, and presented in a simple Bootstrap interface for reviewing and tracking applications.
 
 ## Features
 
-- Scrapes LinkedIn, Indeed, and ZipRecruiter from an Artisan command.
+- Runs keyword searches on LinkedIn, Dice, and Working Nomads.
+- Sweeps all recent listings from WordPress Jobs and LaraJobs.
 - Stores job listings instead of writing JSON or text result files.
 - Deduplicates listings by source and canonical URL.
 - Records scrape history, source errors, and result counts.
@@ -115,8 +116,11 @@ Limit the scrape to one or more sources:
 
 ```bash
 php artisan jobs:scrape --source=linkedin
-php artisan jobs:scrape --source=linkedin --source=indeed
-php artisan jobs:scrape --source=linkedin,ziprecruiter
+php artisan jobs:scrape --source=linkedin --source=dice
+php artisan jobs:scrape --source=linkedin,dice
+php artisan jobs:scrape --source=working_nomads
+php artisan jobs:scrape --source=wordpress_jobs
+php artisan jobs:scrape --source=larajobs
 ```
 
 Enable HTTP diagnostics with Artisan's verbosity option:
@@ -256,8 +260,10 @@ npm run build
 The job boards may change their markup or block automated requests:
 
 - LinkedIn may reject or rate-limit guest job searches.
-- Indeed may return a security or Cloudflare challenge.
-- ZipRecruiter may return a Cloudflare challenge.
+- Dice may change its server-rendered search markup or block automated requests.
+- Working Nomads may change or remove its public jobs API.
+- WordPress Jobs may change its server-rendered listing-card markup.
+- LaraJobs may change or remove its public RSS feed.
 
 These conditions are stored as scrape-run errors. A partial run can still save listings from sources that succeeded.
 

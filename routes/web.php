@@ -44,6 +44,10 @@ Route::resource('jobs/excluded-terms', ExcludedTermController::class)
     ->except('show');
 Route::get('/jobs/cron', [ScrapeScheduleController::class, 'index'])->name('cron');
 Route::post('/jobs/cron', [ScrapeScheduleController::class, 'store'])->name('cron.store');
+Route::get('/jobs/cron/{scrapeSchedule}/edit', [ScrapeScheduleController::class, 'edit'])->name('cron.edit');
+Route::put('/jobs/cron/{scrapeSchedule}', [ScrapeScheduleController::class, 'update'])->name('cron.update');
+Route::delete('/jobs/cron/{scrapeSchedule}', [ScrapeScheduleController::class, 'destroy'])->name('cron.destroy');
+Route::post('/jobs/cron/{scrapeSchedule}/run', [ScrapeScheduleController::class, 'run'])->name('cron.schedule.run');
 Route::get('/jobs/cron/run', RunScrapeSchedulesController::class)->name('cron.run');
 Route::get('/cron/run', RunScrapeSchedulesController::class)->name('cron.run.legacy');
 Route::get('/jobs/applied-to', AppliedJobController::class)->name('applied-to');
