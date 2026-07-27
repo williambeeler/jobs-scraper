@@ -34,12 +34,16 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "WilliamBeeler\\Crm\\": "packages/crm/src/",
+            "WilliamBeeler\\Crm\\Database\\Factories\\": "packages/crm/database/factories/",
+            "WilliamBeeler\\Crm\\Database\\Seeders\\": "packages/crm/database/seeders/"            
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "WilliamBeeler\\Crm\\Tests\\": "packages/crm/tests/"            
         }
     },
     "scripts": {
