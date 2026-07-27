@@ -101,6 +101,7 @@
                                 <li><a class="dropdown-item" href="{{ route('applied-to') }}">Applied to</a></li>
                                 <li><a class="dropdown-item" href="{{ route('calendar') }}">Calendar</a></li>
                                 <li><a class="dropdown-item" href="{{ route('kanban') }}">Kanban</a></li>
+                                <li><a class="dropdown-item" href="{{ route('job-search') }}">Job Search</a></li>
                             </ul>
                         </div>
                         <div class="nav-item dropdown">
