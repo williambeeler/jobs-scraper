@@ -1,9 +1,9 @@
 <?php
 
-use WilliamBeeler\Crm\Support\TableNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use WilliamBeeler\Crm\Support\TableNames;
 
 return new class extends Migration
 {
@@ -11,9 +11,9 @@ return new class extends Migration
     {
         Schema::create(TableNames::get('phone_calls'), function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('company_id')->constrained(TableNames::get('companies'))->cascadeOnDelete();
             $table->dateTime('called_at');
-            $table->longText(TableNames::get('notes'));
+            $table->longText('notes');
             $table->timestamps();
         });
     }
