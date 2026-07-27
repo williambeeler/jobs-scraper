@@ -26,13 +26,17 @@ class HomeController extends Controller
             ->visible()
             ->where('listing_origin', JobListingOrigin::Scraped->value)
             ->whereNull('status')
+            ->with('notes')
             ->withExists(['companyPreference as is_whitelisted' => fn ($query) => $query
                 ->where('type', CompanyPreferenceType::Whitelist)])
+            ->withExists(['companyPreference as is_verified' => fn ($query) => $query
+                ->where('type', CompanyPreferenceType::Verified)])
             ->whereBetween('created_at', [
                 $selectedDate->copy()->startOfDay()->utc(),
                 $selectedDate->copy()->endOfDay()->utc(),
             ])
             ->orderByDesc('is_whitelisted')
+            ->orderByDesc('is_verified')
             ->orderByDesc('posted_at')
             ->orderByDesc('last_seen_at')
             ->get();

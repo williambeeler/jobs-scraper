@@ -4,6 +4,10 @@
 
 @section('content')
     <main class="container py-5">
+            @if (session('status'))
+                <div class="alert alert-success" role="status">{{ session('status') }}</div>
+            @endif
+
             <header class="mb-4">
                 <p class="mb-2 text-uppercase text-secondary fw-semibold small">
                     {{ $isToday ? "Today's scraped jobs" : 'Scraped jobs by date' }}
@@ -34,7 +38,7 @@
                 id="job-list"
             >
                 @foreach ($listings as $listing)
-                        <div class="list-group-item p-4 {{ $listing->is_whitelisted ? 'job-row-whitelisted' : '' }}" data-job-row>
+                        <div class="list-group-item p-4 {{ $listing->is_whitelisted ? 'job-row-whitelisted' : ($listing->is_verified ? 'job-row-verified' : '') }}" data-job-row>
                             <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                                 <div class="flex-grow-1">
                                     <h2 class="h5 mb-2">
@@ -60,26 +64,39 @@
                                                 <input type="hidden" name="type" value="whitelist">
                                                 <button type="submit" class="btn btn-sm {{ $listing->is_whitelisted ? 'btn-warning' : 'btn-outline-warning' }}">
                                                     <span aria-hidden="true">&#9733;</span>
-                                                    {{ $listing->is_whitelisted ? 'Whitelisted' : 'Whitelist company' }}
+                                                    {{ $listing->is_whitelisted ? 'Whitelisted' : 'Whitelist' }}
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('jobs.company-preference', $listing) }}">
+                                                @csrf
+                                                <input type="hidden" name="type" value="verified">
+                                                <button type="submit" class="btn btn-sm {{ $listing->is_verified ? 'btn-info' : 'btn-outline-info' }}">
+                                                    Verified
                                                 </button>
                                             </form>
                                             <form method="POST" action="{{ route('jobs.company-preference', $listing) }}">
                                                 @csrf
                                                 <input type="hidden" name="type" value="blacklist">
-                                                <button type="submit" class="btn btn-sm btn-outline-secondary">
-                                                    Blacklist company
-                                                </button>
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">Blacklist</button>
                                             </form>
                                         </div>
                                     @endif
 
                                     <div class="d-flex flex-wrap gap-3 small text-body-secondary">
-                                        <span>Posted: {{ $listing->posted_relative ?: ($listing->posted_at?->format('M j, Y') ?? 'Unknown') }}</span>
+                                        <span>Posted: {{ $listing->posted_age ?? 'Unknown' }}</span>
                                         @if ($listing->salary)
                                             <span>Salary: {{ $listing->salary }}</span>
                                         @endif
-                                        <span>First scraped: {{ $listing->created_at?->timezone($displayTimezone)->format('g:i A') }}</span>
                                     </div>
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-link px-0 mt-2"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#edit-listing-{{ $listing->id }}"
+                                    >
+                                        Edit details &amp; notes
+                                    </button>
                                 </div>
 
                                 <div class="d-flex flex-column align-items-md-end gap-2 flex-shrink-0">
@@ -126,10 +143,105 @@
                         </div>
                 @endforeach
             </div>
+
+            @foreach ($listings as $listing)
+                <div class="modal fade" id="edit-listing-{{ $listing->id }}" tabindex="-1" aria-labelledby="edit-listing-{{ $listing->id }}-title" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2 class="modal-title fs-5" id="edit-listing-{{ $listing->id }}-title">{{ $listing->title }}</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <dl class="row mb-4">
+                                    <dt class="col-sm-3">Job title</dt>
+                                    <dd class="col-sm-9">{{ $listing->title }}</dd>
+                                    <dt class="col-sm-3">Company</dt>
+                                    <dd class="col-sm-9">{{ $listing->company ?: 'Not provided' }}</dd>
+                                    <dt class="col-sm-3">Location</dt>
+                                    <dd class="col-sm-9">{{ $listing->location ?: 'Not provided' }}</dd>
+                                    <dt class="col-sm-3">Job URL</dt>
+                                    <dd class="col-sm-9 text-break"><a href="{{ $listing->url }}" target="_blank" rel="noopener noreferrer">{{ $listing->url }}</a></dd>
+                                    <dt class="col-sm-3">Source</dt>
+                                    <dd class="col-sm-9">{{ $listing->source }}</dd>
+                                    <dt class="col-sm-3">Posted date</dt>
+                                    <dd class="col-sm-9">{{ $listing->posted_at?->format('F j, Y') ?? 'Not provided' }}</dd>
+                                </dl>
+
+                                <form method="POST" action="{{ route('jobs.details.update', $listing) }}">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="listing-{{ $listing->id }}-salary" class="form-label">Salary</label>
+                                            <input type="text" class="form-control" id="listing-{{ $listing->id }}-salary" name="salary" value="{{ $listing->salary }}">
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary mt-3">Save salary</button>
+                                </form>
+
+                                <hr class="my-4">
+
+                                <section aria-labelledby="listing-{{ $listing->id }}-notes-title">
+                                    <h3 class="h5" id="listing-{{ $listing->id }}-notes-title">Notes</h3>
+
+                                    @if ($listing->notes->isEmpty())
+                                        <p class="text-body-secondary">No notes yet.</p>
+                                    @else
+                                        <div class="list-group mb-3">
+                                            @foreach ($listing->notes as $note)
+                                                <div class="list-group-item d-flex justify-content-between gap-3">
+                                                    <div>
+                                                        <div class="mb-1 text-break note-content">{!! $note->body !!}</div>
+                                                        <small class="text-body-secondary">{{ $note->created_at?->diffForHumans() }}</small>
+                                                    </div>
+                                                    <form method="POST" action="{{ route('jobs.notes.destroy', [$listing, $note]) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                    <form method="POST" action="{{ route('jobs.notes.store', $listing) }}">
+                                        @csrf
+                                        <label for="listing-{{ $listing->id }}-note" class="form-label">Add note</label>
+                                        <div class="note-editor border rounded" data-note-editor>
+                                            <div class="note-editor-toolbar d-flex flex-wrap gap-1 border-bottom bg-body-tertiary p-2" role="toolbar" aria-label="Note formatting">
+                                                <button type="button" class="btn btn-sm btn-light" data-note-command="heading">Heading</button>
+                                                <button type="button" class="btn btn-sm btn-light fw-bold" data-note-command="bold" aria-label="Bold">B</button>
+                                                <button type="button" class="btn btn-sm btn-light fst-italic" data-note-command="italic" aria-label="Italic">I</button>
+                                                <button type="button" class="btn btn-sm btn-light text-decoration-underline" data-note-command="underline" aria-label="Underline">U</button>
+                                                <button type="button" class="btn btn-sm btn-warning" data-note-command="highlight" aria-label="Highlight">Highlight</button>
+                                                <button type="button" class="btn btn-sm btn-light" data-note-command="bulletList">Bullets</button>
+                                                <button type="button" class="btn btn-sm btn-light" data-note-command="orderedList">Numbers</button>
+                                                <button type="button" class="btn btn-sm btn-light" data-note-command="blockquote">Quote</button>
+                                                <button type="button" class="btn btn-sm btn-light" data-note-command="codeBlock">Code</button>
+                                                <button type="button" class="btn btn-sm btn-light" data-note-command="link">Link</button>
+                                                <button type="button" class="btn btn-sm btn-light" data-note-command="undo">Undo</button>
+                                                <button type="button" class="btn btn-sm btn-light" data-note-command="redo">Redo</button>
+                                            </div>
+                                            <div data-note-surface></div>
+                                            <textarea class="visually-hidden" id="listing-{{ $listing->id }}-note" name="body" maxlength="10000" data-note-input></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-primary mt-2">Add note</button>
+                                    </form>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
     </main>
 @endsection
 
 @push('scripts')
+    @vite('resources/js/notes.ts')
     <script>
         document.addEventListener('submit', async (event) => {
             const form = event.target.closest('[data-job-status-form]');
@@ -192,4 +304,24 @@
             }
         });
     </script>
+@endpush
+
+@push('styles')
+    <style>
+        .note-editor-surface {
+            min-height: 10rem;
+            padding: .75rem;
+            outline: none;
+        }
+        .note-editor-surface > :last-child,
+        .note-content > :last-child {
+            margin-bottom: 0;
+        }
+        .note-editor-surface mark,
+        .note-content mark {
+            background-color: #fff176;
+            border-radius: .125rem;
+            padding: 0 .1em;
+        }
+    </style>
 @endpush

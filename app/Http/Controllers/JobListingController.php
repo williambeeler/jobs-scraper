@@ -64,7 +64,7 @@ class JobListingController extends Controller
             'location' => $listing->location,
             'url' => $listing->url,
             'posted_at' => $listing->posted_at?->toDateString(),
-            'posted_relative' => $listing->posted_relative,
+            'posted_age' => $listing->posted_age,
             'salary' => $listing->salary,
             'first_seen_at' => $listing->first_seen_at->toIso8601String(),
             'last_seen_at' => $listing->last_seen_at->toIso8601String(),

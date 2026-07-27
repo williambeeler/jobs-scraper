@@ -14,7 +14,7 @@ type Listing = {
     location: string | null;
     url: string;
     posted_at: string | null;
-    posted_relative: string | null;
+    posted_age: string | null;
     salary: string | null;
     last_seen_at: string;
 };
@@ -115,9 +115,7 @@ defineOptions({
                     }}</span>
                     <span v-if="listing.salary">{{ listing.salary }}</span>
                     <span>{{
-                        listing.posted_relative ||
-                        listing.posted_at ||
-                        'Date unknown'
+                        listing.posted_age || 'Date unknown'
                     }}</span>
                 </div>
             </Link>

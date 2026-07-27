@@ -16,7 +16,11 @@
 
         @forelse ($preferences->groupBy(fn ($preference) => $preference->type->value) as $type => $items)
             <section class="mb-4">
-                <h2 class="h4 text-capitalize">{{ $type }}ed companies</h2>
+                <h2 class="h4">{{ [
+                    'whitelist' => 'Whitelisted companies',
+                    'verified' => 'Verified companies',
+                    'blacklist' => 'Blacklisted companies',
+                ][$type] ?? ucfirst($type).' companies' }}</h2>
                 <div class="list-group shadow-sm">
                     @foreach ($items as $preference)
                         <div class="list-group-item d-flex align-items-center justify-content-between gap-3">
@@ -31,7 +35,7 @@
                 </div>
             </section>
         @empty
-            <div class="alert alert-secondary">No companies have been whitelisted or blacklisted yet.</div>
+            <div class="alert alert-secondary">No company preferences have been saved yet.</div>
         @endforelse
     </main>
 @endsection

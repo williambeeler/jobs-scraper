@@ -55,7 +55,6 @@ class DiceScraperTest extends TestCase
         $this->assertSame('WordPress Developer', $result['jobs'][0]->title);
         $this->assertSame('Acme Corp', $result['jobs'][0]->company);
         $this->assertSame('Remote', $result['jobs'][0]->location);
-        $this->assertSame('3d ago', $result['jobs'][0]->postedRelative);
         $this->assertSame('https://www.dice.com/job-detail/abc-123', $result['jobs'][0]->url);
         $this->assertSame('https://www.dice.com/jobs/q-wordpress+developer-jobs', $http->url);
     }

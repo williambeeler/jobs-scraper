@@ -7,6 +7,8 @@ use App\Http\Controllers\CompanyPreferenceController;
 use App\Http\Controllers\CustomJobController;
 use App\Http\Controllers\ExcludedTermController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JobListingDetailsController;
+use App\Http\Controllers\JobListingNoteController;
 use App\Http\Controllers\JobListingStatusController;
 use App\Http\Controllers\KanbanController;
 use App\Http\Controllers\KanbanStatusController;
@@ -34,6 +36,9 @@ Route::post('/settings/backup', [BackupController::class, 'store'])->name('setti
 Route::delete('/settings/backup', [BackupController::class, 'destroy'])->name('settings.backup.destroy');
 Route::view('/settings/restore', 'settings.restore')->name('settings.restore');
 Route::post('/jobs/{jobListing}/status', JobListingStatusController::class)->name('jobs.status');
+Route::put('/jobs/{jobListing}/details', JobListingDetailsController::class)->name('jobs.details.update');
+Route::post('/jobs/{jobListing}/notes', [JobListingNoteController::class, 'store'])->name('jobs.notes.store');
+Route::delete('/jobs/{jobListing}/notes/{note}', [JobListingNoteController::class, 'destroy'])->name('jobs.notes.destroy');
 Route::post('/jobs/{jobListing}/company-preference', [CompanyPreferenceController::class, 'store'])
     ->name('jobs.company-preference');
 Route::get('/jobs/company-preferences', [CompanyPreferenceController::class, 'index'])->name('company-preferences.index');

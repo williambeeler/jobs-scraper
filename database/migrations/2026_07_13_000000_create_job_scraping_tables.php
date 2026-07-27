@@ -32,7 +32,6 @@ return new class extends Migration
             $table->text('url');
             $table->char('url_hash', 64);
             $table->date('posted_at')->nullable();
-            $table->string('posted_relative')->nullable();
             $table->string('salary')->nullable();
             $table->timestamp('first_seen_at');
             $table->timestamp('last_seen_at');

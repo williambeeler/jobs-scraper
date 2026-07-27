@@ -56,7 +56,7 @@
                                 </p>
                                 <div class="d-flex flex-wrap gap-2 align-items-center small text-body-secondary">
                                     <span class="badge text-bg-light border">{{ $listing->source }}</span>
-                                    <span>{{ $listing->posted_relative ?: ($listing->posted_at?->format('M j, Y') ?? 'Posted date unknown') }}</span>
+                                    <span>{{ $listing->posted_age ?? 'Posted date unknown' }}</span>
                                     @if ($listing->salary)
                                         <span>{{ $listing->salary }}</span>
                                     @endif

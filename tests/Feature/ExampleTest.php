@@ -10,6 +10,8 @@ use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -44,6 +46,24 @@ class ExampleTest extends TestCase
             ->assertSee('data-job-status-form', false)
             ->assertSee('fetch(form.action', false)
             ->assertDontSee($oldListing->title);
+    }
+
+    public function test_posted_age_is_calculated_from_posted_at_and_cached(): void
+    {
+        Carbon::setTestNow('2026-07-27 12:00:00');
+        Cache::flush();
+        $listing = $this->createListing(
+            title: 'Cached Date Developer',
+            url: 'https://example.com/jobs/cached-date',
+            lastSeenAt: now()->subDays(2),
+            createdAt: now(),
+        );
+
+        $this->assertSame('2 days ago', $listing->posted_age);
+        $this->assertTrue(Cache::has(
+            "job-listing:{$listing->id}:posted-age:{$listing->posted_at->toDateString()}",
+        ));
+        $this->assertFalse(Schema::hasColumn('job_listings', 'posted_relative'));
     }
 
     public function test_home_page_can_list_jobs_created_on_a_selected_date(): void
@@ -87,7 +107,7 @@ class ExampleTest extends TestCase
             ->assertSee('Monday, July 13, 2026')
             ->assertSee('value="2026-07-13"', false)
             ->assertSee($listing->title)
-            ->assertSee('First scraped: 7:51 PM');
+            ->assertDontSee('First scraped');
     }
 
     public function test_home_page_has_an_empty_state_when_no_jobs_were_scraped_today(): void
@@ -578,6 +598,101 @@ class ExampleTest extends TestCase
             ->assertSee('job-row-whitelisted', false)
             ->assertSee('aria-label="Whitelisted company"', false)
             ->assertDontSee('Whitelist company');
+    }
+
+    public function test_home_orders_whitelisted_then_verified_then_regular_companies(): void
+    {
+        Carbon::setTestNow('2026-07-27 12:00:00 UTC');
+        $regular = $this->createListing('Regular Role', 'https://example.com/regular', now(), now());
+        $verified = $this->createListing('Verified Role', 'https://example.com/verified', now(), now());
+        $whitelisted = $this->createListing('Whitelisted Role', 'https://example.com/whitelisted', now(), now());
+
+        foreach ([
+            [$regular, 'Regular Company'],
+            [$verified, 'Verified Company'],
+            [$whitelisted, 'Whitelisted Company'],
+        ] as [$listing, $company]) {
+            $listing->update(['company' => $company, 'company_key' => JobListing::companyKey($company)]);
+        }
+
+        CompanyPreference::query()->create([
+            'company_name' => $verified->company,
+            'company_key' => $verified->company_key,
+            'type' => 'verified',
+        ]);
+        CompanyPreference::query()->create([
+            'company_name' => $whitelisted->company,
+            'company_key' => $whitelisted->company_key,
+            'type' => 'whitelist',
+        ]);
+
+        $this->get(route('jobs'))
+            ->assertOk()
+            ->assertSeeInOrder([$whitelisted->title, $verified->title, $regular->title])
+            ->assertSee('list-group-item p-4 job-row-verified', false)
+            ->assertSee('Verified')
+            ->assertSee('Blacklist')
+            ->assertDontSee('Blacklist company')
+            ->assertDontSee('First scraped');
+    }
+
+    public function test_company_can_be_marked_verified(): void
+    {
+        $listing = $this->createListing('Verified Company Role', 'https://example.com/verify-company', now(), now());
+        $listing->update(['company_key' => JobListing::companyKey($listing->company)]);
+
+        $this->post(route('jobs.company-preference', $listing), ['type' => 'verified'])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('company_preferences', [
+            'company_key' => $listing->company_key,
+            'type' => 'verified',
+        ]);
+    }
+
+    public function test_only_the_job_listing_salary_can_be_updated(): void
+    {
+        $listing = $this->createListing('Original Role', 'https://example.com/original-role', now(), now());
+
+        $this->put(route('jobs.details.update', $listing), [
+            'salary' => '$140,000',
+        ])->assertRedirect()
+            ->assertSessionHas('status', 'Salary updated.');
+
+        $this->assertDatabaseHas('job_listings', [
+            'id' => $listing->id,
+            'title' => 'Original Role',
+            'salary' => '$140,000',
+        ]);
+    }
+
+    public function test_polymorphic_notes_can_be_added_to_and_removed_from_a_job_listing(): void
+    {
+        $listing = $this->createListing('Noted Role', 'https://example.com/noted-role', now(), now());
+
+        $this->post(route('jobs.notes.store', $listing), [
+            'body' => '<p onclick="alert(1)">Recruiter confirmed the <mark>salary range</mark>.</p><script>alert(1)</script>',
+        ])
+            ->assertRedirect()
+            ->assertSessionHas('status', 'Note added.');
+
+        $note = $listing->notes()->firstOrFail();
+        $this->assertSame(JobListing::class, $note->notable_type);
+        $this->assertSame($listing->id, $note->notable_id);
+        $this->assertSame('<p>Recruiter confirmed the <mark>salary range</mark>.</p>', $note->body);
+        $this->get(route('jobs'))
+            ->assertOk()
+            ->assertSee('Edit details &amp; notes', false)
+            ->assertSee('Recruiter confirmed the')
+            ->assertSee('<mark>salary range</mark>', false)
+            ->assertDontSee('onclick="alert(1)"', false)
+            ->assertDontSee('<script>alert(1)</script>', false);
+
+        $this->delete(route('jobs.notes.destroy', [$listing, $note]))
+            ->assertRedirect()
+            ->assertSessionHas('status', 'Note deleted.');
+
+        $this->assertDatabaseMissing('notes', ['id' => $note->id]);
     }
 
     public function test_marking_a_job_not_interested_hides_it_without_listing_it_as_applied(): void

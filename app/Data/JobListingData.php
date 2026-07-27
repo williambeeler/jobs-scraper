@@ -11,7 +11,6 @@ final readonly class JobListingData
         public string $location,
         public string $url,
         public ?string $postedDate = null,
-        public ?string $postedRelative = null,
         public ?string $salary = null,
     ) {}
 }

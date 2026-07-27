@@ -7,11 +7,14 @@ use App\Enums\JobListingOrigin;
 use App\Enums\JobListingStatus;
 use App\Enums\KanbanStatus;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $id
@@ -23,7 +26,7 @@ use Illuminate\Support\Carbon;
  * @property string $url
  * @property string $url_hash
  * @property Carbon|null $posted_at
- * @property string|null $posted_relative
+ * @property-read string|null $posted_age
  * @property string|null $salary
  * @property JobListingStatus|null $status
  * @property Carbon|null $status_changed_at
@@ -48,7 +51,6 @@ class JobListing extends Model
         'url',
         'url_hash',
         'posted_at',
-        'posted_relative',
         'salary',
         'status',
         'status_changed_at',
@@ -76,6 +78,14 @@ class JobListing extends Model
         return $this->hasMany(JobListingKanbanTransition::class);
     }
 
+    /**
+     * @return MorphMany<Note, $this>
+     */
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable')->latest();
+    }
+
     public function scopeVisible(Builder $query): Builder
     {
         return $query
@@ -96,6 +106,26 @@ class JobListing extends Model
         }
 
         return mb_strtolower(trim((string) preg_replace('/\s+/', ' ', $company)));
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function postedAge(): Attribute
+    {
+        return Attribute::get(function (): ?string {
+            if ($this->posted_at === null) {
+                return null;
+            }
+
+            $cacheKey = "job-listing:{$this->id}:posted-age:{$this->posted_at->toDateString()}";
+
+            return Cache::remember(
+                $cacheKey,
+                now()->addHours(3),
+                fn (): string => $this->posted_at->diffForHumans(),
+            );
+        });
     }
 
     protected function casts(): array

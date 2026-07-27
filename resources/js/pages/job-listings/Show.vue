@@ -13,7 +13,7 @@ defineProps<{
         location: string | null;
         url: string;
         posted_at: string | null;
-        posted_relative: string | null;
+        posted_age: string | null;
         salary: string | null;
         first_seen_at: string;
         last_seen_at: string;
@@ -84,9 +84,7 @@ defineOptions({
                     </dt>
                     <dd class="mt-1">
                         {{
-                            listing.posted_relative ||
-                            listing.posted_at ||
-                            'Unknown'
+                            listing.posted_age || 'Unknown'
                         }}
                     </dd>
                 </div>

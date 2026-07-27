@@ -14,6 +14,7 @@ export default defineConfig({
                 'resources/js/app.ts',
                 'resources/js/calendar.ts',
                 'resources/js/kanban.ts',
+                'resources/js/notes.ts',
             ],
             refresh: true,
             fonts: [

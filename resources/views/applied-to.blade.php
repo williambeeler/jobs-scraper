@@ -43,7 +43,7 @@
                                             @endif
                                         </p>
                                         <div class="d-flex flex-wrap gap-3 small text-body-secondary">
-                                            <span>Posted: {{ $listing->posted_relative ?: ($listing->posted_at?->format('M j, Y') ?? 'Unknown') }}</span>
+                                            <span>Posted: {{ $listing->posted_age ?? 'Unknown' }}</span>
                                             @if ($listing->salary)
                                                 <span>Salary: {{ $listing->salary }}</span>
                                             @endif

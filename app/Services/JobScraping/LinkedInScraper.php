@@ -90,7 +90,6 @@ final class LinkedInScraper implements JobSourceScraper
             $company = $this->nodeText($companyNode);
             $location = $this->nodeText($locationNode);
             $postedDate = $dateNode instanceof DOMElement ? $dateNode->getAttribute('datetime') : null;
-            $postedRelative = $this->nodeText($dateNode);
 
             if ($title === '' || $url === '' || ! DateFilter::isWithinDays($postedDate, $this->maxDays)) {
                 continue;
@@ -103,7 +102,6 @@ final class LinkedInScraper implements JobSourceScraper
                 location: $location,
                 url: $this->cleanUrl($url),
                 postedDate: $postedDate ?: null,
-                postedRelative: $postedRelative ?: null,
             );
         }
 

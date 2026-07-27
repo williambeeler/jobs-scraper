@@ -204,7 +204,6 @@ class ScrapeJobsCommand extends Command
             'location' => $data->location ?: null,
             'url' => $data->url,
             'posted_at' => $this->parseDate($data->postedDate),
-            'posted_relative' => $data->postedRelative,
             'salary' => $data->salary,
             'first_seen_at' => $listing->first_seen_at ?? $now,
             'last_seen_at' => $now,

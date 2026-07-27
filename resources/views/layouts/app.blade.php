@@ -17,6 +17,10 @@
                 background: linear-gradient(to bottom, #fff 15%, #fff8df 100%);
                 border-left: 4px solid #d5a72e;
             }
+            .job-row-verified {
+                background: linear-gradient(to bottom, #fff 15%, #e8f5ff 100%);
+                border-left: 4px solid #63aee8;
+            }
             .job-row-star {
                 color: #b8860b;
                 font-size: 1.15rem;

@@ -91,7 +91,6 @@ final class DiceScraper implements JobSourceScraper
                 company: $this->nodeText($companyNode),
                 location: $metadata['location'],
                 url: $url,
-                postedRelative: $metadata['postedRelative'],
             );
         }
 
