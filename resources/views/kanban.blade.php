@@ -49,7 +49,7 @@
                                     <a href="{{ $listing->url }}" target="_blank" rel="noopener noreferrer" data-no-drag>{{ $listing->title }}</a>
                                 </h3>
                                 <p class="small text-body-secondary mb-2">
-                                    {{ $listing->company ?: 'Unknown company' }}
+                                    {{ $listing->company?->name ?: 'Unknown company' }}
                                     @if ($listing->location)
                                         <span aria-hidden="true">&middot;</span> {{ $listing->location }}
                                     @endif

@@ -17,11 +17,12 @@ class JobListingController extends Controller
         ]);
 
         $listings = JobListing::query()
+            ->with('company')
             ->visible()
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
                     $query->where('title', 'like', "%{$search}%")
-                        ->orWhere('company', 'like', "%{$search}%")
+                        ->orWhereHas('company', fn ($query) => $query->where('name', 'like', "%{$search}%"))
                         ->orWhere('location', 'like', "%{$search}%");
                 });
             })
@@ -60,7 +61,7 @@ class JobListingController extends Controller
             'id' => $listing->id,
             'source' => $listing->source,
             'title' => $listing->title,
-            'company' => $listing->company,
+            'company' => $listing->company?->name,
             'location' => $listing->location,
             'url' => $listing->url,
             'posted_at' => $listing->posted_at?->toDateString(),

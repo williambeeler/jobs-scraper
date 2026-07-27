@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Company;
 use App\Models\CompanyPreference;
 use App\Models\ExcludedTerm;
 use App\Models\JobListing;
@@ -127,19 +128,18 @@ class ExampleTest extends TestCase
             lastSeenAt: Carbon::parse('2026-07-14 12:00:00 UTC'),
             createdAt: Carbon::parse('2026-07-14 12:00:00 UTC'),
         );
-        $whitelisted->update(['company_key' => JobListing::companyKey($whitelisted->company)]);
         CompanyPreference::query()->create([
-            'company_name' => $whitelisted->company,
-            'company_key' => $whitelisted->company_key,
+            'company_id' => $whitelisted->company_id,
             'type' => 'whitelist',
         ]);
 
-        $this->createListing(
+        $anotherJuly = $this->createListing(
             title: 'Another July Job',
             url: 'https://example.com/jobs/another-july',
             lastSeenAt: Carbon::parse('2026-07-14 15:00:00 UTC'),
             createdAt: Carbon::parse('2026-07-14 15:00:00 UTC'),
         );
+        $anotherJuly->company()->associate(Company::findOrCreateByName('Another Company'))->save();
         $this->createListing(
             title: 'August Job',
             url: 'https://example.com/jobs/august',
@@ -230,10 +230,7 @@ class ExampleTest extends TestCase
             lastSeenAt: Carbon::parse('2026-07-22 14:00:00 UTC'),
             createdAt: Carbon::parse('2026-07-22 14:00:00 UTC'),
         );
-        $regular->update([
-            'company' => 'Regular Company',
-            'company_key' => JobListing::companyKey('Regular Company'),
-        ]);
+        $regular->company()->associate(Company::findOrCreateByName('Regular Company'))->save();
 
         $whitelisted = $this->createListing(
             title: 'Older Whitelisted Backlog Job',
@@ -241,10 +238,8 @@ class ExampleTest extends TestCase
             lastSeenAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
             createdAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
         );
-        $whitelisted->update(['company_key' => JobListing::companyKey($whitelisted->company)]);
         CompanyPreference::query()->create([
-            'company_name' => $whitelisted->company,
-            'company_key' => $whitelisted->company_key,
+            'company_id' => $whitelisted->company_id,
             'type' => 'whitelist',
         ]);
 
@@ -571,10 +566,8 @@ class ExampleTest extends TestCase
             createdAt: now(),
         );
 
-        $listing->update(['company_key' => JobListing::companyKey($listing->company)]);
         CompanyPreference::query()->create([
-            'company_name' => $listing->company,
-            'company_key' => $listing->company_key,
+            'company_id' => $listing->company_id,
             'type' => 'whitelist',
         ]);
 
@@ -612,17 +605,15 @@ class ExampleTest extends TestCase
             [$verified, 'Verified Company'],
             [$whitelisted, 'Whitelisted Company'],
         ] as [$listing, $company]) {
-            $listing->update(['company' => $company, 'company_key' => JobListing::companyKey($company)]);
+            $listing->company()->associate(Company::findOrCreateByName($company))->save();
         }
 
         CompanyPreference::query()->create([
-            'company_name' => $verified->company,
-            'company_key' => $verified->company_key,
+            'company_id' => $verified->company_id,
             'type' => 'verified',
         ]);
         CompanyPreference::query()->create([
-            'company_name' => $whitelisted->company,
-            'company_key' => $whitelisted->company_key,
+            'company_id' => $whitelisted->company_id,
             'type' => 'whitelist',
         ]);
 
@@ -639,15 +630,38 @@ class ExampleTest extends TestCase
     public function test_company_can_be_marked_verified(): void
     {
         $listing = $this->createListing('Verified Company Role', 'https://example.com/verify-company', now(), now());
-        $listing->update(['company_key' => JobListing::companyKey($listing->company)]);
-
         $this->post(route('jobs.company-preference', $listing), ['type' => 'verified'])
             ->assertRedirect();
 
         $this->assertDatabaseHas('company_preferences', [
-            'company_key' => $listing->company_key,
+            'company_id' => $listing->company_id,
             'type' => 'verified',
         ]);
+    }
+
+    public function test_company_normalization_relationships_and_preference_helpers(): void
+    {
+        $company = Company::findOrCreateByName('  Acme   Corporation ');
+        $sameCompany = Company::findOrCreateByName('acme corporation');
+        $listing = $this->createListing('Company Relationship Role', 'https://example.com/company-relation', now(), now());
+        $listing->company()->associate($company)->save();
+
+        CompanyPreference::query()->create([
+            'company_id' => $company->id,
+            'type' => 'blacklist',
+        ]);
+
+        $this->assertTrue($company->is($sameCompany));
+        $this->assertSame('Acme Corporation', $company->name);
+        $this->assertSame('acme corporation', $company->name_key);
+        $this->assertTrue($company->fresh()->isBlacklisted());
+        $this->assertFalse($company->fresh()->isWhitelisted());
+        $this->assertFalse($company->fresh()->isVerified());
+        $this->assertTrue($company->jobListings()->whereKey($listing)->exists());
+        $this->assertFalse(Schema::hasColumn('job_listings', 'company'));
+        $this->assertFalse(Schema::hasColumn('job_listings', 'company_key'));
+        $this->assertFalse(Schema::hasColumn('company_preferences', 'company_name'));
+        $this->assertFalse(Schema::hasColumn('company_preferences', 'company_key'));
     }
 
     public function test_only_the_job_listing_salary_can_be_updated(): void
@@ -798,7 +812,7 @@ class ExampleTest extends TestCase
         $listing = new JobListing([
             'source' => 'LinkedIn',
             'title' => $title,
-            'company' => 'Acme',
+            'company_id' => Company::findOrCreateByName('Acme')?->id,
             'location' => 'Remote',
             'url' => $url,
             'url_hash' => hash('sha256', $url),

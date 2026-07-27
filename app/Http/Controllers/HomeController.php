@@ -26,7 +26,7 @@ class HomeController extends Controller
             ->visible()
             ->where('listing_origin', JobListingOrigin::Scraped->value)
             ->whereNull('status')
-            ->with('notes')
+            ->with(['company', 'notes'])
             ->withExists(['companyPreference as is_whitelisted' => fn ($query) => $query
                 ->where('type', CompanyPreferenceType::Whitelist)])
             ->withExists(['companyPreference as is_verified' => fn ($query) => $query

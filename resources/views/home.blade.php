@@ -51,13 +51,13 @@
                                     </h2>
 
                                     <p class="mb-2 text-body-secondary">
-                                        {{ $listing->company ?: 'Unknown company' }}
+                                        {{ $listing->company?->name ?: 'Unknown company' }}
                                         @if ($listing->location)
                                             <span aria-hidden="true">&middot;</span> {{ $listing->location }}
                                         @endif
                                     </p>
 
-                                    @if ($listing->company)
+                                    @if ($listing->company_id)
                                         <div class="d-flex flex-wrap gap-2 mb-3">
                                             <form method="POST" action="{{ route('jobs.company-preference', $listing) }}">
                                                 @csrf
@@ -158,7 +158,7 @@
                                     <dt class="col-sm-3">Job title</dt>
                                     <dd class="col-sm-9">{{ $listing->title }}</dd>
                                     <dt class="col-sm-3">Company</dt>
-                                    <dd class="col-sm-9">{{ $listing->company ?: 'Not provided' }}</dd>
+                                    <dd class="col-sm-9">{{ $listing->company?->name ?: 'Not provided' }}</dd>
                                     <dt class="col-sm-3">Location</dt>
                                     <dd class="col-sm-9">{{ $listing->location ?: 'Not provided' }}</dd>
                                     <dt class="col-sm-3">Job URL</dt>

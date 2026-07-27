@@ -20,6 +20,7 @@ class AppliedJobController extends Controller
             ->where('status', JobListingStatus::Applied)
             ->withExists(['companyPreference as is_whitelisted' => fn ($query) => $query
                 ->where('type', CompanyPreferenceType::Whitelist)])
+            ->with('company')
             ->orderByDesc('status_changed_at')
             ->get();
 

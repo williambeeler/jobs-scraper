@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\CompanyPreferenceType;
 use App\Enums\JobListingOrigin;
 use App\Enums\JobListingStatus;
+use App\Models\Company;
 use App\Models\CompanyPreference;
 use App\Models\JobListing;
 use Illuminate\Contracts\View\View;
@@ -18,7 +19,11 @@ class CompanyPreferenceController extends Controller
     public function index(): View
     {
         return view('company-preferences', [
-            'preferences' => CompanyPreference::query()->orderBy('type')->orderBy('company_name')->get(),
+            'preferences' => CompanyPreference::query()
+                ->with('company')
+                ->orderBy('type')
+                ->orderBy(Company::query()->select('name')->whereColumn('companies.id', 'company_preferences.company_id'))
+                ->get(),
         ]);
     }
 
@@ -27,18 +32,18 @@ class CompanyPreferenceController extends Controller
         $validated = $request->validate([
             'type' => ['required', Rule::enum(CompanyPreferenceType::class)],
         ]);
-        abort_if($jobListing->company_key === null, 422, 'This listing has no company name.');
+        abort_if($jobListing->company_id === null, 422, 'This listing has no company name.');
 
         $type = CompanyPreferenceType::from($validated['type']);
         CompanyPreference::query()->updateOrCreate(
-            ['company_key' => $jobListing->company_key],
-            ['company_name' => $jobListing->company, 'type' => $type],
+            ['company_id' => $jobListing->company_id],
+            ['type' => $type],
         );
 
         if ($type === CompanyPreferenceType::Blacklist) {
             JobListing::query()
                 ->where('listing_origin', JobListingOrigin::Scraped->value)
-                ->where('company_key', $jobListing->company_key)
+                ->where('company_id', $jobListing->company_id)
                 ->update([
                     'status' => JobListingStatus::NotInterested,
                     'status_changed_at' => now(),

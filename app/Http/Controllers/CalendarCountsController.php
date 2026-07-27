@@ -32,7 +32,7 @@ class CalendarCountsController extends Controller
                 ->where('type', CompanyPreferenceType::Whitelist)])
             ->where('created_at', '>=', $start->copy()->utc())
             ->where('created_at', '<', $end->copy()->utc())
-            ->get(['id', 'company_key', 'created_at'])
+            ->get(['id', 'company_id', 'created_at'])
             ->groupBy(fn (JobListing $listing) => $listing->created_at
                 ->timezone($displayTimezone)
                 ->toDateString())

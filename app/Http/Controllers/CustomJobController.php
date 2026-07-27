@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\JobListingOrigin;
 use App\Enums\KanbanStatus;
+use App\Models\Company;
 use App\Models\JobListing;
 use App\Services\Kanban\TransitionJobListing;
 use Illuminate\Http\RedirectResponse;
@@ -36,10 +37,12 @@ class CustomJobController extends Controller
         }
 
         $now = now();
+        $company = Company::findOrCreateByName($validated['company'] ?? null);
+        unset($validated['company']);
         $listing = JobListing::query()->create([
             ...$validated,
             'listing_origin' => JobListingOrigin::Custom,
-            'company_key' => JobListing::companyKey($validated['company'] ?? null),
+            'company_id' => $company?->id,
             'url_hash' => $urlHash,
             'kanban_status' => KanbanStatus::Backlog,
             'first_seen_at' => $now,

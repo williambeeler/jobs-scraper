@@ -37,7 +37,7 @@
                                     <div>
                                         <h3 class="h5 mb-2">{{ $listing->title }}</h3>
                                         <p class="mb-2 text-body-secondary">
-                                            {{ $listing->company ?: 'Unknown company' }}
+                                            {{ $listing->company?->name ?: 'Unknown company' }}
                                             @if ($listing->location)
                                                 <span aria-hidden="true">&middot;</span> {{ $listing->location }}
                                             @endif

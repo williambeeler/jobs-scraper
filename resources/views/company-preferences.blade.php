@@ -24,7 +24,7 @@
                 <div class="list-group shadow-sm">
                     @foreach ($items as $preference)
                         <div class="list-group-item d-flex align-items-center justify-content-between gap-3">
-                            <span>{{ $preference->company_name }}</span>
+                            <span>{{ $preference->company->name }}</span>
                             <form method="POST" action="{{ route('company-preferences.destroy', $preference) }}">
                                 @csrf
                                 @method('DELETE')

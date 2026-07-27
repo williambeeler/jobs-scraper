@@ -9,6 +9,7 @@ use App\Enums\KanbanStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -21,7 +22,8 @@ use Illuminate\Support\Facades\Cache;
  * @property string $source
  * @property JobListingOrigin $listing_origin
  * @property string $title
- * @property string|null $company
+ * @property int|null $company_id
+ * @property-read Company|null $company
  * @property string|null $location
  * @property string $url
  * @property string $url_hash
@@ -45,8 +47,7 @@ class JobListing extends Model
         'source',
         'listing_origin',
         'title',
-        'company',
-        'company_key',
+        'company_id',
         'location',
         'url',
         'url_hash',
@@ -68,9 +69,15 @@ class JobListing extends Model
         return $this->belongsToMany(ScrapeRun::class);
     }
 
+    /** @return BelongsTo<Company, $this> */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     public function companyPreference(): HasOne
     {
-        return $this->hasOne(CompanyPreference::class, 'company_key', 'company_key');
+        return $this->hasOne(CompanyPreference::class, 'company_id', 'company_id');
     }
 
     public function kanbanTransitions(): HasMany
@@ -90,22 +97,13 @@ class JobListing extends Model
     {
         return $query
             ->where(function (Builder $query): void {
-                $query->whereNull('company_key')->orWhereNotIn('company_key', CompanyPreference::query()
-                    ->select('company_key')->where('type', CompanyPreferenceType::Blacklist));
+                $query->whereNull('company_id')->orWhereNotIn('company_id', CompanyPreference::query()
+                    ->select('company_id')->where('type', CompanyPreferenceType::Blacklist));
             })
             ->whereNotExists(function ($query): void {
                 $query->selectRaw('1')->from('excluded_terms')
                     ->whereRaw('instr(lower(job_listings.title), excluded_terms.term_key) > 0');
             });
-    }
-
-    public static function companyKey(?string $company): ?string
-    {
-        if ($company === null || trim($company) === '') {
-            return null;
-        }
-
-        return mb_strtolower(trim((string) preg_replace('/\s+/', ' ', $company)));
     }
 
     /**
