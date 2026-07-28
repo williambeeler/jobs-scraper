@@ -3,7 +3,6 @@
 namespace WilliamBeeler\Crm\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use WilliamBeeler\Crm\Models\GooglePlacesUsageLog;
 
@@ -16,14 +15,11 @@ class CompaniesGoogleScrapePageTest extends TestCase
         $response = $this->get(route('companies.googleScrape'));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Companies/GoogleScrape')
-            ->where('selectedRangeDays', 30)
-            ->has('availableRangeDays', 4)
-            ->has('tiers', 3)
-            ->where('tiers.0.label', 'Essentials')
-            ->where('monthlyUsage.point_limit', 10000)
-        );
+        $response->assertViewIs('crm::companies.google-scrape');
+        $response->assertViewHas('selectedRangeDays', 30);
+        $response->assertViewHas('availableRangeDays', fn (array $days) => count($days) === 4);
+        $response->assertViewHas('tiers', fn (array $tiers) => count($tiers) === 3 && $tiers[0]['label'] === 'Essentials');
+        $response->assertViewHas('monthlyUsage', fn (array $usage) => $usage['point_limit'] === 10000);
     }
 
     public function test_companies_midrail_shows_google_scrape_entry_on_page(): void
@@ -31,10 +27,8 @@ class CompaniesGoogleScrapePageTest extends TestCase
         $response = $this->get(route('companies.googleScrape'));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Companies/GoogleScrape')
-            ->where('selectedRangeDays', 30)
-        );
+        $response->assertViewIs('crm::companies.google-scrape');
+        $response->assertViewHas('selectedRangeDays', 30);
     }
 
     public function test_google_scrape_page_shows_logged_usage_metrics(): void
@@ -53,13 +47,9 @@ class CompaniesGoogleScrapePageTest extends TestCase
         $response = $this->get(route('companies.googleScrape', ['usage_range' => 30]));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Companies/GoogleScrape')
-            ->where('selectedRangeDays', 30)
-            ->where('monthlyUsage.points_used', 28)
-            ->where('monthlyUsage.point_limit', 10000)
-            ->where('monthlyUsage.request_count', 14)
-            ->where('tiers.1.points', 2)
-        );
+        $response->assertViewIs('crm::companies.google-scrape');
+        $response->assertViewHas('selectedRangeDays', 30);
+        $response->assertViewHas('monthlyUsage', fn (array $usage) => $usage['points_used'] === 28 && $usage['point_limit'] === 10000 && $usage['request_count'] === 14);
+        $response->assertViewHas('tiers', fn (array $tiers) => $tiers[1]['points'] === 2);
     }
 }

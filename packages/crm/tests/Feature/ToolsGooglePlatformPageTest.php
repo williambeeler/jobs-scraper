@@ -2,7 +2,6 @@
 
 namespace WilliamBeeler\Crm\Tests\Feature;
 
-use Inertia\Testing\AssertableInertia as Assert;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -81,13 +80,11 @@ class ToolsGooglePlatformPageTest extends TestCase
         $response = $this->get(route('tools.googlePlatform'));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Tools/GooglePlatform')
-            ->where('connectionLabel', 'Connected')
-            ->where('enabledMapsServices.items.0.title', 'Places API')
-            ->where('budgets.items.0.display_name', 'Maps Budget')
-            ->where('hasCloudCredentials', true)
-        );
+        $response->assertViewIs('crm::tools.google-platform');
+        $response->assertViewHas('connectionLabel', 'Connected');
+        $response->assertViewHas('hasCloudCredentials', true);
+        $response->assertSee('Places API');
+        $response->assertSee('Maps Budget');
     }
 
     public function test_google_platform_page_shows_missing_state_without_cloud_credentials(): void
@@ -149,12 +146,10 @@ class ToolsGooglePlatformPageTest extends TestCase
         $response = $this->get(route('tools.googlePlatform'));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Tools/GooglePlatform')
-            ->where('connectionLabel', 'Setup required')
-            ->where('hasOAuthClientConfig', false)
-            ->where('enabledMapsServices.message', 'Finish the Google app configuration in the environment before loading Maps services.')
-        );
+        $response->assertViewIs('crm::tools.google-platform');
+        $response->assertViewHas('connectionLabel', 'Setup required');
+        $response->assertViewHas('hasOAuthClientConfig', false);
+        $response->assertSee('Finish the Google app configuration in the environment before loading Maps services.');
     }
 
     public function test_google_connect_redirect_requires_app_configuration(): void

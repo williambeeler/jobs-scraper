@@ -8,15 +8,13 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
 use WilliamBeeler\Crm\Models\BusinessProfile;
 use WilliamBeeler\Crm\Support\Avery94200Pdf;
 use WilliamBeeler\Crm\Support\TableNames;
 
 class MyBusinessController extends Controller
 {
-    public function index(Request $request): InertiaResponse
+    public function index(Request $request)
     {
         $businessProfiles = BusinessProfile::query()
             ->orderByDesc('is_default')
@@ -63,7 +61,7 @@ class MyBusinessController extends Controller
             $selectedLabelBusiness = $businessProfiles->firstWhere('is_default', true) ?? $businessProfiles->first();
         }
 
-        return Inertia::render('MyBusiness/Index', [
+        return view('crm::my-business.index', [
             'activeTab' => $activeTab,
             'mode' => $mode,
             'businessProfiles' => $businessProfiles

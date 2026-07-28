@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
 use Spatie\Backup\BackupDestination\BackupDestinationFactory;
 use Spatie\Backup\Config\Config as SpatieBackupConfig;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -30,7 +28,7 @@ use WilliamBeeler\Crm\Support\EnvValueStore;
 
 class ToolsController extends Controller
 {
-    public function index(Request $request): InertiaResponse
+    public function index(Request $request)
     {
         $activeTab = $request->query('tab', 'backups');
 
@@ -38,16 +36,16 @@ class ToolsController extends Controller
             $activeTab = 'backups';
         }
 
-        return Inertia::render('Tools/Index', [
+        return view('crm::tools.index', [
             'activeTab' => $activeTab,
             'backups' => $this->transformBackups($this->listBackups()),
             'isSpatieBackupInstalled' => $this->isSpatieBackupInstalled(),
         ]);
     }
 
-    public function import(): InertiaResponse
+    public function import()
     {
-        return Inertia::render('Tools/Import', [
+        return view('crm::tools.import', [
             'campaigns' => Tag::query()->where('type', 'campaign')->orderBy('name')->get(),
             'tags' => Tag::query()->where('type', 'tag')->orderBy('name')->get(),
             'statuses' => Status::query()->orderBy('name')->get(),
@@ -112,9 +110,9 @@ class ToolsController extends Controller
         ]);
     }
 
-    public function googlePlatform(): InertiaResponse
+    public function googlePlatform()
     {
-        return Inertia::render('Tools/GooglePlatform', app(GoogleCloudPlatformService::class)->getDashboardData());
+        return view('crm::tools.google-platform', app(GoogleCloudPlatformService::class)->getDashboardData());
     }
 
     public function redirectGoogleCloudOAuth(): RedirectResponse
@@ -256,9 +254,9 @@ class ToolsController extends Controller
             ->with('success', 'Google account disconnected.');
     }
 
-    public function openAiPlatform(OpenAiPlatformService $openAiPlatformService): InertiaResponse
+    public function openAiPlatform(OpenAiPlatformService $openAiPlatformService)
     {
-        return Inertia::render('Tools/OpenAiPlatform', $openAiPlatformService->getDashboardData());
+        return view('crm::tools.openai-platform', $openAiPlatformService->getDashboardData());
     }
 
     /**
@@ -364,11 +362,11 @@ class ToolsController extends Controller
             ->with('success', 'OpenAI usage key removed.');
     }
 
-    public function export(): InertiaResponse
+    public function export()
     {
         $companyExportService = app(CompanyExportService::class);
 
-        return Inertia::render('Tools/Export', [
+        return view('crm::tools.export', [
             'companyCount' => $companyExportService->countCompanies(),
             'exportOptions' => $companyExportService->getExportOptions(),
         ]);

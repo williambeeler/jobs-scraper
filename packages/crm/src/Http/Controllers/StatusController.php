@@ -4,14 +4,12 @@ namespace WilliamBeeler\Crm\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
 use WilliamBeeler\Crm\Models\Relationship;
 use WilliamBeeler\Crm\Models\Status;
 
 class StatusController extends Controller
 {
-    public function index(Request $request): InertiaResponse
+    public function index(Request $request)
     {
         $statusQuery = Status::query();
         $relationshipQuery = Relationship::query();
@@ -40,7 +38,7 @@ class StatusController extends Controller
             ->paginate(25, ['*'], 'relationships_page')
             ->withQueryString();
 
-        return Inertia::render('Statuses/Index', [
+        return view('crm::statuses.index', [
             'filters' => [
                 'search_term' => (string) $request->input('search_term', ''),
             ],
@@ -102,9 +100,9 @@ class StatusController extends Controller
         return redirect()->route('statuses.index')->with('success', 'Statuses are system-defined and cannot be edited.');
     }
 
-    public function show(Status $status): InertiaResponse
+    public function show(Status $status)
     {
-        return Inertia::render('Statuses/Show', [
+        return view('crm::statuses.show', [
             'status' => [
                 'id' => $status->id,
                 'name' => $status->name,

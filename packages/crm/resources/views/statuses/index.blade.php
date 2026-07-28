@@ -1,0 +1,7 @@
+@extends('crm::layouts.app')
+@section('title','Statuses') @section('heading','Statuses & Relationships') @section('subtitle','Review the system classifications available to CRM companies.')
+@section('content')
+@include('crm::partials.tools-tabs')
+<form class="crm-card" method="GET"><div class="crm-actions"><input class="crm-input" style="max-width:500px" name="search_term" value="{{ $filters['search_term'] }}" placeholder="Search statuses and relationships"><button class="crm-button crm-button-primary">Search</button></div></form>
+<div class="crm-grid"><section class="crm-col-6 crm-card"><h2>Statuses ({{ $statuses['meta']['total'] }})</h2><div class="crm-table-wrap"><table class="crm-table"><thead><tr><th>Name</th><th>Slug</th><th>Default</th></tr></thead><tbody>@foreach($statuses['data'] as $status)<tr><td><a href="{{ $status['show_url'] }}">{{ $status['name'] }}</a><br><small>{{ $status['description'] }}</small></td><td>{{ $status['slug'] }}</td><td>{{ $status['is_default']?'Yes':'No' }}</td></tr>@endforeach</tbody></table></div></section><section class="crm-col-6 crm-card"><h2>Relationships ({{ $relationships['meta']['total'] }})</h2><div class="crm-table-wrap"><table class="crm-table"><thead><tr><th>Name</th><th>Slug</th></tr></thead><tbody>@foreach($relationships['data'] as $relationship)<tr><td>{{ $relationship['name'] }}<br><small>{{ $relationship['description'] }}</small></td><td>{{ $relationship['slug'] }}</td></tr>@endforeach</tbody></table></div></section></div>
+@endsection

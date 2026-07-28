@@ -2,7 +2,7 @@
 
 namespace WilliamBeeler\Crm\Services;
 
-use Illuminate\Support\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use WilliamBeeler\Crm\Models\GooglePlacesUsageLog;
 
@@ -53,7 +53,7 @@ class GooglePlacesUsageDashboardService
     }
 
     /**
-     * @return array{start: Carbon, end: Carbon, label: string}
+     * @return array{start: CarbonInterface, end: CarbonInterface, label: string}
      */
     private function buildRange(int $rangeDays): array
     {
@@ -71,17 +71,17 @@ class GooglePlacesUsageDashboardService
      * @param  Collection<int, GooglePlacesUsageLog>  $logs
      * @return array{range_label: string, labels: array<int, string>, datasets: array<int, array{label: string, data: array<int, int>, border_color: string, background_color: string}>}
      */
-    private function buildUsageChart(Collection $logs, Carbon $start, Carbon $end): array
+    private function buildUsageChart(Collection $logs, CarbonInterface $start, CarbonInterface $end): array
     {
         $dates = collect();
         $cursor = $start->copy();
 
         while ($cursor->lte($end)) {
             $dates->push($cursor->copy());
-            $cursor->addDay();
+            $cursor = $cursor->addDay();
         }
 
-        $labels = $dates->map(fn (Carbon $date): string => $date->format('M d'))->all();
+        $labels = $dates->map(fn (CarbonInterface $date): string => $date->format('M d'))->all();
         $dailyUsage = $logs->groupBy(fn (GooglePlacesUsageLog $log): string => $log->usage_date->toDateString());
         $palette = [
             GooglePlacesUsageLog::TierEssentials => [
@@ -100,7 +100,7 @@ class GooglePlacesUsageDashboardService
 
         $datasets = collect(GooglePlacesUsageLog::supportedTiers())
             ->map(function (string $tier) use ($dates, $dailyUsage, $palette): array {
-                $data = $dates->map(function (Carbon $date) use ($dailyUsage, $tier): int {
+                $data = $dates->map(function (CarbonInterface $date) use ($dailyUsage, $tier): int {
                     return collect($dailyUsage->get($date->toDateString(), []))
                         ->where('tier', $tier)
                         ->sum('google_request_count');

@@ -6,19 +6,17 @@ use WilliamBeeler\Crm\Models\SavedSearch;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
-use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
 
 class SavedSearchController extends Controller
 {
-    public function index(): InertiaResponse
+    public function index()
     {
         $savedSearches = SavedSearch::query()
             ->where('resource', 'companies')
             ->latest()
             ->paginate(25);
 
-        return Inertia::render('SavedSearches/Index', [
+        return view('crm::saved-searches.index', [
             'savedSearches' => [
                 'data' => $savedSearches->getCollection()
                     ->map(fn (SavedSearch $savedSearch): array => [

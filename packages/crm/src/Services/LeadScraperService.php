@@ -34,7 +34,7 @@ class LeadScraperService
 
     public function __construct()
     {
-        $this->googleApiKey = config('services.google.places_api_key', env('GOOGLE_PLACES_API_KEY'));
+        $this->googleApiKey = (string) config('services.google.places_api_key', env('GOOGLE_PLACES_API_KEY'));
     }
 
     public function scrapeAndSave(

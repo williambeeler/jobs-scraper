@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Tests\TestCase;
 use WilliamBeeler\Crm\Models\Company;
 use WilliamBeeler\Crm\Models\Status;
+use WilliamBeeler\Crm\Support\TableNames;
 
 class CompanyDeleteActionsTest extends TestCase
 {
@@ -43,9 +44,9 @@ class CompanyDeleteActionsTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('success', 'Deleted 2 companies.');
 
-        $this->assertSoftDeleted('companies', ['id' => $companyA->id]);
-        $this->assertSoftDeleted('companies', ['id' => $companyB->id]);
-        $this->assertDatabaseHas('companies', ['id' => $survivor->id, 'deleted_at' => null]);
+        $this->assertSoftDeleted(TableNames::get('companies'), ['id' => $companyA->id]);
+        $this->assertSoftDeleted(TableNames::get('companies'), ['id' => $companyB->id]);
+        $this->assertDatabaseHas(TableNames::get('companies'), ['id' => $survivor->id, 'deleted_at' => null]);
     }
 
     public function test_individual_delete_returns_json_when_requested(): void
@@ -66,6 +67,6 @@ class CompanyDeleteActionsTest extends TestCase
             'message' => 'Company archived.',
         ]);
 
-        $this->assertSoftDeleted('companies', ['id' => $company->id]);
+        $this->assertSoftDeleted(TableNames::get('companies'), ['id' => $company->id]);
     }
 }

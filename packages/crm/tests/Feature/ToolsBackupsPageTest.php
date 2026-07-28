@@ -5,7 +5,6 @@ namespace WilliamBeeler\Crm\Tests\Feature;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ToolsBackupsPageTest extends TestCase
@@ -15,11 +14,9 @@ class ToolsBackupsPageTest extends TestCase
         $response = $this->get(route('tools.index'));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Tools/Index')
-            ->where('activeTab', 'backups')
-            ->has('backups')
-        );
+        $response->assertViewIs('crm::tools.index');
+        $response->assertViewHas('activeTab', 'backups');
+        $response->assertViewHas('backups');
     }
 
     public function test_backup_action_runs_database_only_backup_command(): void

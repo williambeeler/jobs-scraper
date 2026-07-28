@@ -35,11 +35,6 @@ class CrmServiceProvider extends ServiceProvider
             ]);
         }
 
-        config()->set('inertia.pages.paths', array_values(array_unique([
-            ...config('inertia.pages.paths', []),
-            __DIR__.'/../../resources/js/Pages',
-        ])));
-
         $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
         $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'crm');
@@ -48,5 +43,14 @@ class CrmServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../config/crm.php' => config_path('crm.php'),
         ], 'crm-config');
+
+        $this->publishes([
+            __DIR__.'/../../resources/views' => resource_path('views/vendor/crm'),
+        ], 'crm-views');
+
+        $this->publishes([
+            __DIR__.'/../../resources/css/crm.css' => public_path('vendor/crm/crm.css'),
+            __DIR__.'/../../resources/js/crm.js' => public_path('vendor/crm/crm.js'),
+        ], 'crm-assets');
     }
 }

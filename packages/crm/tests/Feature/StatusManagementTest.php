@@ -3,7 +3,6 @@
 namespace WilliamBeeler\Crm\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use WilliamBeeler\Crm\Models\Relationship;
 use WilliamBeeler\Crm\Models\Status;
@@ -23,15 +22,13 @@ class StatusManagementTest extends TestCase
 
         $this->get(route('statuses.index'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Statuses/Index')
-                ->where('statuses.data.0.name', 'Qualified')
-                ->where('relationships.data.0.name', 'Lead'));
+            ->assertViewIs('crm::statuses.index')
+            ->assertViewHas('statuses', fn (array $statuses) => $statuses['data'][0]['name'] === 'Qualified')
+            ->assertViewHas('relationships', fn (array $relationships) => $relationships['data'][0]['name'] === 'Lead');
 
         $this->get(route('statuses.show', $status))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Statuses/Show')
-                ->where('status.name', 'Qualified'));
+            ->assertViewIs('crm::statuses.show')
+            ->assertViewHas('status', fn (array $status) => $status['name'] === 'Qualified');
     }
 }

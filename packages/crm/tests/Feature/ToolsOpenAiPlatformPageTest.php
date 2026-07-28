@@ -3,7 +3,6 @@
 namespace WilliamBeeler\Crm\Tests\Feature;
 
 use Illuminate\Support\Facades\Cache;
-use Inertia\Testing\AssertableInertia as Assert;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -53,13 +52,11 @@ class ToolsOpenAiPlatformPageTest extends TestCase
         $response = $this->get(route('tools.openAiPlatform'));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Tools/OpenAiPlatform')
-            ->where('keyModeLabel', 'Standard key only')
-            ->where('identity.name', 'William Beeler')
-            ->where('costs.message', 'Missing scopes: api.usage.read.')
-            ->where('hasUsageApiKey', false)
-        );
+        $response->assertViewIs('crm::tools.openai-platform');
+        $response->assertViewHas('keyModeLabel', 'Standard key only');
+        $response->assertViewHas('hasUsageApiKey', false);
+        $response->assertSee('William Beeler');
+        $response->assertSee('Missing scopes: api.usage.read.');
     }
 
     public function test_openai_platform_page_handles_missing_key(): void
@@ -103,12 +100,9 @@ class ToolsOpenAiPlatformPageTest extends TestCase
         $response = $this->get(route('tools.openAiPlatform'));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Tools/OpenAiPlatform')
-            ->where('hasApiKey', false)
-            ->where('keyModeLabel', 'Missing')
-            ->where('identity.name', null)
-        );
+        $response->assertViewIs('crm::tools.openai-platform');
+        $response->assertViewHas('hasApiKey', false);
+        $response->assertViewHas('keyModeLabel', 'Missing');
     }
 
     public function test_openai_usage_key_can_be_saved(): void

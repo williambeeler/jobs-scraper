@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use WilliamBeeler\Crm\Models\Company;
+use WilliamBeeler\Crm\Support\TableNames;
 use WilliamBeeler\Crm\Models\Relationship;
 use WilliamBeeler\Crm\Models\Status;
 
@@ -48,7 +49,7 @@ class CompanyModalInteractionsTest extends TestCase
             'message' => 'Note saved.',
         ]);
 
-        $this->assertDatabaseHas('notes', [
+        $this->assertDatabaseHas(TableNames::get('notes'), [
             'company_id' => $company->id,
             'content' => '<p>Left a voicemail.</p>',
         ]);
@@ -75,7 +76,7 @@ class CompanyModalInteractionsTest extends TestCase
             'message' => 'Phone call saved.',
         ]);
 
-        $this->assertDatabaseHas('phone_calls', [
+        $this->assertDatabaseHas(TableNames::get('phone_calls'), [
             'company_id' => $company->id,
             'called_at' => '2026-03-12 10:30:00',
             'notes' => '<p>Discussed pricing and next steps.</p>',
@@ -105,7 +106,7 @@ class CompanyModalInteractionsTest extends TestCase
             'callbackAt' => '2026-03-14T09:15',
         ]);
 
-        $this->assertDatabaseHas('companies', [
+        $this->assertDatabaseHas(TableNames::get('companies'), [
             'id' => $company->id,
             'needs_callback' => 1,
             'callback_at' => '2026-03-14 09:15:00',
@@ -146,7 +147,7 @@ class CompanyModalInteractionsTest extends TestCase
             'relationshipId' => $replacementRelationship->id,
         ]);
 
-        $this->assertDatabaseHas('companies', [
+        $this->assertDatabaseHas(TableNames::get('companies'), [
             'id' => $company->id,
             'status_id' => $replacementStatus->id,
             'relationship_id' => $replacementRelationship->id,

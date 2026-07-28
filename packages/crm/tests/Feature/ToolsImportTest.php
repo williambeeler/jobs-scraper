@@ -4,7 +4,6 @@ namespace WilliamBeeler\Crm\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use WilliamBeeler\Crm\Models\Company;
 use WilliamBeeler\Crm\Models\Relationship;
@@ -31,14 +30,12 @@ class ToolsImportTest extends TestCase
         $response = $this->get(route('tools.import'));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Tools/Import')
-            ->where('defaultStatusId', 1)
-            ->where('leadRelationshipId', 1)
-            ->has('statuses', 1)
-            ->has('relationships', 1)
-            ->where('templateDownloadUrl', fn (string $url) => str_contains($url, 'company-import-template.csv'))
-        );
+        $response->assertViewIs('crm::tools.import');
+        $response->assertViewHas('defaultStatusId', 1);
+        $response->assertViewHas('leadRelationshipId', 1);
+        $response->assertViewHas('statuses', fn ($statuses) => $statuses->count() === 1);
+        $response->assertViewHas('relationships', fn ($relationships) => $relationships->count() === 1);
+        $response->assertViewHas('templateDownloadUrl', fn (string $url) => str_contains($url, 'company-import-template.csv'));
     }
 
     public function test_company_import_template_downloads_from_the_package(): void

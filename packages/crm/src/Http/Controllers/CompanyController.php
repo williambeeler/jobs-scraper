@@ -8,8 +8,6 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use WilliamBeeler\Crm\Models\Company;
 use WilliamBeeler\Crm\Models\Note;
@@ -29,7 +27,7 @@ class CompanyController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): InertiaResponse
+    public function index(Request $request)
     {
         $statuses = Status::orderBy('name')->get();
         $tags = Tag::where('type', 'tag')->orderBy('name')->get();
@@ -55,7 +53,20 @@ class CompanyController extends Controller
                 ->exists();
         }
 
-        return Inertia::render('Companies/Index', [
+        $perPageInput = strtolower((string) $request->input('per_page', '20'));
+        $perPage = $perPageInput === 'all' ? max(1, Company::count()) : max(10, min(100, (int) $perPageInput));
+        $sortField = (string) $request->input('sort', 'name');
+        $sortDirection = strtolower((string) $request->input('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $companyQuery = $this->applyCompanyFilters(
+            Company::query()->with(['status', 'tags']),
+            $request,
+            trim((string) $request->input('search', $request->input('search_term', '')))
+        );
+        $this->applyCompanySort($companyQuery, $sortField, $sortDirection);
+        $companies = $companyQuery->paginate($perPage)->withQueryString();
+
+        return view('crm::companies.index', [
+            'companies' => $companies,
             'filters' => [
                 'search' => (string) ($currentFilterParameters['search'] ?? ''),
                 'status_id' => (string) ($currentFilterParameters['status_id'] ?? ''),
@@ -95,7 +106,7 @@ class CompanyController extends Controller
         $relationships = Relationship::orderBy('name')->get();
         $statuses = Status::orderBy('name')->get();
 
-        return Inertia::render('Companies/Create', [
+        return view('crm::companies.create', [
             'statusOptions' => $statuses->map(fn (Status $status) => [
                 'id' => (string) $status->id,
                 'name' => $status->name,
@@ -113,11 +124,11 @@ class CompanyController extends Controller
         ]);
     }
 
-    public function googleScrape(Request $request, GooglePlacesUsageDashboardService $dashboardService): InertiaResponse
+    public function googleScrape(Request $request, GooglePlacesUsageDashboardService $dashboardService)
     {
         $rangeDays = (int) $request->integer('usage_range', 30);
 
-        return Inertia::render('Companies/GoogleScrape', $dashboardService->getDashboardData($rangeDays));
+        return view('crm::companies.google-scrape', $dashboardService->getDashboardData($rangeDays));
     }
 
     /**
@@ -199,7 +210,7 @@ class CompanyController extends Controller
         $statuses = Status::orderBy('name')->get();
         $relationships = Relationship::orderBy('name')->get();
 
-        return Inertia::render('Companies/Show', [
+        return view('crm::companies.show', [
             'company' => $this->transformCompanyForShow($company),
             'statusOptions' => $statuses->map(fn (Status $status) => [
                 'id' => (string) $status->id,
@@ -247,7 +258,7 @@ class CompanyController extends Controller
         $relationships = Relationship::orderBy('name')->get();
         $statuses = Status::orderBy('name')->get();
 
-        return Inertia::render('Companies/Edit', [
+        return view('crm::companies.edit', [
             'company' => $this->transformCompanyForEdit($company->load(['notes', 'tags'])),
             'statusOptions' => $statuses->map(fn (Status $status) => [
                 'id' => (string) $status->id,

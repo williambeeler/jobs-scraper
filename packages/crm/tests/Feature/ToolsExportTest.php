@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Inertia\Testing\AssertableInertia as Assert;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Tests\TestCase;
 use WilliamBeeler\Crm\Exports\CompaniesTableExport;
@@ -39,13 +38,11 @@ class ToolsExportTest extends TestCase
         $response = $this->get(route('tools.export'));
 
         $response->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Tools/Export')
-            ->where('companyCount', 2)
-            ->has('exportOptions', 2)
-            ->where('exportOptions.0.label', 'Export All Businesses as CSV')
-            ->where('exportOptions.1.label', 'Export All Businesses as XLSX')
-        );
+        $response->assertViewIs('crm::tools.export');
+        $response->assertViewHas('companyCount', 2);
+        $response->assertViewHas('exportOptions', fn (array $options) => count($options) === 2
+            && $options[0]['label'] === 'Export All Businesses as CSV'
+            && $options[1]['label'] === 'Export All Businesses as XLSX');
     }
 
     public function test_company_export_builds_csv_with_database_columns_and_all_rows(): void

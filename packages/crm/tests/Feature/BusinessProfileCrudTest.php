@@ -3,7 +3,6 @@
 namespace WilliamBeeler\Crm\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use WilliamBeeler\Crm\Models\BusinessProfile;
 
@@ -15,9 +14,8 @@ class BusinessProfileCrudTest extends TestCase
     {
         $this->get(route('my-business.index'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('MyBusiness/Index')
-                ->where('mode', 'create'));
+            ->assertViewIs('crm::my-business.index')
+            ->assertViewHas('mode', 'create');
 
         $this->post(route('my-business.address.store'), $this->profileData([
             'business_name' => 'First Business',
