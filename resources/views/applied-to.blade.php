@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Applied to | '.config('app.name'))
+@section('title', 'Applied to | ' . config('app.name'))
 
 @section('content')
     <main class="container py-5">
@@ -22,7 +22,8 @@
                     <h2 class="h5 fw-bold mb-3">
                         {{ $group['label'] }}
                         @if ($group['daysAgo'] !== null)
-                            <span class="text-body-secondary fw-normal">({{ trans_choice(':count day ago|:count days ago', $group['daysAgo'], ['count' => $group['daysAgo']]) }})</span>
+                            <span
+                                class="text-body-secondary fw-normal">({{ trans_choice(':count day ago|:count days ago', $group['daysAgo'], ['count' => $group['daysAgo']]) }})</span>
                         @endif
                     </h2>
                     <div class="list-group shadow-sm">
@@ -31,15 +32,16 @@
                                 href="{{ $listing->url }}"
                                 class="list-group-item list-group-item-action p-4 {{ $listing->is_whitelisted ? 'job-row-whitelisted' : '' }}"
                                 target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                                rel="noopener noreferrer">
+                                <div
+                                    class="d-flex flex-column flex-md-row justify-content-between gap-3">
                                     <div>
                                         <h3 class="h5 mb-2">{{ $listing->title }}</h3>
                                         <p class="mb-2 text-body-secondary">
                                             {{ $listing->company?->name ?: 'Unknown company' }}
                                             @if ($listing->location)
-                                                <span aria-hidden="true">&middot;</span> {{ $listing->location }}
+                                                <span aria-hidden="true">&middot;</span>
+                                                {{ $listing->location }}
                                             @endif
                                         </p>
                                         <div class="d-flex flex-wrap gap-3 small text-body-secondary">
@@ -47,14 +49,21 @@
                                             @if ($listing->salary)
                                                 <span>Salary: {{ $listing->salary }}</span>
                                             @endif
-                                            <span>Applied: {{ $listing->status_changed_at?->timezone($displayTimezone)->format('M j, Y g:i A') }}</span>
+                                            <span>{{ 'Applied: ' . $listing->status_changed_at?->timezone($displayTimezone)->format('M j, Y g:i A') }}</span>
                                         </div>
                                     </div>
-                                    <div class="d-flex flex-column align-items-md-end gap-2 flex-shrink-0">
+                                    <div
+                                        class="d-flex flex-column align-items-md-end gap-2 flex-shrink-0">
                                         @if ($listing->is_whitelisted)
-                                            <span class="job-row-star" title="Whitelisted company" aria-label="Whitelisted company">&#9733;</span>
+                                            <span
+                                                class="job-row-star"
+                                                title="Whitelisted company"
+                                                aria-label="Whitelisted company"
+                                            >&#9733;</span>
                                         @endif
-                                        <span class="badge text-bg-success align-self-start align-self-md-end">{{ $listing->source }}</span>
+                                        <span
+                                            class="badge text-bg-success align-self-start align-self-md-end"
+                                        >{{ $listing->source }}</span>
                                     </div>
                                 </div>
                             </a>

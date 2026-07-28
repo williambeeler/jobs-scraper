@@ -114,9 +114,7 @@ defineOptions({
                         listing.location || 'Location not provided'
                     }}</span>
                     <span v-if="listing.salary">{{ listing.salary }}</span>
-                    <span>{{
-                        listing.posted_age || 'Date unknown'
-                    }}</span>
+                    <span>{{ listing.posted_age || 'Date unknown' }}</span>
                 </div>
             </Link>
         </div>

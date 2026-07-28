@@ -1,0 +1,11 @@
+{
+    "indentSize": 4,
+    "wrapLineLength": 100,
+    "wrapAttributes": "force-expand-multiline",
+    "wrapAttributesMinAttrs": 3,
+    "indentInnerHtml": true,
+    "endWithNewline": true,
+    "endOfLine": "LF",
+    "noMultipleEmptyLines": true,
+    "phpVersion": "8.3"
+}

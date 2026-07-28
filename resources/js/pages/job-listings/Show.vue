@@ -83,9 +83,7 @@ defineOptions({
                         Posted
                     </dt>
                     <dd class="mt-1">
-                        {{
-                            listing.posted_age || 'Unknown'
-                        }}
+                        {{ listing.posted_age || 'Unknown' }}
                     </dd>
                 </div>
                 <div>

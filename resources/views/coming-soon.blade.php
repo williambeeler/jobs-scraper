@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $pageTitle.' | Job Scraper')
+@section('title', $pageTitle . ' | Job Scraper')
 
 @section('content')
     <main class="container py-5">

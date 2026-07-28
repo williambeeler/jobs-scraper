@@ -2,8 +2,7 @@
     <a
         href="{{ route('companies.show', $company) }}"
         class="fw-semibold text-decoration-none crm-company-link crm-company-name-link"
-        data-modal-url="{{ route('companies.modal', $company) }}"
-    >
+        data-modal-url="{{ route('companies.modal', $company) }}">
         {{ $company->name }}
     </a>
 
@@ -19,8 +18,7 @@
             class="btn btn-sm btn-outline-danger company-delete-btn"
             data-company-id="{{ $company->id }}"
             data-company-name="{{ $company->name }}"
-            data-delete-url="{{ route('companies.destroy', $company->id) }}"
-        >
+            data-delete-url="{{ route('companies.destroy', $company->id) }}">
             Delete
         </button>
     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Cron | '.config('app.name'))
+@section('title', 'Cron | ' . config('app.name'))
 
 @section('content')
     @php
@@ -61,8 +61,11 @@
                         </thead>
                         <tbody>
                             @foreach ($schedules as $schedule)
-                                <tr class="{{ $editingSchedule?->is($schedule) ? 'table-primary' : '' }}">
-                                    <th scope="row">{{ $schedule->keywords !== '' ? $schedule->keywords : 'All listings' }}</th>
+                                <tr
+                                    class="{{ $editingSchedule?->is($schedule) ? 'table-primary' : '' }}">
+                                    <th scope="row">
+                                        {{ $schedule->keywords !== '' ? $schedule->keywords : 'All listings' }}
+                                    </th>
                                     <td>
                                         <div class="d-flex flex-wrap gap-1">
                                             @foreach ($schedule->sources as $source)
@@ -75,7 +78,8 @@
                                     <td>{{ $schedule->max_days }} days</td>
                                     <td>Every {{ $schedule->interval_hours }} hours</td>
                                     <td>
-                                        <span class="badge {{ $schedule->is_active ? 'text-bg-success' : 'text-bg-secondary' }}">
+                                        <span
+                                            class="badge {{ $schedule->is_active ? 'text-bg-success' : 'text-bg-secondary' }}">
                                             {{ $schedule->is_active ? 'Enabled' : 'Disabled' }}
                                         </span>
                                     </td>
@@ -84,19 +88,24 @@
                                     </td>
                                     <td>
                                         <div class="d-flex justify-content-end gap-2">
-                                            <form method="POST" action="{{ route('cron.schedule.run', $schedule) }}">
+                                            <form method="POST"
+                                                action="{{ route('cron.schedule.run', $schedule) }}">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-success">Run now</button>
+                                                <button type="submit"
+                                                    class="btn btn-sm btn-success">Run now</button>
                                             </form>
-                                            <a href="{{ route('cron.edit', $schedule) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                            <a href="{{ route('cron.edit', $schedule) }}"
+                                                class="btn btn-sm btn-outline-primary"
+                                            >Edit</a>
                                             <form
                                                 method="POST"
                                                 action="{{ route('cron.destroy', $schedule) }}"
-                                                onsubmit="return confirm('Delete this scrape configuration? This cannot be undone.')"
-                                            >
+                                                onsubmit="return confirm('Delete this scrape configuration? This cannot be undone.')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                >Delete</button>
                                             </form>
                                         </div>
                                     </td>
@@ -114,15 +123,15 @@
                     {{ $editingSchedule ? 'Edit configuration' : 'Add configuration' }}
                 </h2>
                 @if ($editingSchedule)
-                    <a href="{{ route('cron') }}" class="btn btn-sm btn-outline-secondary">Cancel editing</a>
+                    <a href="{{ route('cron') }}" class="btn btn-sm btn-outline-secondary">Cancel
+                        editing</a>
                 @endif
             </div>
 
             <form
                 method="POST"
                 action="{{ $editingSchedule ? route('cron.update', $editingSchedule) : route('cron.store') }}"
-                class="card shadow-sm"
-            >
+                class="card shadow-sm">
                 @csrf
                 @if ($editingSchedule)
                     @method('PUT')
@@ -137,21 +146,21 @@
                             id="keywords"
                             name="keywords"
                             value="{{ old('keywords', $editingSchedule?->keywords ?? '') }}"
-                            placeholder="wordpress developer remote"
-                        >
-                        <div class="form-text">Required for LinkedIn, Dice, and Working Nomads; ignored by full-board sources.</div>
+                            placeholder="wordpress developer remote">
+                        <div class="form-text">Required for LinkedIn, Dice, and Working Nomads; ignored
+                            by full-board sources.</div>
                     </div>
 
                     <fieldset class="mb-4">
                         <legend class="form-label fw-semibold mb-2">Sources</legend>
                         <div class="row g-2">
                             @foreach ([
-                                'linkedin' => 'LinkedIn',
-                                'dice' => 'Dice',
-                                'working_nomads' => 'Working Nomads',
-                                'wordpress_jobs' => 'WordPress Jobs (all listings)',
-                                'larajobs' => 'LaraJobs (all listings)',
-                            ] as $value => $label)
+            'linkedin' => 'LinkedIn',
+            'dice' => 'Dice',
+            'working_nomads' => 'Working Nomads',
+            'wordpress_jobs' => 'WordPress Jobs (all listings)',
+            'larajobs' => 'LaraJobs (all listings)',
+        ] as $value => $label)
                                 <div class="col-sm-6 col-lg-4">
                                     <div class="form-check">
                                         <input
@@ -160,9 +169,10 @@
                                             name="sources[]"
                                             value="{{ $value }}"
                                             id="source-{{ $value }}"
-                                            @checked(in_array($value, $selectedSources, true))
-                                        >
-                                        <label class="form-check-label" for="source-{{ $value }}">{{ $label }}</label>
+                                            @checked(in_array($value, $selectedSources, true))>
+                                        <label class="form-check-label"
+                                            for="source-{{ $value }}"
+                                        >{{ $label }}</label>
                                     </div>
                                 </div>
                             @endforeach
@@ -181,8 +191,7 @@
                                     value="{{ old('max_days', $editingSchedule?->max_days ?? 5) }}"
                                     min="1"
                                     max="365"
-                                    required
-                                >
+                                    required>
                                 <span class="input-group-text">days</span>
                             </div>
                         </div>
@@ -198,14 +207,16 @@
                                     value="{{ old('interval_hours', $editingSchedule?->interval_hours ?? 6) }}"
                                     min="1"
                                     max="8760"
-                                    required
-                                >
+                                    required>
                                 <span class="input-group-text">hours</span>
                             </div>
                         </div>
                     </div>
 
-                    <input type="hidden" name="is_active" value="0">
+                    <input
+                        type="hidden"
+                        name="is_active"
+                        value="0">
                     <div class="form-check form-switch">
                         <input
                             class="form-check-input"
@@ -214,8 +225,7 @@
                             id="is-active"
                             name="is_active"
                             value="1"
-                            @checked((bool) old('is_active', $editingSchedule?->is_active ?? true))
-                        >
+                            @checked((bool) old('is_active', $editingSchedule?->is_active ?? true))>
                         <label class="form-check-label" for="is-active">Enabled</label>
                     </div>
                 </div>

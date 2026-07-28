@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Jobs Kanban | '.config('app.name'))
+@section('title', 'Jobs Kanban | ' . config('app.name'))
 
 @section('content')
     <main class="container-fluid px-4 py-5">
@@ -24,38 +24,46 @@
         <div class="kanban-board pb-3" aria-label="Jobs Kanban board">
             @foreach ($columns as $column)
                 @php($columnListings = $listingsByStatus->get($column['status']->value, collect()))
-                <section class="kanban-column" aria-labelledby="kanban-{{ $column['status']->value }}-title">
+                <section class="kanban-column"
+                    aria-labelledby="kanban-{{ $column['status']->value }}-title">
                     <header class="kanban-column-header">
                         <h2 class="h6 fw-bold mb-0" id="kanban-{{ $column['status']->value }}-title">
                             {{ $column['title'] }}
                         </h2>
-                        <span class="badge rounded-pill text-bg-secondary" data-column-count>{{ $columnListings->count() }}</span>
+                        <span class="badge rounded-pill text-bg-secondary"
+                            data-column-count>{{ $columnListings->count() }}</span>
                     </header>
 
                     <div
                         class="kanban-column-body"
                         data-kanban-column
-                        data-column-id="{{ $column['status']->value }}"
-                    >
+                        data-column-id="{{ $column['status']->value }}">
                         @foreach ($columnListings as $listing)
                             <article
                                 class="kanban-card {{ $listing->is_whitelisted ? 'kanban-card-whitelisted' : '' }}"
                                 data-job-card
                                 data-update-url="{{ route('jobs.kanban-status', $listing) }}"
                                 data-status-url="{{ route('jobs.status', $listing) }}"
-                                data-listing-origin="{{ $listing->listing_origin->value }}"
-                            >
+                                data-listing-origin="{{ $listing->listing_origin->value }}">
                                 <h3 class="h6 fw-bold mb-2">
-                                    <a href="{{ $listing->url }}" target="_blank" rel="noopener noreferrer" data-no-drag>{{ $listing->title }}</a>
+                                    <a
+                                        href="{{ $listing->url }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        data-no-drag
+                                    >{{ $listing->title }}</a>
                                 </h3>
                                 <p class="small text-body-secondary mb-2">
                                     {{ $listing->company?->name ?: 'Unknown company' }}
                                     @if ($listing->location)
-                                        <span aria-hidden="true">&middot;</span> {{ $listing->location }}
+                                        <span aria-hidden="true">&middot;</span>
+                                        {{ $listing->location }}
                                     @endif
                                 </p>
-                                <div class="d-flex flex-wrap gap-2 align-items-center small text-body-secondary">
-                                    <span class="badge text-bg-light border">{{ $listing->source }}</span>
+                                <div
+                                    class="d-flex flex-wrap gap-2 align-items-center small text-body-secondary">
+                                    <span
+                                        class="badge text-bg-light border">{{ $listing->source }}</span>
                                     <span>{{ $listing->posted_age ?? 'Posted date unknown' }}</span>
                                     @if ($listing->salary)
                                         <span>{{ $listing->salary }}</span>
@@ -66,8 +74,7 @@
                                         type="button"
                                         class="btn btn-sm btn-outline-danger w-100 mt-3 {{ in_array($column['status']->value, ['backlog', 'interested'], true) ? '' : 'd-none' }}"
                                         data-not-interested
-                                        data-no-drag
-                                    >
+                                        data-no-drag>
                                         Not Interested
                                     </button>
                                 @endif
@@ -85,15 +92,19 @@
         tabindex="-1"
         aria-labelledby="add-job-modal-title"
         aria-hidden="true"
-        data-open-on-load="{{ $errors->customJob->any() ? 'true' : 'false' }}"
-    >
+        data-open-on-load="{{ $errors->customJob->any() ? 'true' : 'false' }}">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <form method="POST" action="{{ route('jobs.custom.store') }}">
                     @csrf
                     <div class="modal-header">
                         <h2 class="modal-title fs-5" id="add-job-modal-title">Add Custom Job</h2>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
                     </div>
                     <div class="modal-body">
                         <div class="row g-3">
@@ -105,44 +116,94 @@
                                     id="custom-job-title"
                                     name="title"
                                     value="{{ old('title') }}"
-                                    required
-                                >
-                                @error('title', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    required>
+                                @error('title', 'customJob')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-6">
                                 <label for="custom-job-company" class="form-label">Company</label>
-                                <input type="text" class="form-control @error('company', 'customJob') is-invalid @enderror" id="custom-job-company" name="company" value="{{ old('company') }}">
-                                @error('company', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <input
+                                    type="text"
+                                    class="form-control @error('company', 'customJob') is-invalid @enderror"
+                                    id="custom-job-company"
+                                    name="company"
+                                    value="{{ old('company') }}">
+                                @error('company', 'customJob')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-6">
                                 <label for="custom-job-location" class="form-label">Location</label>
-                                <input type="text" class="form-control @error('location', 'customJob') is-invalid @enderror" id="custom-job-location" name="location" value="{{ old('location') }}">
-                                @error('location', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <input
+                                    type="text"
+                                    class="form-control @error('location', 'customJob') is-invalid @enderror"
+                                    id="custom-job-location"
+                                    name="location"
+                                    value="{{ old('location') }}">
+                                @error('location', 'customJob')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-12">
                                 <label for="custom-job-url" class="form-label">Job URL</label>
-                                <input type="url" class="form-control @error('url', 'customJob') is-invalid @enderror" id="custom-job-url" name="url" value="{{ old('url') }}" required>
-                                @error('url', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <input
+                                    type="url"
+                                    class="form-control @error('url', 'customJob') is-invalid @enderror"
+                                    id="custom-job-url"
+                                    name="url"
+                                    value="{{ old('url') }}"
+                                    required>
+                                @error('url', 'customJob')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-4">
                                 <label for="custom-job-source" class="form-label">Source</label>
-                                <input type="text" class="form-control @error('source', 'customJob') is-invalid @enderror" id="custom-job-source" name="source" value="{{ old('source', 'Custom') }}" required>
-                                @error('source', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <input
+                                    type="text"
+                                    class="form-control @error('source', 'customJob') is-invalid @enderror"
+                                    id="custom-job-source"
+                                    name="source"
+                                    value="{{ old('source', 'Custom') }}"
+                                    required>
+                                @error('source', 'customJob')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-4">
-                                <label for="custom-job-posted-at" class="form-label">Posted date</label>
-                                <input type="date" class="form-control @error('posted_at', 'customJob') is-invalid @enderror" id="custom-job-posted-at" name="posted_at" value="{{ old('posted_at') }}">
-                                @error('posted_at', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <label for="custom-job-posted-at" class="form-label">Posted
+                                    date</label>
+                                <input
+                                    type="date"
+                                    class="form-control @error('posted_at', 'customJob') is-invalid @enderror"
+                                    id="custom-job-posted-at"
+                                    name="posted_at"
+                                    value="{{ old('posted_at') }}">
+                                @error('posted_at', 'customJob')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-4">
                                 <label for="custom-job-salary" class="form-label">Salary</label>
-                                <input type="text" class="form-control @error('salary', 'customJob') is-invalid @enderror" id="custom-job-salary" name="salary" value="{{ old('salary') }}">
-                                @error('salary', 'customJob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <input
+                                    type="text"
+                                    class="form-control @error('salary', 'customJob') is-invalid @enderror"
+                                    id="custom-job-salary"
+                                    name="salary"
+                                    value="{{ old('salary') }}">
+                                @error('salary', 'customJob')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal"
+                        >Cancel</button>
                         <button type="submit" class="btn btn-primary">Add Job</button>
                     </div>
                 </form>

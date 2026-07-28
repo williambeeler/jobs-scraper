@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Jobs Calendar | '.config('app.name'))
+@section('title', 'Jobs Calendar | ' . config('app.name'))
 
 @section('content')
     <main class="container py-5">
