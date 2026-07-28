@@ -1,0 +1,234 @@
+.bible-page {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.bible-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(17rem, 0.8fr);
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    background:
+        radial-gradient(circle at top left, rgba(209, 170, 92, 0.18), transparent 30%),
+        linear-gradient(135deg, #fffdfa 0%, #f4ede2 100%);
+    border: 1px solid rgba(167, 136, 86, 0.22);
+}
+
+.bible-hero-kicker,
+.bible-progress-label,
+.bible-section-header span {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #876739;
+}
+
+.bible-hero-year-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bible-hero-year {
+    margin: 0;
+    font-size: clamp(2.4rem, 4vw, 4rem);
+    line-height: 1;
+    color: #332412;
+}
+
+.bible-hero-subtitle,
+.bible-progress-footnote {
+    color: #6a5b48;
+}
+
+.bible-year-bumper {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 2rem;
+    line-height: 1;
+    color: #58421f;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(148, 116, 67, 0.24);
+    box-shadow: 0 12px 24px rgba(94, 74, 39, 0.08);
+}
+
+.bible-year-bumper:hover,
+.bible-year-bumper:focus-visible {
+    color: #3d2c11;
+    background: #ffffff;
+}
+
+.bible-progress-panel {
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(171, 139, 91, 0.2);
+    align-self: stretch;
+}
+
+.bible-progress-value {
+    font-size: 2.4rem;
+    line-height: 1;
+    font-weight: 700;
+    color: #2f2212;
+    margin: 0.4rem 0 0.85rem;
+}
+
+.bible-progress-bar {
+    width: 100%;
+    height: 0.7rem;
+    border-radius: 999px;
+    background: rgba(126, 104, 67, 0.12);
+    overflow: hidden;
+    margin-bottom: 0.85rem;
+}
+
+.bible-progress-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #a37838 0%, #d8b16b 100%);
+}
+
+.bible-section {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.bible-section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.bible-section-header h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #27344f;
+}
+
+.bible-books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 1rem;
+}
+
+.bible-book-card {
+    padding: 1rem;
+    border-radius: 1.25rem;
+    border: 1px solid #e6dccd;
+    background: linear-gradient(180deg, #fffefb 0%, #fbf7ef 100%);
+    box-shadow: 0 16px 28px rgba(70, 55, 31, 0.05);
+}
+
+.bible-book-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.8rem;
+}
+
+.bible-book-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #30291f;
+}
+
+.bible-book-header span {
+    font-size: 0.85rem;
+    color: #7f6a45;
+    white-space: nowrap;
+}
+
+.bible-chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(2.35rem, 1fr));
+    gap: 0.45rem;
+}
+
+.bible-chapter-box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.35rem;
+    border-radius: 0.75rem;
+    border: 1px solid #d8c7ae;
+    background: #fffdf9;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.bible-chapter-box:hover,
+.bible-chapter-box:focus-within {
+    transform: translateY(-1px);
+    border-color: #b69158;
+    box-shadow: 0 8px 18px rgba(133, 100, 50, 0.12);
+}
+
+.bible-chapter-box span {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #574327;
+    pointer-events: none;
+}
+
+.bible-chapter-checkbox {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.bible-chapter-box:has(.bible-chapter-checkbox:checked) {
+    border-color: #7b5a26;
+    background: linear-gradient(180deg, #f5dfb0 0%, #ecd098 100%);
+}
+
+.bible-chapter-box:has(.bible-chapter-checkbox:checked) span {
+    color: #3a2a11;
+}
+
+.bible-progress-footnote.is-saving {
+    color: #7f6235;
+}
+
+.bible-progress-footnote.is-error {
+    color: #a23737;
+}
+
+@media (max-width: 991.98px) {
+    .bible-hero {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .bible-hero,
+    .bible-book-card {
+        padding: 1rem;
+    }
+
+    .bible-hero-year-wrap {
+        gap: 0.75rem;
+    }
+
+    .bible-year-bumper {
+        width: 2.6rem;
+        height: 2.6rem;
+        font-size: 1.75rem;
+    }
+
+    .bible-books-grid {
+        grid-template-columns: 1fr;
+    }
+}
