@@ -14,7 +14,7 @@
             id="crm-import-form"
             method="POST"
             enctype="multipart/form-data"
-            action="{{ route('tools.import.companies') }}">
+            action="{{ route('crm.tools.import.companies') }}">
             @csrf<div class="crm-grid">
                 <div class="crm-col-12 crm-field">
                     <label>CSV file</label>

@@ -12,7 +12,7 @@ class CompaniesGoogleScrapePageTest extends TestCase
 
     public function test_google_scrape_page_loads_in_companies_workspace(): void
     {
-        $response = $this->get(route('companies.googleScrape'));
+        $response = $this->get(route('crm.companies.googleScrape'));
 
         $response->assertOk();
         $response->assertViewIs('crm::companies.google-scrape');
@@ -24,7 +24,7 @@ class CompaniesGoogleScrapePageTest extends TestCase
 
     public function test_companies_midrail_shows_google_scrape_entry_on_page(): void
     {
-        $response = $this->get(route('companies.googleScrape'));
+        $response = $this->get(route('crm.companies.googleScrape'));
 
         $response->assertOk();
         $response->assertViewIs('crm::companies.google-scrape');
@@ -44,7 +44,7 @@ class CompaniesGoogleScrapePageTest extends TestCase
             'imported_companies_count' => 9,
         ]);
 
-        $response = $this->get(route('companies.googleScrape', ['usage_range' => 30]));
+        $response = $this->get(route('crm.companies.googleScrape', ['usage_range' => 30]));
 
         $response->assertOk();
         $response->assertViewIs('crm::companies.google-scrape');

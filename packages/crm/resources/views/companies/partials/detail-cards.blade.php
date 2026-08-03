@@ -57,7 +57,7 @@
             <dd class="col-md-9">
                 <form
                     method="POST"
-                    action="{{ route('companies.callback.update', $company) }}"
+                    action="{{ route('crm.companies.callback.update', $company) }}"
                     class="crm-callback-form">
                     @csrf
                     @method('PATCH')
@@ -114,7 +114,7 @@
             <dd class="col-md-9">
                 <form
                     method="POST"
-                    action="{{ route('companies.classification.update', $company) }}"
+                    action="{{ route('crm.companies.classification.update', $company) }}"
                     class="crm-company-classification-form">
                     @csrf
                     @method('PATCH')

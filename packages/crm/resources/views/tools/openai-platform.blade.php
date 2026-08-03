@@ -25,12 +25,12 @@
     <section class="crm-card">
         <h2>Usage key</h2>
         @if ($hasUsageApiKey)
-            <form method="POST" action="{{ route('tools.openAiPlatform.usageKey.remove') }}">
+            <form method="POST" action="{{ route('crm.tools.openAiPlatform.usageKey.remove') }}">
                 @csrf<button class="crm-button crm-button-danger"
                     data-confirm="Remove the OpenAI usage key?"
                 >Remove Usage Key</button>
         </form>@else<form method="POST"
-                action="{{ route('tools.openAiPlatform.usageKey.store') }}">
+                action="{{ route('crm.tools.openAiPlatform.usageKey.store') }}">
                 @csrf<div class="crm-field">
                     <label>Usage API key</label>
                     <input

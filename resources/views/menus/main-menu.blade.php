@@ -24,7 +24,7 @@
         </a>
         <a
             class="app-navbar-icon"
-            href="{{ route('jobs') }}"
+            href="{{ route('jobs.index') }}"
             aria-label="Jobs"
             title="Jobs">
             <svg
@@ -49,7 +49,7 @@
         </a>
         <a
             class="app-navbar-icon"
-            href="{{ route('companies.index') }}"
+            href="{{ route('crm.companies.index') }}"
             aria-label="CRM"
             title="CRM">
             <svg

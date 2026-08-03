@@ -13,7 +13,7 @@
 
         <form
             method="GET"
-            action="{{ route('job-search') }}"
+            action="{{ route('jobs.search') }}"
             class="card shadow-sm mb-4">
             <div class="card-body">
                 <div class="row g-3">
@@ -168,7 +168,7 @@
             </div>
             <div class="card-footer d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Search jobs</button>
-                <a href="{{ route('job-search') }}" class="btn btn-outline-secondary">Clear
+                <a href="{{ route('jobs.search') }}" class="btn btn-outline-secondary">Clear
                     filters</a>
             </div>
         </form>

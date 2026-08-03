@@ -1,10 +1,10 @@
-@extends('crm::layouts.app')
+@extends('layouts.app')
 
 @section('title', $status['name']) @section('heading', $status['name']) @section('subtitle',
 'System-defined company status.')
 
 @section('actions')
-    <a class="crm-button" href="{{ route('statuses.index') }}">Back to
+    <a class="crm-button" href="{{ route('crm.statuses.index') }}">Back to
         Statuses</a>
 @endsection
 

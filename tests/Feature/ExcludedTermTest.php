@@ -23,25 +23,25 @@ class ExcludedTermTest extends FeatureTestCase
             createdAt: now(),
         );
 
-        $this->post(route('excluded-terms.store'), ['term' => '.NET'])
-            ->assertRedirect(route('excluded-terms.index'));
+        $this->post(route('jobs.excluded-terms.store'), ['term' => '.NET'])
+            ->assertRedirect(route('jobs.excluded-terms.index'));
 
         $this->assertDatabaseHas('excluded_terms', ['term' => '.NET', 'term_key' => '.net']);
         $this->assertDatabaseHas('job_listings', ['id' => $matching->id, 'status' => 'not_interested']);
-        $this->get(route('jobs'))->assertDontSee($matching->title)->assertSee($other->title);
-        $this->get(route('excluded-terms.index'))->assertOk()->assertSee('Excluded terms (1)');
+        $this->get(route('jobs.index'))->assertDontSee($matching->title)->assertSee($other->title);
+        $this->get(route('jobs.excluded-terms.index'))->assertOk()->assertSee('Excluded terms (1)');
     }
 
     public function test_excluded_terms_can_be_edited_and_deleted(): void
     {
         $term = ExcludedTerm::query()->create(['term' => '.NET', 'term_key' => '.net']);
 
-        $this->put(route('excluded-terms.update', $term), ['term' => 'Java'])
-            ->assertRedirect(route('excluded-terms.index'));
+        $this->put(route('jobs.excluded-terms.update', $term), ['term' => 'Java'])
+            ->assertRedirect(route('jobs.excluded-terms.index'));
         $this->assertDatabaseHas('excluded_terms', ['id' => $term->id, 'term' => 'Java', 'term_key' => 'java']);
 
-        $this->delete(route('excluded-terms.destroy', $term))
-            ->assertRedirect(route('excluded-terms.index'));
+        $this->delete(route('jobs.excluded-terms.destroy', $term))
+            ->assertRedirect(route('jobs.excluded-terms.index'));
         $this->assertDatabaseMissing('excluded_terms', ['id' => $term->id]);
     }
 }

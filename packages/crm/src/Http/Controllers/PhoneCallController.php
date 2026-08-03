@@ -20,7 +20,7 @@ class PhoneCallController extends Controller
 
         if (!$request->expectsJson()) {
             return redirect()
-                ->route('companies.show', $company)
+                ->route('crm.companies.show', $company)
                 ->with('success', 'Phone call saved.');
         }
 

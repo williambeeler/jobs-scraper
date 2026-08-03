@@ -9,7 +9,7 @@
 
         <form
             method="POST"
-            action="{{ route('learning-topics.update', $topic) }}"
+            action="{{ route('learning.agenda.topics.update', $topic) }}"
             class="card card-body shadow-sm">
             @csrf
             @method('PUT')
@@ -72,7 +72,7 @@
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-primary" type="submit">Save changes</button>
-                <a class="btn btn-outline-secondary" href="{{ route('learning') }}">Cancel</a>
+                <a class="btn btn-outline-secondary" href="{{ route('learning.agenda') }}">Cancel</a>
             </div>
         </form>
     </main>

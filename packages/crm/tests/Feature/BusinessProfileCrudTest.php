@@ -12,19 +12,19 @@ class BusinessProfileCrudTest extends TestCase
 
     public function test_business_profiles_can_be_listed_created_and_updated(): void
     {
-        $this->get(route('my-business.index'))
+        $this->get(route('crm.my-business.index'))
             ->assertOk()
             ->assertViewIs('crm::my-business.index')
             ->assertViewHas('mode', 'create');
 
-        $this->post(route('my-business.address.store'), $this->profileData([
+        $this->post(route('crm.my-business.address.store'), $this->profileData([
             'business_name' => 'First Business',
-        ]))->assertRedirect(route('my-business.index', ['tab' => 'address']));
+        ]))->assertRedirect(route('crm.my-business.index', ['tab' => 'address']));
 
         $business = BusinessProfile::query()->sole();
         $this->assertTrue($business->is_default);
 
-        $this->patch(route('my-business.address.update', $business), $this->profileData([
+        $this->patch(route('crm.my-business.address.update', $business), $this->profileData([
             'business_name' => 'Updated Business',
         ]))->assertRedirect();
 
@@ -45,8 +45,8 @@ class BusinessProfileCrudTest extends TestCase
             'is_default' => false,
         ]));
 
-        $this->delete(route('my-business.destroy', $default))
-            ->assertRedirect(route('my-business.index', ['tab' => 'address']));
+        $this->delete(route('crm.my-business.destroy', $default))
+            ->assertRedirect(route('crm.my-business.index', ['tab' => 'address']));
 
         $this->assertModelMissing($default);
         $this->assertTrue($replacement->fresh()->is_default);

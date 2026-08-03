@@ -10,13 +10,13 @@ class ScrapeScheduleTest extends FeatureTestCase
 {
     public function test_scrape_configuration_can_be_saved_and_listed(): void
     {
-        $this->post(route('cron.store'), [
+        $this->post(route('jobs.cron.store'), [
             'keywords' => 'wordpress developer remote',
             'sources' => ['linkedin', 'dice'],
             'max_days' => 5,
             'interval_hours' => 6,
             'is_active' => true,
-        ])->assertRedirect(route('cron'))
+        ])->assertRedirect(route('jobs.cron'))
             ->assertSessionHas('status', 'Scrape configuration saved.');
 
         $this->assertDatabaseHas('scrape_schedules', [
@@ -26,7 +26,7 @@ class ScrapeScheduleTest extends FeatureTestCase
             'is_active' => true,
         ]);
 
-        $this->get(route('cron'))
+        $this->get(route('jobs.cron'))
             ->assertOk()
             ->assertSee('wordpress developer remote')
             ->assertSee('LinkedIn')
@@ -44,14 +44,14 @@ class ScrapeScheduleTest extends FeatureTestCase
             'is_active' => true,
         ];
 
-        $this->post(route('cron.store'), $configuration)
-            ->assertRedirect(route('cron'));
+        $this->post(route('jobs.cron.store'), $configuration)
+            ->assertRedirect(route('jobs.cron'));
 
-        $this->post(route('cron.store'), [
+        $this->post(route('jobs.cron.store'), [
             ...$configuration,
             'sources' => ['dice', 'linkedin'],
             'interval_hours' => 12,
-        ])->assertRedirect(route('cron'))
+        ])->assertRedirect(route('jobs.cron'))
             ->assertSessionHas('status', 'Scrape configuration updated.');
 
         $this->assertDatabaseCount('scrape_schedules', 1);
@@ -63,15 +63,15 @@ class ScrapeScheduleTest extends FeatureTestCase
 
     public function test_full_board_sources_can_be_saved_in_a_scrape_configuration(): void
     {
-        $this->post(route('cron.store'), [
+        $this->post(route('jobs.cron.store'), [
             'keywords' => '',
             'sources' => ['wordpress_jobs', 'larajobs'],
             'max_days' => 7,
             'interval_hours' => 12,
             'is_active' => true,
-        ])->assertRedirect(route('cron'));
+        ])->assertRedirect(route('jobs.cron'));
 
-        $this->get(route('cron'))
+        $this->get(route('jobs.cron'))
             ->assertOk()
             ->assertSee('WordPress Jobs')
             ->assertSee('LaraJobs');
@@ -79,7 +79,7 @@ class ScrapeScheduleTest extends FeatureTestCase
 
     public function test_keyword_search_sources_still_require_keywords(): void
     {
-        $this->post(route('cron.store'), [
+        $this->post(route('jobs.cron.store'), [
             'keywords' => '',
             'sources' => ['linkedin'],
             'max_days' => 7,
@@ -90,22 +90,22 @@ class ScrapeScheduleTest extends FeatureTestCase
 
     public function test_working_nomads_can_be_saved_as_a_keyword_source(): void
     {
-        $this->post(route('cron.store'), [
+        $this->post(route('jobs.cron.store'), [
             'keywords' => 'wordpress remote',
             'sources' => ['working_nomads'],
             'max_days' => 7,
             'interval_hours' => 12,
             'is_active' => true,
-        ])->assertRedirect(route('cron'));
+        ])->assertRedirect(route('jobs.cron'));
 
-        $this->get(route('cron'))
+        $this->get(route('jobs.cron'))
             ->assertOk()
             ->assertSee('Working Nomads');
     }
 
     public function test_cron_page_lists_configurations_before_the_form(): void
     {
-        $this->get(route('cron'))
+        $this->get(route('jobs.cron'))
             ->assertOk()
             ->assertSeeInOrder(['Saved configurations', 'Add configuration']);
     }
@@ -121,19 +121,19 @@ class ScrapeScheduleTest extends FeatureTestCase
             'is_active' => true,
         ]);
 
-        $this->get(route('cron.edit', $schedule))
+        $this->get(route('jobs.cron.edit', $schedule))
             ->assertOk()
             ->assertSee('Edit configuration')
             ->assertSee('value="wordpress remote"', false)
             ->assertSee('Update configuration');
 
-        $this->put(route('cron.update', $schedule), [
+        $this->put(route('jobs.cron.update', $schedule), [
             'keywords' => 'laravel remote',
             'sources' => ['dice', 'working_nomads'],
             'max_days' => 3,
             'interval_hours' => 12,
             'is_active' => false,
-        ])->assertRedirect(route('cron'))
+        ])->assertRedirect(route('jobs.cron'))
             ->assertSessionHas('status', 'Scrape configuration updated.');
 
         $this->assertDatabaseHas('scrape_schedules', [
@@ -156,8 +156,8 @@ class ScrapeScheduleTest extends FeatureTestCase
             'is_active' => true,
         ]);
 
-        $this->delete(route('cron.destroy', $schedule))
-            ->assertRedirect(route('cron'))
+        $this->delete(route('jobs.cron.destroy', $schedule))
+            ->assertRedirect(route('jobs.cron'))
             ->assertSessionHas('status', 'Scrape configuration deleted.');
 
         $this->assertDatabaseMissing('scrape_schedules', ['id' => $schedule->id]);
@@ -186,8 +186,8 @@ class ScrapeScheduleTest extends FeatureTestCase
             ])
             ->andReturn(0);
 
-        $this->post(route('cron.schedule.run', $schedule))
-            ->assertRedirect(route('cron'))
+        $this->post(route('jobs.cron.schedule.run', $schedule))
+            ->assertRedirect(route('jobs.cron'))
             ->assertSessionHas('status', 'Scrape configuration completed.');
 
         $schedule->refresh();
@@ -199,9 +199,9 @@ class ScrapeScheduleTest extends FeatureTestCase
     {
         config(['services.scrape_cron.token' => 'test-cron-token']);
 
-        $this->get(route('cron.run'))->assertForbidden();
-        $this->withToken('wrong-token')->get(route('cron.run'))->assertForbidden();
-        $this->withToken('test-cron-token')->get(route('cron.run'))->assertNoContent();
+        $this->get(route('jobs.cron.run'))->assertForbidden();
+        $this->withToken('wrong-token')->get(route('jobs.cron.run'))->assertForbidden();
+        $this->withToken('test-cron-token')->get(route('jobs.cron.run'))->assertNoContent();
     }
 
     public function test_schedule_runner_succeeds_when_no_configurations_are_due(): void

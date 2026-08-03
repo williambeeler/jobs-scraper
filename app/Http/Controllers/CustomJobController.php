@@ -51,6 +51,6 @@ class CustomJobController extends Controller
 
         $transition->handle($listing, KanbanStatus::Interested);
 
-        return redirect()->route('kanban')->with('status', 'Custom job added.');
+        return redirect()->route('jobs.kanban')->with('status', 'Custom job added.');
     }
 }

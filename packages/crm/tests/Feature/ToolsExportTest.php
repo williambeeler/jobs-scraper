@@ -35,7 +35,7 @@ class ToolsExportTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->get(route('tools.export'));
+        $response = $this->get(route('crm.tools.export'));
 
         $response->assertOk();
         $response->assertViewIs('crm::tools.export');

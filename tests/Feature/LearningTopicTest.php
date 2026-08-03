@@ -10,7 +10,15 @@ class LearningTopicTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_learning_center_lists_topics(): void
+    public function test_learning_dashboard_links_to_the_agenda(): void
+    {
+        $this->get(route('learning'))
+            ->assertOk()
+            ->assertSee('Dashboard')
+            ->assertSee(route('learning.agenda'));
+    }
+
+    public function test_learning_agenda_lists_topics(): void
     {
         LearningTopic::query()->create([
             'title' => 'ColdFusion',
@@ -19,7 +27,7 @@ class LearningTopicTest extends TestCase
             'priority' => 'high',
         ]);
 
-        $this->get(route('learning'))
+        $this->get(route('learning.agenda'))
             ->assertOk()
             ->assertSee('Topic agenda')
             ->assertSee('ColdFusion');
@@ -27,12 +35,12 @@ class LearningTopicTest extends TestCase
 
     public function test_topic_can_be_created(): void
     {
-        $this->post(route('learning-topics.store'), [
+        $this->post(route('learning.agenda.topics.store'), [
             'title' => 'Advanced React',
             'description' => 'Study rendering and composition patterns.',
             'status' => 'in_progress',
             'priority' => 'medium',
-        ])->assertRedirect(route('learning'));
+        ])->assertRedirect(route('learning.agenda'));
 
         $this->assertDatabaseHas('learning_topics', [
             'title' => 'Advanced React',
@@ -48,12 +56,12 @@ class LearningTopicTest extends TestCase
             'priority' => 'medium',
         ]);
 
-        $this->put(route('learning-topics.update', $topic), [
+        $this->put(route('learning.agenda.topics.update', $topic), [
             'title' => 'Complex React patterns',
             'description' => null,
             'status' => 'completed',
             'priority' => 'high',
-        ])->assertRedirect(route('learning'));
+        ])->assertRedirect(route('learning.agenda'));
 
         $this->assertDatabaseHas('learning_topics', [
             'id' => $topic->id,
@@ -70,15 +78,15 @@ class LearningTopicTest extends TestCase
             'priority' => 'low',
         ]);
 
-        $this->delete(route('learning-topics.destroy', $topic))
-            ->assertRedirect(route('learning'));
+        $this->delete(route('learning.agenda.topics.destroy', $topic))
+            ->assertRedirect(route('learning.agenda'));
 
         $this->assertDatabaseMissing('learning_topics', ['id' => $topic->id]);
     }
 
     public function test_topic_fields_are_validated(): void
     {
-        $this->post(route('learning-topics.store'), [
+        $this->post(route('learning.agenda.topics.store'), [
             'title' => '',
             'status' => 'unknown',
             'priority' => 'urgent',

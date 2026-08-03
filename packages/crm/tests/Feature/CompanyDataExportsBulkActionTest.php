@@ -46,7 +46,7 @@ class CompanyDataExportsBulkActionTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->post(route('companies.bulk-action'), [
+        $response = $this->post(route('crm.companies.bulk-action'), [
             'bulk_action' => 'export_csv',
             'scope' => 'selected',
             'companies' => [$selectedCompany->id],
@@ -93,7 +93,7 @@ class CompanyDataExportsBulkActionTest extends TestCase
         ]);
         $selectedCompany->attachTag('Priority', 'tag');
 
-        $response = $this->post(route('companies.bulk-action'), [
+        $response = $this->post(route('crm.companies.bulk-action'), [
             'bulk_action' => 'export_excel',
             'scope' => 'selected',
             'companies' => [$selectedCompany->id],
@@ -137,7 +137,7 @@ class CompanyDataExportsBulkActionTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->post(route('companies.bulk-action'), [
+        $response = $this->post(route('crm.companies.bulk-action'), [
             'bulk_action' => 'export_pdf',
             'scope' => 'selected',
             'companies' => [$selectedCompany->id],
@@ -191,7 +191,7 @@ class CompanyDataExportsBulkActionTest extends TestCase
             'poc_name' => 'Ignore Person',
         ]);
 
-        $response = $this->post(route('companies.bulk-action'), [
+        $response = $this->post(route('crm.companies.bulk-action'), [
             'bulk_action' => 'export_vcard',
             'scope' => 'selected',
             'companies' => [$companyOne->id, $companyTwo->id],

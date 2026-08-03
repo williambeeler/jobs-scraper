@@ -26,7 +26,7 @@ class ExcludedTermController extends Controller
         ExcludedTerm::query()->create(['term' => $term, 'term_key' => ExcludedTerm::key($term)]);
         $this->markMatchingListingsNotInterested($term);
 
-        return to_route('excluded-terms.index')->with('status', 'Excluded term added.');
+        return to_route('jobs.excluded-terms.index')->with('status', 'Excluded term added.');
     }
 
     public function edit(ExcludedTerm $excludedTerm): View
@@ -40,14 +40,14 @@ class ExcludedTermController extends Controller
         $excludedTerm->update(['term' => $term, 'term_key' => ExcludedTerm::key($term)]);
         $this->markMatchingListingsNotInterested($term);
 
-        return to_route('excluded-terms.index')->with('status', 'Excluded term updated.');
+        return to_route('jobs.excluded-terms.index')->with('status', 'Excluded term updated.');
     }
 
     public function destroy(ExcludedTerm $excludedTerm): RedirectResponse
     {
         $excludedTerm->delete();
 
-        return to_route('excluded-terms.index')->with('status', 'Excluded term removed.');
+        return to_route('jobs.excluded-terms.index')->with('status', 'Excluded term removed.');
     }
 
     private function validatedTerm(Request $request, ?ExcludedTerm $excluding = null): string

@@ -31,11 +31,11 @@ class JobStatusTest extends FeatureTestCase
             'status' => 'applied',
         ]);
 
-        $this->get(route('jobs'))
+        $this->get(route('jobs.index'))
             ->assertOk()
             ->assertDontSee($listing->title);
 
-        $this->get(route('applied-to'))
+        $this->get(route('jobs.applied-to'))
             ->assertOk()
             ->assertSee($listing->title)
             ->assertSee('Applied: Jul 13, 2026 7:00 AM')
@@ -62,8 +62,8 @@ class JobStatusTest extends FeatureTestCase
             'status' => 'not_interested',
         ]);
 
-        $this->get(route('jobs'))->assertDontSee($listing->title);
-        $this->get(route('applied-to'))->assertDontSee($listing->title);
+        $this->get(route('jobs.index'))->assertDontSee($listing->title);
+        $this->get(route('jobs.applied-to'))->assertDontSee($listing->title);
     }
 
     public function test_applied_jobs_are_grouped_into_lists_by_the_local_application_date(): void
@@ -86,7 +86,7 @@ class JobStatusTest extends FeatureTestCase
         $newer->update(['status' => 'applied', 'status_changed_at' => '2026-07-13 12:00:00 UTC']);
         $older->update(['status' => 'applied', 'status_changed_at' => '2026-07-12 16:00:00 UTC']);
 
-        $response = $this->get(route('applied-to'))
+        $response = $this->get(route('jobs.applied-to'))
             ->assertOk()
             ->assertSeeInOrder([
                 'Monday, July 13, 2026',

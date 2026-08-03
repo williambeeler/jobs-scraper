@@ -52,7 +52,7 @@ class StatusController extends Controller
                         'color' => $status->color,
                         'is_default' => (bool) $status->is_default,
                         'created_at_label' => $status->created_at?->format('M j, Y'),
-                        'show_url' => route('statuses.show', $status),
+                        'show_url' => route('crm.statuses.show', $status),
                     ])
                     ->values()
                     ->all(),
@@ -92,12 +92,12 @@ class StatusController extends Controller
 
     public function create()
     {
-        return redirect()->route('statuses.index')->with('success', 'Statuses are system-defined and cannot be edited.');
+        return redirect()->route('crm.statuses.index')->with('success', 'Statuses are system-defined and cannot be edited.');
     }
 
     public function store(Request $request)
     {
-        return redirect()->route('statuses.index')->with('success', 'Statuses are system-defined and cannot be edited.');
+        return redirect()->route('crm.statuses.index')->with('success', 'Statuses are system-defined and cannot be edited.');
     }
 
     public function show(Status $status)
@@ -116,16 +116,16 @@ class StatusController extends Controller
 
     public function edit(Status $status)
     {
-        return redirect()->route('statuses.show', $status)->with('success', 'Statuses are system-defined and cannot be edited.');
+        return redirect()->route('crm.statuses.show', $status)->with('success', 'Statuses are system-defined and cannot be edited.');
     }
 
     public function update(Request $request, Status $status)
     {
-        return redirect()->route('statuses.show', $status)->with('success', 'Statuses are system-defined and cannot be edited.');
+        return redirect()->route('crm.statuses.show', $status)->with('success', 'Statuses are system-defined and cannot be edited.');
     }
 
     public function destroy(Status $status)
     {
-        return redirect()->route('statuses.index')->with('success', 'Statuses are system-defined and cannot be edited.');
+        return redirect()->route('crm.statuses.index')->with('success', 'Statuses are system-defined and cannot be edited.');
     }
 }

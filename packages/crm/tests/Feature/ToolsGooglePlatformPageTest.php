@@ -77,7 +77,7 @@ class ToolsGooglePlatformPageTest extends TestCase
 
         $this->app->instance(GoogleCloudPlatformService::class, $service);
 
-        $response = $this->get(route('tools.googlePlatform'));
+        $response = $this->get(route('crm.tools.googlePlatform'));
 
         $response->assertOk();
         $response->assertViewIs('crm::tools.google-platform');
@@ -143,7 +143,7 @@ class ToolsGooglePlatformPageTest extends TestCase
 
         $this->app->instance(GoogleCloudPlatformService::class, $service);
 
-        $response = $this->get(route('tools.googlePlatform'));
+        $response = $this->get(route('crm.tools.googlePlatform'));
 
         $response->assertOk();
         $response->assertViewIs('crm::tools.google-platform');
@@ -158,9 +158,9 @@ class ToolsGooglePlatformPageTest extends TestCase
         config()->set('services.google.oauth_client_id', null);
         config()->set('services.google.oauth_client_secret', null);
 
-        $response = $this->get(route('tools.googlePlatform.oauth.redirect'));
+        $response = $this->get(route('crm.tools.googlePlatform.oauth.redirect'));
 
-        $response->assertRedirect(route('tools.googlePlatform'));
+        $response->assertRedirect(route('crm.tools.googlePlatform'));
         $response->assertSessionHas('error');
     }
 
@@ -174,9 +174,9 @@ class ToolsGooglePlatformPageTest extends TestCase
             $mock->shouldReceive('clearCache')->once();
         });
 
-        $response = $this->post(route('tools.googlePlatform.remove'));
+        $response = $this->post(route('crm.tools.googlePlatform.remove'));
 
-        $response->assertRedirect(route('tools.googlePlatform'));
+        $response->assertRedirect(route('crm.tools.googlePlatform'));
         $response->assertSessionHas('success', 'Google account disconnected.');
     }
 }

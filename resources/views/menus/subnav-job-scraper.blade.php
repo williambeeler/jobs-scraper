@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand bg-white border-bottom shadow-sm">
     <div class="container d-flex gap-4">
-        <a class="navbar-brand fw-bold mb-0" href="{{ route('jobs') }}">Job Scraper</a>
+        <a class="navbar-brand fw-bold mb-0" href="{{ route('jobs.index') }}">Job Scraper</a>
         <div class="navbar-nav flex-row gap-3">
             <div class="nav-item dropdown">
                 <button
@@ -11,11 +11,11 @@
                     Tools
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ route('applied-to') }}">Applied to</a>
+                    <li><a class="dropdown-item" href="{{ route('jobs.applied-to') }}">Applied to</a>
                     </li>
-                    <li><a class="dropdown-item" href="{{ route('calendar') }}">Calendar</a></li>
-                    <li><a class="dropdown-item" href="{{ route('kanban') }}">Kanban</a></li>
-                    <li><a class="dropdown-item" href="{{ route('job-search') }}">Job Search</a>
+                    <li><a class="dropdown-item" href="{{ route('jobs.calendar') }}">Calendar</a></li>
+                    <li><a class="dropdown-item" href="{{ route('jobs.kanban') }}">Kanban</a></li>
+                    <li><a class="dropdown-item" href="{{ route('jobs.search') }}">Job Search</a>
                     </li>
                 </ul>
             </div>
@@ -29,17 +29,17 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item"
-                            href="{{ route('company-preferences.index') }}">Companies List</a></li>
-                    <li><a class="dropdown-item" href="{{ route('cron') }}">Cron</a></li>
+                            href="{{ route('jobs.company-preferences.index') }}">Companies List</a></li>
+                    <li><a class="dropdown-item" href="{{ route('jobs.cron') }}">Cron</a></li>
                     <li><a class="dropdown-item"
-                            href="{{ route('excluded-terms.index') }}">{{ 'Excluded terms' }}</a>
+                            href="{{ route('jobs.excluded-terms.index') }}">{{ 'Excluded terms' }}</a>
                     </li>
                 </ul>
             </div>
         </div>
         <form
             method="GET"
-            action="{{ route('jobs') }}"
+            action="{{ route('jobs.index') }}"
             class="d-flex align-items-center gap-2 ms-auto">
             <label for="job-date" class="form-label mb-0 text-nowrap fw-semibold">Choose
                 date</label>

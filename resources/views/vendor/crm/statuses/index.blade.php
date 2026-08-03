@@ -1,4 +1,4 @@
-@extends('crm::layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Statuses') @section('heading', 'Statuses & Relationships') @section('subtitle',
 'Review the system classifications available to CRM companies.')

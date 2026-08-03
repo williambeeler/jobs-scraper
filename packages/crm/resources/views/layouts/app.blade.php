@@ -13,18 +13,18 @@
     <body>
         <nav class="crm-nav" aria-label="CRM navigation">
             <div class="crm-nav-inner">
-                <a class="crm-brand" href="{{ route('companies.index') }}">CRM</a>
-                <a class="{{ request()->routeIs('companies.*') ? 'active' : '' }}"
-                    href="{{ route('companies.index') }}"
+                <a class="crm-brand" href="{{ route('crm.companies.index') }}">CRM</a>
+                <a class="{{ request()->routeIs('crm.companies.*') ? 'active' : '' }}"
+                    href="{{ route('crm.companies.index') }}"
                 >Companies</a>
-                <a class="{{ request()->routeIs('saved-searches.*') ? 'active' : '' }}"
-                    href="{{ route('saved-searches.index') }}"
+                <a class="{{ request()->routeIs('crm.saved-searches.*') ? 'active' : '' }}"
+                    href="{{ route('crm.saved-searches.index') }}"
                 >Saved Searches</a>
-                <a class="{{ request()->routeIs('my-business.*') ? 'active' : '' }}"
-                    href="{{ route('my-business.index') }}"
+                <a class="{{ request()->routeIs('crm.my-business.*') ? 'active' : '' }}"
+                    href="{{ route('crm.my-business.index') }}"
                 >My Business</a>
-                <a class="{{ request()->routeIs('tools.*', 'statuses.*') ? 'active' : '' }}"
-                    href="{{ route('tools.index') }}"
+                <a class="{{ request()->routeIs('crm.tools.*', 'crm.statuses.*') ? 'active' : '' }}"
+                    href="{{ route('crm.tools.index') }}"
                 >Tools</a>
             </div>
         </nav>

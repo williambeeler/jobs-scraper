@@ -27,7 +27,7 @@ class HomeAndCalendarTest extends FeatureTestCase
             createdAt: now()->subDay(),
         );
 
-        $this->get(route('jobs'))
+        $this->get(route('jobs.index'))
             ->assertOk()
             ->assertViewIs('home')
             ->assertSee('Monday, July 13, 2026')
@@ -75,7 +75,7 @@ class HomeAndCalendarTest extends FeatureTestCase
             createdAt: now()->subDay(),
         );
 
-        $this->get(route('jobs', ['date' => '2026-07-12']))
+        $this->get(route('jobs.index', ['date' => '2026-07-12']))
             ->assertOk()
             ->assertSee('Sunday, July 12, 2026')
             ->assertSee('value="2026-07-12"', false)
@@ -94,7 +94,7 @@ class HomeAndCalendarTest extends FeatureTestCase
             createdAt: now(),
         );
 
-        $this->get(route('jobs'))
+        $this->get(route('jobs.index'))
             ->assertOk()
             ->assertSee('Monday, July 13, 2026')
             ->assertSee('value="2026-07-13"', false)
@@ -106,7 +106,7 @@ class HomeAndCalendarTest extends FeatureTestCase
     {
         Carbon::setTestNow('2026-07-13 12:00:00');
 
-        $this->get(route('jobs'))
+        $this->get(route('jobs.index'))
             ->assertOk()
             ->assertSee('No jobs were first scraped on July 13, 2026.');
     }
@@ -138,7 +138,7 @@ class HomeAndCalendarTest extends FeatureTestCase
             createdAt: Carbon::parse('2026-08-02 12:00:00 UTC'),
         );
 
-        $this->getJson(route('calendar.counts', [
+        $this->getJson(route('jobs.calendar.counts', [
             'start' => '2026-07-01',
             'end' => '2026-08-01',
         ]))->assertOk()->assertExactJson([

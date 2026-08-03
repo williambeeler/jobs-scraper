@@ -89,17 +89,17 @@
                                     <td>
                                         <div class="d-flex justify-content-end gap-2">
                                             <form method="POST"
-                                                action="{{ route('cron.schedule.run', $schedule) }}">
+                                                action="{{ route('jobs.cron.schedule.run', $schedule) }}">
                                                 @csrf
                                                 <button type="submit"
                                                     class="btn btn-sm btn-success">Run now</button>
                                             </form>
-                                            <a href="{{ route('cron.edit', $schedule) }}"
+                                            <a href="{{ route('jobs.cron.edit', $schedule) }}"
                                                 class="btn btn-sm btn-outline-primary"
                                             >Edit</a>
                                             <form
                                                 method="POST"
-                                                action="{{ route('cron.destroy', $schedule) }}"
+                                                action="{{ route('jobs.cron.destroy', $schedule) }}"
                                                 onsubmit="return confirm('Delete this scrape configuration? This cannot be undone.')">
                                                 @csrf
                                                 @method('DELETE')
@@ -123,14 +123,14 @@
                     {{ $editingSchedule ? 'Edit configuration' : 'Add configuration' }}
                 </h2>
                 @if ($editingSchedule)
-                    <a href="{{ route('cron') }}" class="btn btn-sm btn-outline-secondary">Cancel
+                    <a href="{{ route('jobs.cron') }}" class="btn btn-sm btn-outline-secondary">Cancel
                         editing</a>
                 @endif
             </div>
 
             <form
                 method="POST"
-                action="{{ $editingSchedule ? route('cron.update', $editingSchedule) : route('cron.store') }}"
+                action="{{ $editingSchedule ? route('jobs.cron.update', $editingSchedule) : route('jobs.cron.store') }}"
                 class="card shadow-sm">
                 @csrf
                 @if ($editingSchedule)
@@ -235,7 +235,7 @@
                         {{ $editingSchedule ? 'Update configuration' : 'Save configuration' }}
                     </button>
                     @if ($editingSchedule)
-                        <a href="{{ route('cron') }}" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="{{ route('jobs.cron') }}" class="btn btn-outline-secondary">Cancel</a>
                     @endif
                 </div>
             </form>

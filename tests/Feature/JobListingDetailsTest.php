@@ -36,7 +36,7 @@ class JobListingDetailsTest extends FeatureTestCase
         $this->assertSame(JobListing::class, $note->notable_type);
         $this->assertSame($listing->id, $note->notable_id);
         $this->assertSame('<p>Recruiter confirmed the <mark>salary range</mark>.</p>', $note->body);
-        $this->get(route('jobs'))
+        $this->get(route('jobs.index'))
             ->assertOk()
             ->assertSee('Edit details &amp; notes', false)
             ->assertSee('Recruiter confirmed the')

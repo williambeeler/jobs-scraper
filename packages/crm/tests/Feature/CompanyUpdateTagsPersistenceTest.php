@@ -25,14 +25,14 @@ class CompanyUpdateTagsPersistenceTest extends TestCase
         $company->attachTag('Legacy Tag', 'tag');
         $company->attachTag('Legacy Campaign', 'campaign');
 
-        $response = $this->put(route('companies.update', $company), [
+        $response = $this->put(route('crm.companies.update', $company), [
             'name' => 'Acme Roofing',
             'status_id' => $status->id,
             'tags' => 'Priority, Follow Up',
             'campaigns' => 'Spring 2026, Retarget',
         ]);
 
-        $response->assertRedirect(route('companies.show', $company));
+        $response->assertRedirect(route('crm.companies.show', $company));
 
         $fresh = $company->fresh();
         $this->assertSame(

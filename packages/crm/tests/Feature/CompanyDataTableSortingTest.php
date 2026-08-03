@@ -30,7 +30,7 @@ class CompanyDataTableSortingTest extends TestCase
         ]);
         $companyB->attachTag('Fall Campaign', 'campaign');
 
-        $response = $this->get(route('companies.data', [
+        $response = $this->get(route('crm.companies.data', [
             'draw' => 1,
             'start' => 0,
             'length' => 10,

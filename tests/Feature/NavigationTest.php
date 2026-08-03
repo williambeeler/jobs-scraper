@@ -6,23 +6,23 @@ class NavigationTest extends FeatureTestCase
 {
     public function test_public_navigation_pages_are_available(): void
     {
-        $this->get(route('cron'))
+        $this->get(route('jobs.cron'))
             ->assertOk()
             ->assertSee('Job Scraper')
             ->assertSee('navbar navbar-expand bg-white', false)
             ->assertSee('data-bs-toggle="dropdown"', false)
             ->assertSeeInOrder(['Tools', 'Applied to', 'Settings', 'Companies List', 'Cron', 'Excluded terms'])
-            ->assertSee(route('company-preferences.index'), false)
+            ->assertSee(route('jobs.company-preferences.index'), false)
             ->assertSee('aria-label="Home"', false)
             ->assertSee('aria-label="Settings"', false);
 
-        $this->get(route('applied-to'))
+        $this->get(route('jobs.applied-to'))
             ->assertOk()
             ->assertSee('Job Scraper')
             ->assertSee('aria-label="Jobs"', false)
             ->assertSee('aria-label="Bible"', false);
 
-        $this->get(route('kanban'))
+        $this->get(route('jobs.kanban'))
             ->assertOk()
             ->assertSeeInOrder([
                 'Backlog',

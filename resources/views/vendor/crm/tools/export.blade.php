@@ -1,4 +1,4 @@
-@extends('crm::layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Export Companies') @section('heading', 'Export Companies') @section('subtitle',
 'Build a downloadable export of CRM company data.')
@@ -8,7 +8,7 @@
         <h2>{{ number_format($companyCount) }} companies ready to export</h2>
         <form
             id="crm-export-form"
-            action="{{ route('tools.exports.start') }}"
+            action="{{ route('crm.tools.exports.start') }}"
             method="POST">
             @csrf<div class="crm-field">
                 <label>Export type</label>

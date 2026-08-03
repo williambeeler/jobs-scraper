@@ -23,7 +23,7 @@ class MyBusinessLabelsTest extends TestCase
             'is_default' => true,
         ]);
 
-        $response = $this->get(route('my-business.labels.print', ['business_id' => $business->id]));
+        $response = $this->get(route('crm.my-business.labels.print', ['business_id' => $business->id]));
 
         $response->assertOk();
         $response->assertHeader('Content-Type', 'application/pdf');

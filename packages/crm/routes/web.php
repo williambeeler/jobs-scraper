@@ -10,6 +10,7 @@ use WilliamBeeler\Crm\Http\Controllers\ToolsController;
 
 Route::middleware(config('crm.route_middleware', ['web']))
     ->prefix(config('crm.route_prefix', 'crm'))
+    ->name('crm.')
     ->group(function (): void {
         Route::get('/saved-searches', [SavedSearchController::class, 'index'])->name('saved-searches.index');
         Route::post('/saved-searches', [SavedSearchController::class, 'store'])->name('saved-searches.store');

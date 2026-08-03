@@ -12,8 +12,8 @@
         <div class="bg-white border rounded shadow-sm p-3 p-md-4">
             <div
                 id="calendar"
-                data-jobs-url="{{ route('jobs') }}"
-                data-counts-url="{{ route('calendar.counts') }}"
+                data-jobs-url="{{ route('jobs.index') }}"
+                data-counts-url="{{ route('jobs.calendar.counts') }}"
             ></div>
         </div>
     </main>

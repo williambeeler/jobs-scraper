@@ -93,7 +93,7 @@ class MyBusinessController extends Controller
         });
 
         return redirect()
-            ->route('my-business.index', ['tab' => 'address'])
+            ->route('crm.my-business.index', ['tab' => 'address'])
             ->with('success', 'Business added successfully.');
     }
 
@@ -121,7 +121,7 @@ class MyBusinessController extends Controller
         });
 
         return redirect()
-            ->route('my-business.index', ['tab' => 'address', 'business_id' => $businessProfile->id])
+            ->route('crm.my-business.index', ['tab' => 'address', 'business_id' => $businessProfile->id])
             ->with('success', 'Business updated successfully.');
     }
 
@@ -140,7 +140,7 @@ class MyBusinessController extends Controller
         });
 
         return redirect()
-            ->route('my-business.index', ['tab' => 'address'])
+            ->route('crm.my-business.index', ['tab' => 'address'])
             ->with('success', 'Business deleted successfully.');
     }
 

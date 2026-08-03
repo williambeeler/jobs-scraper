@@ -11,7 +11,7 @@ class ToolsBackupsPageTest extends TestCase
 {
     public function test_tools_page_loads_with_backups_tab(): void
     {
-        $response = $this->get(route('tools.index'));
+        $response = $this->get(route('crm.tools.index'));
 
         $response->assertOk();
         $response->assertViewIs('crm::tools.index');
@@ -32,9 +32,9 @@ class ToolsBackupsPageTest extends TestCase
         Artisan::shouldReceive('output')
             ->never();
 
-        $response = $this->post(route('tools.backups.run'));
+        $response = $this->post(route('crm.tools.backups.run'));
 
-        $response->assertRedirect(route('tools.index', ['tab' => 'backups']));
+        $response->assertRedirect(route('crm.tools.index', ['tab' => 'backups']));
         $response->assertSessionHas('success', 'Database backup started successfully.');
     }
 
@@ -49,15 +49,15 @@ class ToolsBackupsPageTest extends TestCase
                 "Starting backup...\nError Output\n============\nmysqldump: command not found"
             );
 
-        $response = $this->post(route('tools.backups.run'));
+        $response = $this->post(route('crm.tools.backups.run'));
 
-        $response->assertRedirect(route('tools.index', ['tab' => 'backups']));
+        $response->assertRedirect(route('crm.tools.index', ['tab' => 'backups']));
         $response->assertSessionHas('error');
     }
 
     public function test_backup_download_requires_signed_url(): void
     {
-        $response = $this->get(route('tools.backups.download', [
+        $response = $this->get(route('crm.tools.backups.download', [
             'disk' => 'local',
             'path' => 'fake/file.zip',
         ]));
@@ -74,7 +74,7 @@ class ToolsBackupsPageTest extends TestCase
         Storage::disk('local')->put($path, 'backup-content');
 
         $url = URL::temporarySignedRoute(
-            'tools.backups.download',
+            'crm.tools.backups.download',
             now()->addMinutes(5),
             ['disk' => 'local', 'path' => $path]
         );

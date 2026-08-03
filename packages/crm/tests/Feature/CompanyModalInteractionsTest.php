@@ -23,7 +23,7 @@ class CompanyModalInteractionsTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->get(route('companies.modal', $company));
+        $response = $this->get(route('crm.companies.modal', $company));
 
         $response->assertOk();
         $response->assertSee('Acme Logistics');
@@ -40,7 +40,7 @@ class CompanyModalInteractionsTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->postJson(route('companies.notes.store', $company), [
+        $response = $this->postJson(route('crm.companies.notes.store', $company), [
             'content' => '<p>Left a voicemail.</p>',
         ]);
 
@@ -66,7 +66,7 @@ class CompanyModalInteractionsTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->postJson(route('companies.phone-calls.store', $company), [
+        $response = $this->postJson(route('crm.companies.phone-calls.store', $company), [
             'called_at' => '2026-03-12 10:30:00',
             'notes' => '<p>Discussed pricing and next steps.</p>',
         ]);
@@ -94,7 +94,7 @@ class CompanyModalInteractionsTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->patchJson(route('companies.callback.update', $company), [
+        $response = $this->patchJson(route('crm.companies.callback.update', $company), [
             'needs_callback' => 1,
             'callback_at' => '2026-03-14 09:15:00',
         ]);
@@ -135,7 +135,7 @@ class CompanyModalInteractionsTest extends TestCase
             'relationship_id' => $relationship->id,
         ]);
 
-        $response = $this->patchJson(route('companies.classification.update', $company), [
+        $response = $this->patchJson(route('crm.companies.classification.update', $company), [
             'status_id' => $replacementStatus->id,
             'relationship_id' => $replacementRelationship->id,
         ]);

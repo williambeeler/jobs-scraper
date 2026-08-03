@@ -1,4 +1,4 @@
-@extends('crm::layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Import Companies') @section('heading', 'Import Companies') @section('subtitle',
 'Import a CSV into the CRM company directory.')
@@ -14,7 +14,7 @@
             id="crm-import-form"
             method="POST"
             enctype="multipart/form-data"
-            action="{{ route('tools.import.companies') }}">
+            action="{{ route('crm.tools.import.companies') }}">
             @csrf<div class="crm-grid">
                 <div class="crm-col-12 crm-field">
                     <label>CSV file</label>

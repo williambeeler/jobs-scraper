@@ -35,7 +35,7 @@ class CompanyDeleteActionsTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->post(route('companies.bulk-action'), [
+        $response = $this->post(route('crm.companies.bulk-action'), [
             'bulk_action' => 'bulk_delete',
             'scope' => 'selected',
             'companies' => [$companyA->id, $companyB->id],
@@ -59,7 +59,7 @@ class CompanyDeleteActionsTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->deleteJson(route('companies.destroy', $company));
+        $response = $this->deleteJson(route('crm.companies.destroy', $company));
 
         $response->assertOk();
         $response->assertJson([

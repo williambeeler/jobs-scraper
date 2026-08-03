@@ -17,7 +17,7 @@
 
         <form
             method="POST"
-            action="{{ route('excluded-terms.store') }}"
+            action="{{ route('jobs.excluded-terms.store') }}"
             class="card card-body mb-4 shadow-sm">
             @csrf
             <label class="form-label fw-semibold" for="term">Add an excluded term</label>
@@ -42,9 +42,9 @@
                     <span>{{ $term->term }}</span>
                     <div class="d-flex gap-2">
                         <a class="btn btn-sm btn-outline-secondary"
-                            href="{{ route('excluded-terms.edit', $term) }}"
+                            href="{{ route('jobs.excluded-terms.edit', $term) }}"
                         >Edit</a>
-                        <form method="POST" action="{{ route('excluded-terms.destroy', $term) }}">@csrf
+                        <form method="POST" action="{{ route('jobs.excluded-terms.destroy', $term) }}">@csrf
                             @method('DELETE')<button class="btn btn-sm btn-outline-danger"
                                 type="submit"
                             >Delete</button></form>

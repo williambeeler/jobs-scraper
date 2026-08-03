@@ -24,7 +24,7 @@ class SavedSearchController extends Controller
                         'name' => $savedSearch->name,
                         'parameters' => $savedSearch->parameters ?? [],
                         'created_at_label' => $savedSearch->created_at?->format('M j, Y g:i A'),
-                        'open_url' => route('companies.index', $savedSearch->parameters ?? []),
+                        'open_url' => route('crm.companies.index', $savedSearch->parameters ?? []),
                     ])
                     ->values()
                     ->all(),

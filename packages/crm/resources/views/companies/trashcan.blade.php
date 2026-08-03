@@ -2,7 +2,7 @@
 
 @if ($company->trashed())
     <form
-        action="{{ route('companies.restore', $company->id) }}"
+        action="{{ route('crm.companies.restore', $company->id) }}"
         method="POST"
         class="d-inline">
         @csrf
@@ -10,7 +10,7 @@
     </form>
 
     <form
-        action="{{ route('companies.force-delete', $company->id) }}"
+        action="{{ route('crm.companies.force-delete', $company->id) }}"
         method="POST"
         class="d-inline"
         onsubmit="return confirm('Permanently delete this company?');">

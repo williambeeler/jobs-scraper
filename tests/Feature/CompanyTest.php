@@ -33,7 +33,7 @@ class CompanyTest extends FeatureTestCase
             'type' => 'whitelist',
         ]);
 
-        $this->get(route('jobs'))
+        $this->get(route('jobs.index'))
             ->assertOk()
             ->assertSeeInOrder([$whitelisted->title, $verified->title, $regular->title])
             ->assertSee('list-group-item p-4 job-row-verified', false)

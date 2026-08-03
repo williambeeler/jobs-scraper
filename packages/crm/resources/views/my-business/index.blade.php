@@ -7,16 +7,16 @@ sender addresses and print return-address labels.')
 @section('content')
     <nav class="crm-tabs">
         <a class="{{ $activeTab === 'address' ? 'active' : '' }}"
-            href="{{ route('my-business.index', ['tab' => 'address']) }}"
+            href="{{ route('crm.my-business.index', ['tab' => 'address']) }}"
         >Addresses</a>
         <a class="{{ $activeTab === 'labels' ? 'active' : '' }}"
-            href="{{ route('my-business.index', ['tab' => 'labels']) }}"
+            href="{{ route('crm.my-business.index', ['tab' => 'labels']) }}"
         >Labels</a>
     </nav>
     @if ($activeTab === 'labels')
         <section class="crm-card">
             <h2>Print Avery 94200 labels</h2>
-            <form method="GET" action="{{ route('my-business.labels.print') }}">
+            <form method="GET" action="{{ route('crm.my-business.labels.print') }}">
                 <div class="crm-field">
                     <label>Business</label>
                     <select class="crm-select" name="business_id">
@@ -36,19 +36,19 @@ sender addresses and print return-address labels.')
                 @foreach ($businessProfiles as $profile)
                     <p>
                         <a
-                            href="{{ route('my-business.index', ['business_id' => $profile['id']]) }}">{{ $profile['business_name'] }}</a>
+                            href="{{ route('crm.my-business.index', ['business_id' => $profile['id']]) }}">{{ $profile['business_name'] }}</a>
                         @if ($profile['is_default'])
                             <span class="crm-badge">Default</span>
                         @endif
                     </p>
                 @endforeach
-                <a class="crm-button" href="{{ route('my-business.index', ['mode' => 'create']) }}">
+                <a class="crm-button" href="{{ route('crm.my-business.index', ['mode' => 'create']) }}">
                     Add Business</a>
             </aside>
             <section class="crm-col-8 crm-card">
                 <h2>{{ $mode === 'create' ? 'Add Business' : 'Edit Business' }}</h2>
                 @php($profile = $mode === 'create' ? [] : $selectedBusiness ?? [])<form method="POST"
-                    action="{{ $mode === 'create' ? route('my-business.address.store') : route('my-business.address.update', $profile['id']) }}">
+                    action="{{ $mode === 'create' ? route('crm.my-business.address.store') : route('crm.my-business.address.update', $profile['id']) }}">
                     @csrf @if ($mode !== 'create')
                         @method('PATCH')
                     @endif
@@ -79,7 +79,7 @@ sender addresses and print return-address labels.')
                     </div>
                 </form>
                 @if ($mode !== 'create')
-                    <form method="POST" action="{{ route('my-business.destroy', $profile['id']) }}">
+                    <form method="POST" action="{{ route('crm.my-business.destroy', $profile['id']) }}">
                         @csrf @method('DELETE')<button class="crm-button crm-button-danger"
                             data-confirm="Delete this business?"
                         >Delete</button>

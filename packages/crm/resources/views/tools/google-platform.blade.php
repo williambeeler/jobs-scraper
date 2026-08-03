@@ -10,14 +10,14 @@
             <h2>{{ $connectionLabel }}</h2>
             <p>Project: {{ data_get($project, 'id') ?: 'Not configured' }}</p>
             @if ($hasCloudCredentials)
-                <form method="POST" action="{{ route('tools.googlePlatform.remove') }}">
+                <form method="POST" action="{{ route('crm.tools.googlePlatform.remove') }}">
                     @csrf<button class="crm-button crm-button-danger"
                         data-confirm="Disconnect Google Cloud?"
                     >Disconnect</button>
                 </form>
             @elseif($hasOAuthClientConfig)
                 <a class="crm-button crm-button-primary"
-                    href="{{ route('tools.googlePlatform.oauth.redirect') }}"
+                    href="{{ route('crm.tools.googlePlatform.oauth.redirect') }}"
                 >Connect Google</a>
             @endif
         </section>

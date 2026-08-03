@@ -12,7 +12,7 @@
 </div>
 <div class="modal-body">
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('companies.edit', $company) }}" class="btn btn-outline-primary btn-sm">
+        <a href="{{ route('crm.companies.edit', $company) }}" class="btn btn-outline-primary btn-sm">
             Edit Company
         </a>
     </div>

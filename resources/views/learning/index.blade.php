@@ -27,7 +27,7 @@
 
         <section class="card card-body shadow-sm mb-4" aria-labelledby="add-topic-heading">
             <h2 class="h5 mb-3" id="add-topic-heading">Add a topic</h2>
-            <form method="POST" action="{{ route('learning-topics.store') }}">
+            <form method="POST" action="{{ route('learning.agenda.topics.store') }}">
                 @csrf
                 <div class="row g-3">
                     <div class="col-lg-5">
@@ -98,11 +98,11 @@
 
         <div class="d-flex flex-wrap gap-2 mb-3" aria-label="Filter topics">
             <a class="btn btn-sm {{ $status === '' ? 'btn-dark' : 'btn-outline-dark' }}"
-                href="{{ route('learning') }}"
+                href="{{ route('learning.agenda') }}"
             >All</a>
             @foreach ($statuses as $value => $label)
                 <a class="btn btn-sm {{ $status === $value ? 'btn-dark' : 'btn-outline-dark' }}"
-                    href="{{ route('learning', ['status' => $value]) }}"
+                    href="{{ route('learning.agenda', ['status' => $value]) }}"
                 >{{ $label }}</a>
             @endforeach
         </div>
@@ -134,11 +134,11 @@
                         </div>
                         <footer class="card-footer bg-white d-flex gap-2 justify-content-end">
                             <a class="btn btn-sm btn-outline-secondary"
-                                href="{{ route('learning-topics.edit', $topic) }}"
+                                href="{{ route('learning.agenda.topics.edit', $topic) }}"
                             >Edit</a>
                             <form
                                 method="POST"
-                                action="{{ route('learning-topics.destroy', $topic) }}"
+                                action="{{ route('learning.agenda.topics.destroy', $topic) }}"
                                 onsubmit="return confirm('Delete this learning topic?')">
                                 @csrf
                                 @method('DELETE')

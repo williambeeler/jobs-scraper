@@ -27,7 +27,7 @@ class ToolsImportTest extends TestCase
             'description' => 'Default relationship',
         ]);
 
-        $response = $this->get(route('tools.import'));
+        $response = $this->get(route('crm.tools.import'));
 
         $response->assertOk();
         $response->assertViewIs('crm::tools.import');
@@ -40,7 +40,7 @@ class ToolsImportTest extends TestCase
 
     public function test_company_import_template_downloads_from_the_package(): void
     {
-        $this->get(route('tools.import.template'))
+        $this->get(route('crm.tools.import.template'))
             ->assertOk()
             ->assertDownload('company-import-template.csv');
     }
@@ -78,7 +78,7 @@ class ToolsImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('companies.csv', $csv);
 
-        $response = $this->post(route('tools.import.companies'), [
+        $response = $this->post(route('crm.tools.import.companies'), [
             'file' => $file,
             'campaigns' => 'Spring Push',
             'tags' => 'Priority,New Import',
@@ -144,7 +144,7 @@ class ToolsImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('companies.csv', $csv);
 
-        $response = $this->post(route('tools.import.companies'), [
+        $response = $this->post(route('crm.tools.import.companies'), [
             'file' => $file,
             'campaigns' => 'Spring Push',
             'tags' => 'Priority',
@@ -191,7 +191,7 @@ class ToolsImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('companies.csv', $csv);
 
-        $response = $this->post(route('tools.import.companies'), [
+        $response = $this->post(route('crm.tools.import.companies'), [
             'file' => $file,
             'campaigns' => '',
             'tags' => '',

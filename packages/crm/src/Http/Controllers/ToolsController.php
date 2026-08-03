@@ -52,7 +52,7 @@ class ToolsController extends Controller
             'relationships' => Relationship::query()->orderBy('name')->get(),
             'defaultStatusId' => (int) Status::query()->where('is_default', true)->value('id'),
             'leadRelationshipId' => (int) Relationship::query()->where('slug', 'lead')->value('id'),
-            'templateDownloadUrl' => route('tools.import.template'),
+            'templateDownloadUrl' => route('crm.tools.import.template'),
             'maxUploadSize' => $this->resolveMaxUploadSize(),
         ]);
     }
@@ -119,13 +119,13 @@ class ToolsController extends Controller
     {
         if (! filled(config('services.google.oauth_client_id')) || ! filled(config('services.google.oauth_client_secret'))) {
             return redirect()
-                ->route('tools.googlePlatform')
+                ->route('crm.tools.googlePlatform')
                 ->with('error', 'This CRM is missing its Google OAuth client configuration. Add GOOGLE_CLOUD_OAUTH_CLIENT_ID and GOOGLE_CLOUD_OAUTH_CLIENT_SECRET in the environment first.');
         }
 
         if (! filled(config('services.google.cloud_project_id'))) {
             return redirect()
-                ->route('tools.googlePlatform')
+                ->route('crm.tools.googlePlatform')
                 ->with('error', 'This CRM is missing GOOGLE_CLOUD_PROJECT_ID, so Google Cloud data cannot be mapped to the right project yet.');
         }
 
@@ -134,7 +134,7 @@ class ToolsController extends Controller
 
         $query = http_build_query([
             'client_id' => config('services.google.oauth_client_id'),
-            'redirect_uri' => route('tools.googlePlatform.oauth.callback'),
+            'redirect_uri' => route('crm.tools.googlePlatform.oauth.callback'),
             'response_type' => 'code',
             'scope' => implode(' ', [
                 'https://www.googleapis.com/auth/cloud-platform.read-only',
@@ -166,19 +166,19 @@ class ToolsController extends Controller
 
         if (filled($validated['error'] ?? null)) {
             return redirect()
-                ->route('tools.googlePlatform')
+                ->route('crm.tools.googlePlatform')
                 ->with('error', 'Google authorization failed: '.$validated['error']);
         }
 
         if (! is_string($expectedState) || $expectedState === '' || ($validated['state'] ?? null) !== $expectedState) {
             return redirect()
-                ->route('tools.googlePlatform')
+                ->route('crm.tools.googlePlatform')
                 ->with('error', 'Google authorization state could not be verified.');
         }
 
         if (! filled($validated['code'] ?? null)) {
             return redirect()
-                ->route('tools.googlePlatform')
+                ->route('crm.tools.googlePlatform')
                 ->with('error', 'Google authorization did not return an authorization code.');
         }
 
@@ -189,7 +189,7 @@ class ToolsController extends Controller
                     'code' => $validated['code'],
                     'client_id' => config('services.google.oauth_client_id'),
                     'client_secret' => config('services.google.oauth_client_secret'),
-                    'redirect_uri' => route('tools.googlePlatform.oauth.callback'),
+                    'redirect_uri' => route('crm.tools.googlePlatform.oauth.callback'),
                     'grant_type' => 'authorization_code',
                 ]);
 
@@ -199,7 +199,7 @@ class ToolsController extends Controller
                     ?: 'Google token exchange failed.';
 
                 return redirect()
-                    ->route('tools.googlePlatform')
+                    ->route('crm.tools.googlePlatform')
                     ->with('error', $message);
             }
 
@@ -207,7 +207,7 @@ class ToolsController extends Controller
 
             if ($refreshToken === '') {
                 return redirect()
-                    ->route('tools.googlePlatform')
+                    ->route('crm.tools.googlePlatform')
                     ->with('error', 'Google did not return a refresh token. Try connecting again after revoking the previous grant.');
             }
 
@@ -220,12 +220,12 @@ class ToolsController extends Controller
             }
         } catch (Throwable $e) {
             return redirect()
-                ->route('tools.googlePlatform')
+                ->route('crm.tools.googlePlatform')
                 ->with('error', 'Google OAuth callback failed: '.$e->getMessage());
         }
 
         return redirect()
-            ->route('tools.googlePlatform')
+            ->route('crm.tools.googlePlatform')
             ->with('success', 'Google Cloud connected successfully.');
     }
 
@@ -245,12 +245,12 @@ class ToolsController extends Controller
             }
         } catch (Throwable $e) {
             return redirect()
-                ->route('tools.googlePlatform')
+                ->route('crm.tools.googlePlatform')
                 ->with('error', 'Google Cloud credentials could not be removed: '.$e->getMessage());
         }
 
         return redirect()
-            ->route('tools.googlePlatform')
+            ->route('crm.tools.googlePlatform')
             ->with('success', 'Google account disconnected.');
     }
 
@@ -332,12 +332,12 @@ class ToolsController extends Controller
             }
         } catch (Throwable $e) {
             return redirect()
-                ->route('tools.openAiPlatform')
+                ->route('crm.tools.openAiPlatform')
                 ->with('error', 'OpenAI usage key could not be saved: '.$e->getMessage());
         }
 
         return redirect()
-            ->route('tools.openAiPlatform')
+            ->route('crm.tools.openAiPlatform')
             ->with('success', 'OpenAI usage key connected successfully.');
     }
 
@@ -353,12 +353,12 @@ class ToolsController extends Controller
             }
         } catch (Throwable $e) {
             return redirect()
-                ->route('tools.openAiPlatform')
+                ->route('crm.tools.openAiPlatform')
                 ->with('error', 'OpenAI usage key could not be removed: '.$e->getMessage());
         }
 
         return redirect()
-            ->route('tools.openAiPlatform')
+            ->route('crm.tools.openAiPlatform')
             ->with('success', 'OpenAI usage key removed.');
     }
 
@@ -408,7 +408,7 @@ class ToolsController extends Controller
             'filename' => $status['filename'],
             'error' => $status['error'],
             'download_url' => $status['status'] === CompanyExportService::STATUS_COMPLETED
-                ? route('tools.exports.download', ['exportId' => $exportId, 'token' => $status['token']])
+                ? route('crm.tools.exports.download', ['exportId' => $exportId, 'token' => $status['token']])
                 : null,
         ]);
     }
@@ -426,7 +426,7 @@ class ToolsController extends Controller
     {
         if (! $this->isSpatieBackupInstalled()) {
             return redirect()
-                ->route('tools.index', ['tab' => 'backups'])
+                ->route('crm.tools.index', ['tab' => 'backups'])
                 ->with('error', 'Spatie Laravel Backup is not installed. Run composer require spatie/laravel-backup.');
         }
 
@@ -437,7 +437,7 @@ class ToolsController extends Controller
             ]);
         } catch (\Throwable $e) {
             return redirect()
-                ->route('tools.index', ['tab' => 'backups'])
+                ->route('crm.tools.index', ['tab' => 'backups'])
                 ->with('error', 'Backup failed: '.$e->getMessage());
         }
 
@@ -446,12 +446,12 @@ class ToolsController extends Controller
             $message = $this->extractBackupFailureMessage($output);
 
             return redirect()
-                ->route('tools.index', ['tab' => 'backups'])
+                ->route('crm.tools.index', ['tab' => 'backups'])
                 ->with('error', $message);
         }
 
         return redirect()
-            ->route('tools.index', ['tab' => 'backups'])
+            ->route('crm.tools.index', ['tab' => 'backups'])
             ->with('success', 'Database backup started successfully.');
     }
 
@@ -584,7 +584,7 @@ class ToolsController extends Controller
                     'size_label' => Number::fileSize($backup['size']),
                     'last_modified_label' => now()->createFromTimestamp($backup['last_modified'])->toDayDateTimeString(),
                     'download_url' => URL::temporarySignedRoute(
-                        'tools.backups.download',
+                        'crm.tools.backups.download',
                         now()->addMinutes(30),
                         [
                             'disk' => $backup['disk'],

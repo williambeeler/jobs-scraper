@@ -20,13 +20,13 @@ class StatusManagementTest extends TestCase
             'description' => 'Potential customer',
         ]);
 
-        $this->get(route('statuses.index'))
+        $this->get(route('crm.statuses.index'))
             ->assertOk()
             ->assertViewIs('crm::statuses.index')
             ->assertViewHas('statuses', fn (array $statuses) => $statuses['data'][0]['name'] === 'Qualified')
             ->assertViewHas('relationships', fn (array $relationships) => $relationships['data'][0]['name'] === 'Lead');
 
-        $this->get(route('statuses.show', $status))
+        $this->get(route('crm.statuses.show', $status))
             ->assertOk()
             ->assertViewIs('crm::statuses.show')
             ->assertViewHas('status', fn (array $status) => $status['name'] === 'Qualified');

@@ -40,7 +40,7 @@ class CompanyAveryLabelsBulkActionTest extends TestCase
             'country' => 'USA',
         ]);
 
-        $response = $this->post(route('companies.bulk-action'), [
+        $response = $this->post(route('crm.companies.bulk-action'), [
             'bulk_action' => 'export_avery_pdf',
             'scope' => 'selected',
             'companies' => [$selectedCompany->id],
@@ -79,7 +79,7 @@ class CompanyAveryLabelsBulkActionTest extends TestCase
             $selectedIds[] = $company->id;
         }
 
-        $response = $this->post(route('companies.bulk-action'), [
+        $response = $this->post(route('crm.companies.bulk-action'), [
             'bulk_action' => 'export_avery_pdf',
             'scope' => 'selected',
             'companies' => $selectedIds,
@@ -106,7 +106,7 @@ class CompanyAveryLabelsBulkActionTest extends TestCase
             'country' => 'USA',
         ]);
 
-        $response = $this->post(route('companies.bulk-action'), [
+        $response = $this->post(route('crm.companies.bulk-action'), [
             'bulk_action' => 'export_avery_pdf',
             'scope' => 'selected',
             'companies' => [$company->id],

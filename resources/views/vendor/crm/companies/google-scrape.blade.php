@@ -1,11 +1,11 @@
-@extends('crm::layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Google Places Usage') @section('heading', 'Google Places Usage')
 
 @section('subtitle', 'Review usage and cost information for company enrichment.')
 
 @section('actions')
-    <a class="crm-button" href="{{ route('companies.index') }}">
+    <a class="crm-button" href="{{ route('crm.companies.index') }}">
         Companies</a>
 @endsection
 

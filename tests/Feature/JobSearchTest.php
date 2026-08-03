@@ -24,7 +24,7 @@ class JobSearchTest extends FeatureTestCase
         $regular = $this->createListing('WordPress Developer', 'https://example.com/regular-search', now(), now());
         $regular->company()->associate(Company::findOrCreateByName('Regular Search Company'))->save();
 
-        $this->get(route('job-search'))
+        $this->get(route('jobs.search'))
             ->assertOk()
             ->assertSee('Job Search')
             ->assertSee('Ready to search through 3 jobs')
@@ -32,26 +32,26 @@ class JobSearchTest extends FeatureTestCase
             ->assertDontSee($verified->title)
             ->assertDontSee($regular->title);
 
-        $this->get(route('job-search', ['company_type' => 'any']))
+        $this->get(route('jobs.search', ['company_type' => 'any']))
             ->assertOk()
             ->assertSee($blacklisted->title)
             ->assertSee($verified->title)
             ->assertSee($regular->title)
             ->assertSee('Blacklisted');
 
-        $this->get(route('job-search', ['company_type' => 'blacklist']))
+        $this->get(route('jobs.search', ['company_type' => 'blacklist']))
             ->assertOk()
             ->assertSee($blacklisted->title)
             ->assertDontSee($verified->title)
             ->assertDontSee($regular->title);
 
-        $this->get(route('job-search', ['company' => 'verified search']))
+        $this->get(route('jobs.search', ['company' => 'verified search']))
             ->assertOk()
             ->assertSee($verified->title)
             ->assertDontSee($blacklisted->title)
             ->assertDontSee($regular->title);
 
-        $this->get(route('job-search', [
+        $this->get(route('jobs.search', [
             'q' => 'Laravel Verified',
             'company_type' => 'verified',
             'location' => 'Remote',
@@ -69,7 +69,7 @@ class JobSearchTest extends FeatureTestCase
         $listing = $this->createListing('Actionable Search Role', 'https://example.com/actionable-search', now(), now());
         $company = Company::findOrCreateByName('Actionable Company');
         $listing->company()->associate($company)->save();
-        $searchUrl = route('job-search', ['company' => 'Actionable']);
+        $searchUrl = route('jobs.search', ['company' => 'Actionable']);
 
         $this->get($searchUrl)
             ->assertOk()

@@ -66,12 +66,16 @@
         @include('menus.main-menu')
 
         @unless (request()->routeIs('home'))
-            @if (request()->routeIs('learning', 'learning-topics.*'))
+            @if (request()->routeIs('crm.*'))
+                @include('menus.subnav-crm')
+            @elseif (request()->routeIs('learning', 'learning.*'))
                 @include('menus.subnav-learning')
             @elseif (request()->routeIs('settings.*'))
                 @include('menus.subnav-settings')
-            @else
+            @elseif (request()->routeIs('jobs.*'))
                 @include('menus.subnav-job-scraper')
+            @else
+
             @endif
         @endunless
 

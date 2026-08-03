@@ -37,7 +37,7 @@ class LearningTopicController extends Controller
     {
         LearningTopic::query()->create($this->validated($request));
 
-        return to_route('learning')->with('status', 'Learning topic added.');
+        return to_route('learning.agenda')->with('status', 'Learning topic added.');
     }
 
     public function edit(LearningTopic $learningTopic): View
@@ -53,14 +53,14 @@ class LearningTopicController extends Controller
     {
         $learningTopic->update($this->validated($request));
 
-        return to_route('learning')->with('status', 'Learning topic updated.');
+        return to_route('learning.agenda')->with('status', 'Learning topic updated.');
     }
 
     public function destroy(LearningTopic $learningTopic): RedirectResponse
     {
         $learningTopic->delete();
 
-        return to_route('learning')->with('status', 'Learning topic deleted.');
+        return to_route('learning.agenda')->with('status', 'Learning topic deleted.');
     }
 
     /**

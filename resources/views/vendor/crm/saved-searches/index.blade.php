@@ -1,4 +1,4 @@
-@extends('crm::layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Saved Searches') @section('heading', 'Saved Searches') @section('subtitle',
 'Return to frequently used company filters.')

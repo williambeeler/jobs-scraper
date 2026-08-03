@@ -8,7 +8,7 @@ imports, exports, and platform connections.')
     <section class="crm-card">
         <div class="crm-actions">
             <h2 style="margin-right:auto">Database Backups</h2>
-            <form method="POST" action="{{ route('tools.backups.run') }}">
+            <form method="POST" action="{{ route('crm.tools.backups.run') }}">
                 @csrf<button class="crm-button crm-button-primary" @disabled(!$isSpatieBackupInstalled)>Run
                     Backup</button>
             </form>

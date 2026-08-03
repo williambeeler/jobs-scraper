@@ -27,7 +27,7 @@ class KanbanTest extends FeatureTestCase
 
         $this->assertSame('backlog', $active->fresh()->kanban_status->value);
         $this->assertSame('scraped', $active->fresh()->listing_origin->value);
-        $this->get(route('kanban'))
+        $this->get(route('jobs.kanban'))
             ->assertOk()
             ->assertSee($active->title)
             ->assertSee('data-not-interested', false)
@@ -97,7 +97,7 @@ class KanbanTest extends FeatureTestCase
             'type' => 'whitelist',
         ]);
 
-        $this->get(route('kanban'))
+        $this->get(route('jobs.kanban'))
             ->assertOk()
             ->assertSeeInOrder([$whitelisted->title, $regular->title]);
     }
@@ -114,7 +114,7 @@ class KanbanTest extends FeatureTestCase
             'source' => 'Referral',
             'posted_at' => '2026-07-21',
             'salary' => '$120,000',
-        ])->assertRedirect(route('kanban'))
+        ])->assertRedirect(route('jobs.kanban'))
             ->assertSessionHas('status', 'Custom job added.');
 
         $listing = JobListing::query()->where('title', 'Custom Referral Opportunity')->firstOrFail();
@@ -128,27 +128,27 @@ class KanbanTest extends FeatureTestCase
             'to_status' => 'interested',
         ]);
 
-        $this->get(route('kanban'))
+        $this->get(route('jobs.kanban'))
             ->assertOk()
             ->assertSeeInOrder(['Interested', $listing->title, 'Applied To'])
             ->assertSee('data-listing-origin="custom"', false)
             ->assertDontSee('Not Interested');
 
-        $this->post(route('excluded-terms.store'), ['term' => 'Referral'])
-            ->assertRedirect(route('excluded-terms.index'));
+        $this->post(route('jobs.excluded-terms.store'), ['term' => 'Referral'])
+            ->assertRedirect(route('jobs.excluded-terms.index'));
         $this->post(route('jobs.company-preference', $listing), ['type' => 'blacklist'])
             ->assertRedirect();
 
         $this->assertNull($listing->fresh()->status);
-        $this->get(route('kanban'))
+        $this->get(route('jobs.kanban'))
             ->assertOk()
             ->assertSee($listing->title);
 
-        $this->get(route('jobs', ['date' => '2026-07-22']))
+        $this->get(route('jobs.index', ['date' => '2026-07-22']))
             ->assertOk()
             ->assertDontSee($listing->title);
 
-        $this->getJson(route('calendar.counts', [
+        $this->getJson(route('jobs.calendar.counts', [
             'start' => '2026-07-01',
             'end' => '2026-08-01',
         ]))->assertOk()->assertExactJson([]);
@@ -157,7 +157,7 @@ class KanbanTest extends FeatureTestCase
             'kanban_status' => 'applied',
         ])->assertOk();
 
-        $this->get(route('applied-to'))
+        $this->get(route('jobs.applied-to'))
             ->assertOk()
             ->assertDontSee($listing->title);
     }

@@ -19,19 +19,22 @@ use App\Http\Controllers\ScrapeScheduleController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
-Route::get('/jobs', HomeController::class)->name('jobs');
-Route::view('/jobs/calendar', 'calendar')->name('calendar');
-Route::get('/jobs/calendar/counts', CalendarCountsController::class)->name('calendar.counts');
-Route::get('/jobs/kanban', KanbanController::class)->name('kanban');
-Route::get('/jobs/search', JobSearchController::class)->name('job-search');
+Route::get('/jobs', HomeController::class)->name('jobs.index');
+Route::view('/jobs/calendar', 'calendar')->name('jobs.calendar');
+Route::get('/jobs/calendar/counts', CalendarCountsController::class)->name('jobs.calendar.counts');
+Route::get('/jobs/kanban', KanbanController::class)->name('jobs.kanban');
+Route::get('/jobs/search', JobSearchController::class)->name('jobs.search');
 Route::post('/jobs/custom', CustomJobController::class)->name('jobs.custom.store');
 Route::post('/jobs/{jobListing}/kanban-status', KanbanStatusController::class)->name('jobs.kanban-status');
 Route::view('/bible', 'coming-soon', ['pageTitle' => 'Bible'])->name('bible');
-Route::get('/learning', [LearningTopicController::class, 'index'])->name('learning');
-Route::post('/learning/topics', [LearningTopicController::class, 'store'])->name('learning-topics.store');
-Route::get('/learning/topics/{learningTopic}/edit', [LearningTopicController::class, 'edit'])->name('learning-topics.edit');
-Route::put('/learning/topics/{learningTopic}', [LearningTopicController::class, 'update'])->name('learning-topics.update');
-Route::delete('/learning/topics/{learningTopic}', [LearningTopicController::class, 'destroy'])->name('learning-topics.destroy');
+Route::view('/learning', 'learning.dashboard')->name('learning');
+Route::prefix('learning/agenda')->name('learning.agenda')->group(function (): void {
+    Route::get('/', [LearningTopicController::class, 'index']);
+    Route::post('/topics', [LearningTopicController::class, 'store'])->name('.topics.store');
+    Route::get('/topics/{learningTopic}/edit', [LearningTopicController::class, 'edit'])->name('.topics.edit');
+    Route::put('/topics/{learningTopic}', [LearningTopicController::class, 'update'])->name('.topics.update');
+    Route::delete('/topics/{learningTopic}', [LearningTopicController::class, 'destroy'])->name('.topics.destroy');
+});
 Route::redirect('/settings', '/settings/backup')->name('settings');
 Route::get('/settings/backup', [BackupController::class, 'index'])->name('settings.backup');
 Route::post('/settings/backup', [BackupController::class, 'store'])->name('settings.backup.store');
@@ -43,18 +46,18 @@ Route::post('/jobs/{jobListing}/notes', [JobListingNoteController::class, 'store
 Route::delete('/jobs/{jobListing}/notes/{note}', [JobListingNoteController::class, 'destroy'])->name('jobs.notes.destroy');
 Route::post('/jobs/{jobListing}/company-preference', [CompanyPreferenceController::class, 'store'])
     ->name('jobs.company-preference');
-Route::get('/jobs/company-preferences', [CompanyPreferenceController::class, 'index'])->name('company-preferences.index');
+Route::get('/jobs/company-preferences', [CompanyPreferenceController::class, 'index'])->name('jobs.company-preferences.index');
 Route::delete('/jobs/company-preferences/{companyPreference}', [CompanyPreferenceController::class, 'destroy'])
-    ->name('company-preferences.destroy');
+    ->name('jobs.company-preferences.destroy');
 Route::resource('jobs/excluded-terms', ExcludedTermController::class)
-    ->names('excluded-terms')
+    ->names('jobs.excluded-terms')
     ->except('show');
-Route::get('/jobs/cron', [ScrapeScheduleController::class, 'index'])->name('cron');
-Route::post('/jobs/cron', [ScrapeScheduleController::class, 'store'])->name('cron.store');
-Route::get('/jobs/cron/{scrapeSchedule}/edit', [ScrapeScheduleController::class, 'edit'])->name('cron.edit');
-Route::put('/jobs/cron/{scrapeSchedule}', [ScrapeScheduleController::class, 'update'])->name('cron.update');
-Route::delete('/jobs/cron/{scrapeSchedule}', [ScrapeScheduleController::class, 'destroy'])->name('cron.destroy');
-Route::post('/jobs/cron/{scrapeSchedule}/run', [ScrapeScheduleController::class, 'run'])->name('cron.schedule.run');
-Route::get('/jobs/cron/run', RunScrapeSchedulesController::class)->name('cron.run');
-Route::get('/cron/run', RunScrapeSchedulesController::class)->name('cron.run.legacy');
-Route::get('/jobs/applied-to', AppliedJobController::class)->name('applied-to');
+Route::get('/jobs/cron', [ScrapeScheduleController::class, 'index'])->name('jobs.cron');
+Route::post('/jobs/cron', [ScrapeScheduleController::class, 'store'])->name('jobs.cron.store');
+Route::get('/jobs/cron/{scrapeSchedule}/edit', [ScrapeScheduleController::class, 'edit'])->name('jobs.cron.edit');
+Route::put('/jobs/cron/{scrapeSchedule}', [ScrapeScheduleController::class, 'update'])->name('jobs.cron.update');
+Route::delete('/jobs/cron/{scrapeSchedule}', [ScrapeScheduleController::class, 'destroy'])->name('jobs.cron.destroy');
+Route::post('/jobs/cron/{scrapeSchedule}/run', [ScrapeScheduleController::class, 'run'])->name('jobs.cron.schedule.run');
+Route::get('/jobs/cron/run', RunScrapeSchedulesController::class)->name('jobs.cron.run');
+Route::get('/cron/run', RunScrapeSchedulesController::class)->name('jobs.cron.run.legacy');
+Route::get('/jobs/applied-to', AppliedJobController::class)->name('jobs.applied-to');

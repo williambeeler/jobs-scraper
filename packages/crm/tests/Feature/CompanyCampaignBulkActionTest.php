@@ -28,7 +28,7 @@ class CompanyCampaignBulkActionTest extends TestCase
             'status_id' => $status->id,
         ]);
 
-        $response = $this->post(route('companies.bulk-action'), [
+        $response = $this->post(route('crm.companies.bulk-action'), [
             'bulk_action' => 'bulk_campaign',
             'scope' => 'selected',
             'companies' => [$companyA->id, $companyB->id],

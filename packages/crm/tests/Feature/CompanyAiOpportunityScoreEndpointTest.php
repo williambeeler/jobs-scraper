@@ -35,7 +35,7 @@ class CompanyAiOpportunityScoreEndpointTest extends TestCase
             ]);
         $this->app->instance(CompanyOpportunityScoringService::class, $service);
 
-        $response = $this->post(route('companies.ai-opportunity-score', $company), []);
+        $response = $this->post(route('crm.companies.ai-opportunity-score', $company), []);
 
         $response->assertOk();
         $response->assertJson([
@@ -61,7 +61,7 @@ class CompanyAiOpportunityScoreEndpointTest extends TestCase
             ->andThrow(new \RuntimeException('Scoring timeout'));
         $this->app->instance(CompanyOpportunityScoringService::class, $service);
 
-        $response = $this->post(route('companies.ai-opportunity-score', $company), []);
+        $response = $this->post(route('crm.companies.ai-opportunity-score', $company), []);
 
         $response->assertStatus(500);
         $response->assertJson([

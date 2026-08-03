@@ -7,7 +7,7 @@
 @section('subtitle', 'Track accounts, assign tags, and manage outreach priorities.')
 
 @section('actions')
-    <a class="crm-button crm-button-primary" href="{{ route('companies.create') }}">
+    <a class="crm-button crm-button-primary" href="{{ route('crm.companies.create') }}">
         Add Company</a>
 @endsection
 
@@ -15,7 +15,7 @@
     <form
         class="crm-card"
         method="GET"
-        action="{{ route('companies.index') }}">
+        action="{{ route('crm.companies.index') }}">
         <div class="crm-grid">
             <div class="crm-col-4 crm-field">
                 <label for="search">Search</label>
@@ -90,14 +90,14 @@
             </div>
             <div class="crm-col-4 crm-actions">
                 <button class="crm-button crm-button-primary">Search</button>
-                <a class="crm-button" href="{{ route('companies.index') }}">Reset</a>
+                <a class="crm-button" href="{{ route('crm.companies.index') }}">Reset</a>
             </div>
         </div>
     </form>
     <form
         class="crm-card"
         method="POST"
-        action="{{ route('companies.bulk-action') }}">
+        action="{{ route('crm.companies.bulk-action') }}">
         @csrf
         <input
             type="hidden"
@@ -171,7 +171,7 @@
                             </td>
                             <td>
                                 <a
-                                    href="{{ route('companies.show', $company) }}">{{ $company->name }}</a>
+                                    href="{{ route('crm.companies.show', $company) }}">{{ $company->name }}</a>
                                 <br>
                                 <span class="crm-muted">{{ $company->website }}</span>
                             </td>
@@ -188,7 +188,7 @@
                             <td>{{ implode(', ', array_filter([$company->city, $company->state])) ?: '—' }}
                             </td>
                             <td>
-                                <a href="{{ route('companies.edit', $company) }}">Edit</a>
+                                <a href="{{ route('crm.companies.edit', $company) }}">Edit</a>
                             </td>
                         </tr>
                     @empty

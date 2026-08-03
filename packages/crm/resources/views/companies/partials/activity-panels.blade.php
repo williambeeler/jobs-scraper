@@ -7,7 +7,7 @@
             <div class="card-body">
                 <form
                     method="POST"
-                    action="{{ route('companies.notes.store', $company) }}"
+                    action="{{ route('crm.companies.notes.store', $company) }}"
                     class="crm-company-modal-form mb-4">
                     @csrf
                     <label for="company-note-input-{{ $company->id }}" class="form-label">Add
@@ -50,7 +50,7 @@
             <div class="card-body">
                 <form
                     method="POST"
-                    action="{{ route('companies.phone-calls.store', $company) }}"
+                    action="{{ route('crm.companies.phone-calls.store', $company) }}"
                     class="crm-company-modal-form mb-4">
                     @csrf
                     <div class="mb-3">

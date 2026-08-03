@@ -32,7 +32,7 @@ class ScrapeScheduleController extends Controller
             $attributes,
         );
 
-        return to_route('cron')->with(
+        return to_route('jobs.cron')->with(
             'status',
             $schedule->wasRecentlyCreated ? 'Scrape configuration saved.' : 'Scrape configuration updated.',
         );
@@ -54,14 +54,14 @@ class ScrapeScheduleController extends Controller
 
         $scrapeSchedule->update($attributes);
 
-        return to_route('cron')->with('status', 'Scrape configuration updated.');
+        return to_route('jobs.cron')->with('status', 'Scrape configuration updated.');
     }
 
     public function destroy(ScrapeSchedule $scrapeSchedule): RedirectResponse
     {
         $scrapeSchedule->delete();
 
-        return to_route('cron')->with('status', 'Scrape configuration deleted.');
+        return to_route('jobs.cron')->with('status', 'Scrape configuration deleted.');
     }
 
     public function run(ScrapeSchedule $scrapeSchedule): RedirectResponse
@@ -86,10 +86,10 @@ class ScrapeScheduleController extends Controller
         ]);
 
         if ($exitCode !== 0) {
-            return to_route('cron')->with('error', 'Scrape configuration failed. Check the latest scrape run for details.');
+            return to_route('jobs.cron')->with('error', 'Scrape configuration failed. Check the latest scrape run for details.');
         }
 
-        return to_route('cron')->with('status', 'Scrape configuration completed.');
+        return to_route('jobs.cron')->with('status', 'Scrape configuration completed.');
     }
 
     private function view(?ScrapeSchedule $editingSchedule = null): View

@@ -1,4 +1,4 @@
-@extends('crm::layouts.app')
+@extends('layouts.app')
 
 @section('title', $company['name']) @section('heading', $company['name']) @section('subtitle',
 'Company details, notes, phone history, and classification.')

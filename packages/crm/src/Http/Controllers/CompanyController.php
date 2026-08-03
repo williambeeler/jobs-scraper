@@ -90,9 +90,9 @@ class CompanyController extends Controller
             ]),
             'totalCompanies' => Company::count(),
             'currentSearchSaved' => $currentSearchSaved,
-            'createUrl' => route('companies.create'),
-            'bulkActionUrl' => route('companies.bulk-action'),
-            'dataUrl' => route('companies.data'),
+            'createUrl' => route('crm.companies.create'),
+            'bulkActionUrl' => route('crm.companies.bulk-action'),
+            'dataUrl' => route('crm.companies.data'),
         ]);
     }
 
@@ -197,7 +197,7 @@ class CompanyController extends Controller
         }
 
         return redirect()
-            ->route('companies.show', $company)
+            ->route('crm.companies.show', $company)
             ->with('success', 'Company added successfully!');
     }
 
@@ -346,7 +346,7 @@ class CompanyController extends Controller
         }
 
         return redirect()
-            ->route('companies.show', $company)
+            ->route('crm.companies.show', $company)
             ->with('success', 'Company updated successfully.');
     }
 
@@ -366,7 +366,7 @@ class CompanyController extends Controller
 
         if (! $request->expectsJson()) {
             return redirect()
-                ->route('companies.show', $company)
+                ->route('crm.companies.show', $company)
                 ->with('success', 'Callback preference saved.');
         }
 
@@ -394,7 +394,7 @@ class CompanyController extends Controller
 
         if (! $request->expectsJson()) {
             return redirect()
-                ->route('companies.show', $company)
+                ->route('crm.companies.show', $company)
                 ->with('success', 'Company classification saved.');
         }
 
@@ -415,7 +415,7 @@ class CompanyController extends Controller
 
         if (! $request->expectsJson()) {
             return redirect()
-                ->route('companies.show', $company)
+                ->route('crm.companies.show', $company)
                 ->with('success', 'Note saved.');
         }
 
@@ -442,7 +442,7 @@ class CompanyController extends Controller
             ]);
         }
 
-        return redirect()->route('companies.index')->with('success', 'Company archived.');
+        return redirect()->route('crm.companies.index')->with('success', 'Company archived.');
     }
 
     /**
@@ -454,7 +454,7 @@ class CompanyController extends Controller
         $this->authorize('restore', $company); // optional
         $company->restore();
 
-        return redirect()->route('companies.index')->with('success', 'Company restored.');
+        return redirect()->route('crm.companies.index')->with('success', 'Company restored.');
     }
 
     /**
@@ -466,7 +466,7 @@ class CompanyController extends Controller
         $this->authorize('forceDelete', $company); // optional
         $company->forceDelete();
 
-        return redirect()->route('companies.index')->with('success', 'Company permanently deleted.');
+        return redirect()->route('crm.companies.index')->with('success', 'Company permanently deleted.');
     }
 
     // Bulk tag edit
@@ -1224,10 +1224,10 @@ class CompanyController extends Controller
                 ->where('type', 'campaign')
                 ->pluck('name')
                 ->values(),
-            'show_url' => route('companies.show', $company),
-            'modal_url' => route('companies.modal', $company),
-            'edit_url' => route('companies.edit', $company),
-            'delete_url' => route('companies.destroy', $company),
+            'show_url' => route('crm.companies.show', $company),
+            'modal_url' => route('crm.companies.modal', $company),
+            'edit_url' => route('crm.companies.edit', $company),
+            'delete_url' => route('crm.companies.destroy', $company),
         ];
     }
 
@@ -1314,7 +1314,7 @@ class CompanyController extends Controller
             'meta' => $company->meta ?? [],
             'tags' => $company->tagsWithType('tag')->pluck('name')->values(),
             'campaigns' => $company->tagsWithType('campaign')->pluck('name')->values(),
-            'update_url' => route('companies.update', $company),
+            'update_url' => route('crm.companies.update', $company),
             'notes' => $company->notes->map(fn (Note $note) => $this->transformNote($note))->values(),
             'phone_calls' => $company->phoneCalls->map(function ($phoneCall) {
                 return [
@@ -1324,13 +1324,13 @@ class CompanyController extends Controller
                     'notes' => $phoneCall->notes,
                 ];
             })->values(),
-            'edit_url' => route('companies.edit', $company),
-            'delete_url' => route('companies.destroy', $company),
-            'callback_update_url' => route('companies.callback.update', $company),
-            'classification_update_url' => route('companies.classification.update', $company),
-            'notes_store_url' => route('companies.notes.store', $company),
-            'phone_calls_store_url' => route('companies.phone-calls.store', $company),
-            'index_url' => route('companies.index'),
+            'edit_url' => route('crm.companies.edit', $company),
+            'delete_url' => route('crm.companies.destroy', $company),
+            'callback_update_url' => route('crm.companies.callback.update', $company),
+            'classification_update_url' => route('crm.companies.classification.update', $company),
+            'notes_store_url' => route('crm.companies.notes.store', $company),
+            'phone_calls_store_url' => route('crm.companies.phone-calls.store', $company),
+            'index_url' => route('crm.companies.index'),
         ];
     }
 

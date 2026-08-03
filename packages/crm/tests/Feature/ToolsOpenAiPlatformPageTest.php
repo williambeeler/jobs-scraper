@@ -49,7 +49,7 @@ class ToolsOpenAiPlatformPageTest extends TestCase
 
         $this->app->instance(OpenAiPlatformService::class, $service);
 
-        $response = $this->get(route('tools.openAiPlatform'));
+        $response = $this->get(route('crm.tools.openAiPlatform'));
 
         $response->assertOk();
         $response->assertViewIs('crm::tools.openai-platform');
@@ -97,7 +97,7 @@ class ToolsOpenAiPlatformPageTest extends TestCase
 
         $this->app->instance(OpenAiPlatformService::class, $service);
 
-        $response = $this->get(route('tools.openAiPlatform'));
+        $response = $this->get(route('crm.tools.openAiPlatform'));
 
         $response->assertOk();
         $response->assertViewIs('crm::tools.openai-platform');
@@ -117,11 +117,11 @@ class ToolsOpenAiPlatformPageTest extends TestCase
             $mock->shouldReceive('clearCache')->once();
         });
 
-        $response = $this->post(route('tools.openAiPlatform.usageKey.store'), [
+        $response = $this->post(route('crm.tools.openAiPlatform.usageKey.store'), [
             'usage_api_key' => 'sk-admin-usage-key-example',
         ]);
 
-        $response->assertRedirect(route('tools.openAiPlatform'));
+        $response->assertRedirect(route('crm.tools.openAiPlatform'));
         $response->assertSessionHas('success', 'OpenAI usage key connected successfully.');
     }
 
@@ -131,12 +131,12 @@ class ToolsOpenAiPlatformPageTest extends TestCase
             $mock->shouldNotReceive('set');
         });
 
-        $response = $this->from(route('tools.openAiPlatform'))
-            ->post(route('tools.openAiPlatform.usageKey.store'), [
+        $response = $this->from(route('crm.tools.openAiPlatform'))
+            ->post(route('crm.tools.openAiPlatform.usageKey.store'), [
                 'usage_api_key' => '',
             ]);
 
-        $response->assertRedirect(route('tools.openAiPlatform'));
+        $response->assertRedirect(route('crm.tools.openAiPlatform'));
         $response->assertSessionHasErrors('usage_api_key');
     }
 
@@ -152,9 +152,9 @@ class ToolsOpenAiPlatformPageTest extends TestCase
             $mock->shouldReceive('clearCache')->once();
         });
 
-        $response = $this->post(route('tools.openAiPlatform.usageKey.remove'));
+        $response = $this->post(route('crm.tools.openAiPlatform.usageKey.remove'));
 
-        $response->assertRedirect(route('tools.openAiPlatform'));
+        $response->assertRedirect(route('crm.tools.openAiPlatform'));
         $response->assertSessionHas('success', 'OpenAI usage key removed.');
     }
 

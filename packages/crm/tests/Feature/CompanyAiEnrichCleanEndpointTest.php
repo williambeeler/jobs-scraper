@@ -36,7 +36,7 @@ class CompanyAiEnrichCleanEndpointTest extends TestCase
             ]);
         $this->app->instance(CompanyAiEnrichmentService::class, $service);
 
-        $response = $this->post(route('companies.ai-enrich-clean', $company), []);
+        $response = $this->post(route('crm.companies.ai-enrich-clean', $company), []);
 
         $response->assertOk();
         $response->assertJson([
@@ -62,7 +62,7 @@ class CompanyAiEnrichCleanEndpointTest extends TestCase
             ->andThrow(new \RuntimeException('Upstream timeout'));
         $this->app->instance(CompanyAiEnrichmentService::class, $service);
 
-        $response = $this->post(route('companies.ai-enrich-clean', $company), []);
+        $response = $this->post(route('crm.companies.ai-enrich-clean', $company), []);
 
         $response->assertStatus(500);
         $response->assertJson([

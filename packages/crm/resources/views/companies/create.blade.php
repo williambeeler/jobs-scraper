@@ -5,7 +5,7 @@
 a new account and its initial context.')
 
 @section('actions')
-    <a class="crm-button" href="{{ route('companies.index') }}">Back to
+    <a class="crm-button" href="{{ route('crm.companies.index') }}">Back to
         Companies</a>
 @endsection
 
@@ -13,6 +13,6 @@ a new account and its initial context.')
     <form
         class="crm-card"
         method="POST"
-        action="{{ route('companies.store') }}">
+        action="{{ route('crm.companies.store') }}">
         @csrf @include('crm::companies._form', ['submitLabel' => 'Save Company'])</form>
 @endsection
