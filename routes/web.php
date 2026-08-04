@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CalendarCountsController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CompanyPreferenceController;
 use App\Http\Controllers\CustomJobController;
 use App\Http\Controllers\ExcludedTermController;
@@ -35,6 +36,8 @@ Route::prefix('learning/agenda')->name('learning.agenda')->group(function (): vo
     Route::put('/topics/{learningTopic}', [LearningTopicController::class, 'update'])->name('.topics.update');
     Route::delete('/topics/{learningTopic}', [LearningTopicController::class, 'destroy'])->name('.topics.destroy');
 });
+Route::resource('learning/certificates', CertificateController::class)
+    ->names('learning.certificates');
 Route::redirect('/settings', '/settings/backup')->name('settings');
 Route::get('/settings/backup', [BackupController::class, 'index'])->name('settings.backup');
 Route::post('/settings/backup', [BackupController::class, 'store'])->name('settings.backup.store');

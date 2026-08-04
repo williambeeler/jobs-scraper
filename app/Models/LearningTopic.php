@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LearningTopic extends Model
 {
@@ -24,4 +25,9 @@ class LearningTopic extends Model
         'medium' => 'Medium',
         'low' => 'Low',
     ];
+
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class);
+    }
 }

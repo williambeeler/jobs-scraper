@@ -17,6 +17,13 @@
                     <p class="text-secondary mb-0">Plan, prioritize, and track the topics you want to learn.</p>
                 </a>
             </div>
+            <div class="col-12 col-md-6 col-xl-4">
+                <a class="card card-body h-100 shadow-sm text-decoration-none"
+                    href="{{ route('learning.certificates.index') }}">
+                    <h2 class="h5 text-body">Certificates</h2>
+                    <p class="text-secondary mb-0">Track certifications, study notes, and completion dates by agenda.</p>
+                </a>
+            </div>
         </section>
     </main>
 @endsection

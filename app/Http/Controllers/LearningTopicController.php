@@ -19,6 +19,7 @@ class LearningTopicController extends Controller
 
         return view('learning.index', [
             'topics' => LearningTopic::query()
+                ->withCount('certificates')
                 ->when($status, fn ($query) => $query->where('status', $status))
                 ->orderByRaw("case priority when 'high' then 1 when 'medium' then 2 else 3 end")
                 ->orderBy('title')

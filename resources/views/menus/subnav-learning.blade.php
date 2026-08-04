@@ -6,6 +6,8 @@
                 href="{{ route('learning') }}">Dashboard</a>
             <a class="nav-link {{ request()->routeIs('learning.agenda*') ? 'active' : '' }}"
                 href="{{ route('learning.agenda') }}">Topic agenda</a>
+            <a class="nav-link {{ request()->routeIs('learning.certificates.*') ? 'active' : '' }}"
+                href="{{ route('learning.certificates.index') }}">Certificates</a>
         </div>
     </div>
 </nav>

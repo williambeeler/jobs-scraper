@@ -124,6 +124,10 @@
                                     class="badge text-bg-{{ $topic->status === 'completed' ? 'success' : ($topic->status === 'in_progress' ? 'primary' : 'secondary') }}">
                                     {{ $statuses[$topic->status] }}
                                 </span>
+                                <a class="badge text-bg-light text-decoration-none ms-1"
+                                    href="{{ route('learning.certificates.index', ['agenda' => $topic->id]) }}">
+                                    {{ trans_choice(':count certificate|:count certificates', $topic->certificates_count, ['count' => $topic->certificates_count]) }}
+                                </a>
                             </p>
                             @if ($topic->description)
                                 <p class="text-secondary mb-0" style="white-space: pre-line;">
@@ -133,6 +137,8 @@
                             @endif
                         </div>
                         <footer class="card-footer bg-white d-flex gap-2 justify-content-end">
+                            <a class="btn btn-sm btn-outline-primary"
+                                href="{{ route('learning.certificates.create', ['agenda' => $topic->id]) }}">Add certificate</a>
                             <a class="btn btn-sm btn-outline-secondary"
                                 href="{{ route('learning.agenda.topics.edit', $topic) }}"
                             >Edit</a>
