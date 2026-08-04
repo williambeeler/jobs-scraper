@@ -48,4 +48,28 @@ class NavigationTest extends FeatureTestCase
             ->assertOk()
             ->assertSee('Restore controls will be added here');
     }
+
+    public function test_crm_navigation_links_to_the_primary_sections(): void
+    {
+        $this->get(route('crm.companies.index'))
+            ->assertOk()
+            ->assertSeeInOrder(['Saved Searches', 'My Business', 'Tools', 'Add Company'])
+            ->assertSee(route('crm.saved-searches.index'), false)
+            ->assertSee(route('crm.my-business.index'), false)
+            ->assertSee(route('crm.tools.index'), false)
+            ->assertSee(route('crm.companies.create'), false)
+            ->assertSee('navbar-nav ms-auto', false);
+    }
+
+    public function test_crm_tools_only_lists_the_remaining_tools(): void
+    {
+        $this->get(route('crm.tools.index'))
+            ->assertOk()
+            ->assertSee('Statuses')
+            ->assertSee('OpenAI')
+            ->assertSee('Google Platform')
+            ->assertDontSee('Backups')
+            ->assertDontSee('>Import<', false)
+            ->assertDontSee('>Export<', false);
+    }
 }

@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Create Company') @section('heading', 'Create Company') @section('subtitle',
-'Add
-a new account and its initial context.')
-
-@section('actions')
-    <a class="crm-button" href="{{ route('crm.companies.index') }}">Back to
-        Companies</a>
-@endsection
+@section('title', 'Add Company | ' . config('app.name'))
 
 @section('content')
-    <form
-        class="crm-card"
-        method="POST"
-        action="{{ route('crm.companies.store') }}">
-        @csrf @include('crm::companies._form', ['submitLabel' => 'Save Company'])</form>
+    <main class="container py-5" style="max-width: 960px;">
+        <header class="mb-4">
+            <p class="mb-2 text-uppercase text-primary fw-semibold small">CRM company</p>
+            <h1 class="display-6 fw-bold mb-2">Add company</h1>
+            <p class="text-secondary mb-0">Create a new account and add its initial context.</p>
+        </header>
+
+        <form method="POST" action="{{ route('crm.companies.store') }}">
+            @csrf
+            @include('vendor.crm.companies._form-app', ['submitLabel' => 'Save company'])
+        </form>
+    </main>
 @endsection
