@@ -3,6 +3,8 @@
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CalendarCountsController;
+use App\Http\Controllers\CareerPathController;
+use App\Http\Controllers\CareerPathFileController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CompanyPreferenceController;
 use App\Http\Controllers\CustomJobController;
@@ -56,6 +58,14 @@ Route::put('learning/modules/{learningModule}', [LearningModuleController::class
 Route::delete('learning/modules/{learningModule}', [LearningModuleController::class, 'destroy'])
     ->name('learning.modules.destroy');
 Route::resource('learning/decks', DeckController::class)->names('learning.decks');
+Route::resource('learning/career-paths', CareerPathController::class)
+    ->names('learning.career-paths');
+Route::get('learning/career-paths/{careerPath}/files/{careerPathFile}', [CareerPathFileController::class, 'show'])
+    ->name('learning.career-paths.files.show');
+Route::get('learning/career-paths/{careerPath}/files/{careerPathFile}/download', [CareerPathFileController::class, 'download'])
+    ->name('learning.career-paths.files.download');
+Route::delete('learning/career-paths/{careerPath}/files/{careerPathFile}', [CareerPathFileController::class, 'destroy'])
+    ->name('learning.career-paths.files.destroy');
 Route::post('learning/decks/{deck}/cards', [FlashCardController::class, 'store'])
     ->name('learning.decks.cards.store');
 Route::get('learning/decks/{deck}/cards/create', [FlashCardController::class, 'create'])

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LearningTopic extends Model
@@ -42,5 +43,10 @@ class LearningTopic extends Model
     public function portfolioProjects(): HasMany
     {
         return $this->hasMany(PortfolioProject::class);
+    }
+
+    public function careerPaths(): BelongsToMany
+    {
+        return $this->belongsToMany(CareerPath::class)->withTimestamps();
     }
 }

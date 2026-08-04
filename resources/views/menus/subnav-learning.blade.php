@@ -12,6 +12,9 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li>
+                        <a class="nav-link {{ request()->routeIs('learning.career-paths.*') ? 'active' : '' }}" href="{{ route('learning.career-paths.index') }}">Career Paths</a>
+                    </li>
+                    <li>
                         <a class="nav-link {{ request()->routeIs('learning.agenda*') ? 'active' : '' }}" href="{{ route('learning.agenda') }}">Topic agenda</a>
                     </li>
                     <li>

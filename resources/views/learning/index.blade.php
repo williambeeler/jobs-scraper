@@ -78,6 +78,18 @@
                         <button class="btn btn-primary w-100" type="submit">Add to agenda</button>
                     </div>
                     <div class="col-12">
+                        <label class="form-label fw-semibold" for="career_path_ids">Career paths</label>
+                        <select class="form-select @error('career_path_ids') is-invalid @enderror"
+                            id="career_path_ids" name="career_path_ids[]" multiple
+                            size="{{ min(max($careerPaths->count(), 2), 5) }}">
+                            @foreach ($careerPaths as $careerPath)
+                                <option value="{{ $careerPath->id }}" @selected(in_array($careerPath->id, old('career_path_ids', [])))>{{ $careerPath->title }}</option>
+                            @endforeach
+                        </select>
+                        <div class="form-text">Hold Command or Control to select multiple paths.</div>
+                        @error('career_path_ids')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-12">
                         <label class="form-label fw-semibold" for="description">Notes <span
                                 class="text-secondary fw-normal"
                             >(optional)</span></label>
@@ -128,7 +140,19 @@
                                     href="{{ route('learning.certificates.index', ['agenda' => $topic->id]) }}">
                                     {{ trans_choice(':count certificate|:count certificates', $topic->certificates_count, ['count' => $topic->certificates_count]) }}
                                 </a>
+                                <a class="badge text-bg-light text-decoration-none ms-1"
+                                    href="{{ route('learning.projects.index', ['agenda' => $topic->id]) }}">
+                                    {{ trans_choice(':count project|:count projects', $topic->portfolio_projects_count, ['count' => $topic->portfolio_projects_count]) }}
+                                </a>
                             </p>
+                            @if ($topic->careerPaths->isNotEmpty())
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    @foreach ($topic->careerPaths as $careerPath)
+                                        <a class="badge rounded-pill text-bg-info text-decoration-none"
+                                            href="{{ route('learning.career-paths.show', $careerPath) }}">{{ $careerPath->title }}</a>
+                                    @endforeach
+                                </div>
+                            @endif
                             @if ($topic->description)
                                 <p class="text-secondary mb-0" style="white-space: pre-line;">
                                     {{ $topic->description }}</p>

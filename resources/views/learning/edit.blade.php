@@ -59,6 +59,18 @@
                 </div>
             </div>
             <div class="mb-4">
+                <label class="form-label fw-semibold" for="career_path_ids">Career paths</label>
+                <select class="form-select @error('career_path_ids') is-invalid @enderror"
+                    id="career_path_ids" name="career_path_ids[]" multiple
+                    size="{{ min(max($careerPaths->count(), 2), 6) }}">
+                    @foreach ($careerPaths as $careerPath)
+                        <option value="{{ $careerPath->id }}" @selected(in_array($careerPath->id, old('career_path_ids', $topic->careerPaths->pluck('id')->all())))>{{ $careerPath->title }}</option>
+                    @endforeach
+                </select>
+                <div class="form-text">Hold Command or Control to select multiple paths.</div>
+                @error('career_path_ids')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="mb-4">
                 <label class="form-label fw-semibold" for="description">Notes</label>
                 <textarea
                     class="form-control @error('description') is-invalid @enderror"
