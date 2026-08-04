@@ -6,6 +6,7 @@ use App\Http\Controllers\CalendarCountsController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CompanyPreferenceController;
 use App\Http\Controllers\CustomJobController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeckController;
 use App\Http\Controllers\ExcludedTermController;
 use App\Http\Controllers\FlashCardController;
@@ -23,7 +24,7 @@ use App\Http\Controllers\RunScrapeSchedulesController;
 use App\Http\Controllers\ScrapeScheduleController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+Route::get('/', DashboardController::class)->name('home');
 Route::get('/jobs', HomeController::class)->name('jobs.index');
 Route::view('/jobs/calendar', 'calendar')->name('jobs.calendar');
 Route::get('/jobs/calendar/counts', CalendarCountsController::class)->name('jobs.calendar.counts');
