@@ -19,6 +19,13 @@
             </div>
             <div class="col-12 col-md-6 col-xl-4">
                 <a class="card card-body h-100 shadow-sm text-decoration-none"
+                    href="{{ route('learning.decks.index') }}">
+                    <h2 class="h5 text-body">Flash Cards</h2>
+                    <p class="text-secondary mb-0">Organize questions and answers into decks by difficulty.</p>
+                </a>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+                <a class="card card-body h-100 shadow-sm text-decoration-none"
                     href="{{ route('learning.projects.index') }}">
                     <h2 class="h5 text-body">Portfolio Projects</h2>
                     <p class="text-secondary mb-0">Build practical work and track its learning modules by agenda.</p>

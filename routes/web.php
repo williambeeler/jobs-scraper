@@ -6,7 +6,9 @@ use App\Http\Controllers\CalendarCountsController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CompanyPreferenceController;
 use App\Http\Controllers\CustomJobController;
+use App\Http\Controllers\DeckController;
 use App\Http\Controllers\ExcludedTermController;
+use App\Http\Controllers\FlashCardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobListingDetailsController;
 use App\Http\Controllers\JobListingNoteController;
@@ -52,6 +54,19 @@ Route::put('learning/modules/{learningModule}', [LearningModuleController::class
     ->name('learning.modules.update');
 Route::delete('learning/modules/{learningModule}', [LearningModuleController::class, 'destroy'])
     ->name('learning.modules.destroy');
+Route::resource('learning/decks', DeckController::class)->names('learning.decks');
+Route::post('learning/decks/{deck}/cards', [FlashCardController::class, 'store'])
+    ->name('learning.decks.cards.store');
+Route::get('learning/decks/{deck}/cards/create', [FlashCardController::class, 'create'])
+    ->name('learning.decks.cards.create');
+Route::get('learning/cards/{flashCard}', [FlashCardController::class, 'show'])
+    ->name('learning.cards.show');
+Route::get('learning/cards/{flashCard}/edit', [FlashCardController::class, 'edit'])
+    ->name('learning.cards.edit');
+Route::put('learning/cards/{flashCard}', [FlashCardController::class, 'update'])
+    ->name('learning.cards.update');
+Route::delete('learning/cards/{flashCard}', [FlashCardController::class, 'destroy'])
+    ->name('learning.cards.destroy');
 Route::redirect('/settings', '/settings/backup')->name('settings');
 Route::get('/settings/backup', [BackupController::class, 'index'])->name('settings.backup');
 Route::post('/settings/backup', [BackupController::class, 'store'])->name('settings.backup.store');

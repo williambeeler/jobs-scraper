@@ -1,0 +1,4 @@
+<div class="card shadow-sm"><div class="card-body p-4 p-md-5">
+    <div class="mb-3"><label class="form-label fw-semibold" for="title">Deck title</label><input class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title', $deck->title) }}" required autofocus>@error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+    <div><label class="form-label fw-semibold" for="description">Description</label><textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="6">{{ old('description', $deck->description) }}</textarea>@error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+</div><div class="card-footer bg-white p-4 d-flex justify-content-end gap-2"><a class="btn btn-outline-secondary" href="{{ $cancelUrl }}">Cancel</a><button class="btn btn-primary">{{ $submitLabel }}</button></div></div>
