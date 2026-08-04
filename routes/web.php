@@ -14,7 +14,9 @@ use App\Http\Controllers\JobListingStatusController;
 use App\Http\Controllers\JobSearchController;
 use App\Http\Controllers\KanbanController;
 use App\Http\Controllers\KanbanStatusController;
+use App\Http\Controllers\LearningModuleController;
 use App\Http\Controllers\LearningTopicController;
+use App\Http\Controllers\PortfolioProjectController;
 use App\Http\Controllers\RunScrapeSchedulesController;
 use App\Http\Controllers\ScrapeScheduleController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +40,18 @@ Route::prefix('learning/agenda')->name('learning.agenda')->group(function (): vo
 });
 Route::resource('learning/certificates', CertificateController::class)
     ->names('learning.certificates');
+Route::resource('learning/projects', PortfolioProjectController::class)
+    ->names('learning.projects');
+Route::post('learning/certificates/{certificate}/modules', [LearningModuleController::class, 'storeForCertificate'])
+    ->name('learning.certificates.modules.store');
+Route::post('learning/projects/{portfolioProject}/modules', [LearningModuleController::class, 'storeForProject'])
+    ->name('learning.projects.modules.store');
+Route::get('learning/modules/{learningModule}/edit', [LearningModuleController::class, 'edit'])
+    ->name('learning.modules.edit');
+Route::put('learning/modules/{learningModule}', [LearningModuleController::class, 'update'])
+    ->name('learning.modules.update');
+Route::delete('learning/modules/{learningModule}', [LearningModuleController::class, 'destroy'])
+    ->name('learning.modules.destroy');
 Route::redirect('/settings', '/settings/backup')->name('settings');
 Route::get('/settings/backup', [BackupController::class, 'index'])->name('settings.backup');
 Route::post('/settings/backup', [BackupController::class, 'store'])->name('settings.backup.store');

@@ -8,6 +8,8 @@
                 href="{{ route('learning.agenda') }}">Topic agenda</a>
             <a class="nav-link {{ request()->routeIs('learning.certificates.*') ? 'active' : '' }}"
                 href="{{ route('learning.certificates.index') }}">Certificates</a>
+            <a class="nav-link {{ request()->routeIs('learning.projects.*') ? 'active' : '' }}"
+                href="{{ route('learning.projects.index') }}">Portfolio Projects</a>
         </div>
     </div>
 </nav>

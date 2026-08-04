@@ -52,7 +52,7 @@ class CertificateController extends Controller
     public function show(Certificate $certificate): View
     {
         return view('learning.certificates.show', [
-            'certificate' => $certificate->load('agenda'),
+            'certificate' => $certificate->load(['agenda', 'learningModules']),
         ]);
     }
 

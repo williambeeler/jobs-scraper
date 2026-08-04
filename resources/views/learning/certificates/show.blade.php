@@ -68,6 +68,11 @@
             </aside>
         </div>
 
+        @include('learning.modules._manager', [
+            'moduleable' => $certificate,
+            'moduleStoreUrl' => route('learning.certificates.modules.store', $certificate),
+        ])
+
         <div class="mt-4">
             <a class="btn btn-link px-0" href="{{ route('learning.certificates.index') }}">← Back to certificates</a>
         </div>

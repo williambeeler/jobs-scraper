@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Certificate extends Model
 {
@@ -25,8 +26,27 @@ class Certificate extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(fn (self $certificate) => $certificate->learningModules()->delete());
+    }
+
     public function agenda(): BelongsTo
     {
         return $this->belongsTo(LearningTopic::class, 'learning_topic_id');
+    }
+
+    public function learningModules(): MorphMany
+    {
+        return $this->morphMany(LearningModule::class, 'moduleable')->orderBy('title');
+    }
+
+    public function progressPercentage(): int
+    {
+        $total = $this->learningModules->count();
+
+        return $total === 0
+            ? 0
+            : (int) round(($this->learningModules->where('is_completed', true)->count() / $total) * 100);
     }
 }
