@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Cache;
  * @property string $url_hash
  * @property Carbon|null $posted_at
  * @property-read string|null $posted_age
+ * @property-read string|null $company_search_url
  * @property string|null $salary
  * @property JobListingStatus|null $status
  * @property Carbon|null $status_changed_at
@@ -123,6 +124,24 @@ class JobListing extends Model
                 now()->addHours(3),
                 fn (): string => $this->posted_at->diffForHumans(),
             );
+        });
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function companySearchUrl(): Attribute
+    {
+        return Attribute::get(function (): ?string {
+            $companyName = $this->company?->name;
+
+            if ($companyName === null || trim($companyName) === '') {
+                return null;
+            }
+
+            $query = trim($companyName.' '.($this->location ?? ''));
+
+            return 'https://www.google.com/search?q='.urlencode($query);
         });
     }
 

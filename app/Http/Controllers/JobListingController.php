@@ -62,6 +62,7 @@ class JobListingController extends Controller
             'source' => $listing->source,
             'title' => $listing->title,
             'company' => $listing->company?->name,
+            'company_search_url' => $listing->company_search_url,
             'location' => $listing->location,
             'url' => $listing->url,
             'posted_at' => $listing->posted_at?->toDateString(),

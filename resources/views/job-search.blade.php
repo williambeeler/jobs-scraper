@@ -202,7 +202,11 @@
                                         rel="noopener noreferrer"
                                     >{{ $listing->title }}</a></h3>
                                 <p class="text-secondary mb-2">
-                                    {{ $listing->company?->name ?? 'Unknown company' }}
+                                    @if ($listing->company_search_url)
+                                        <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
+                                    @else
+                                        Unknown company
+                                    @endif
                                     @if ($listing->location)
                                         <span aria-hidden="true">&middot;</span>
                                         {{ $listing->location }}

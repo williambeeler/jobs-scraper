@@ -11,6 +11,7 @@ type Listing = {
     source: string;
     title: string;
     company: string | null;
+    company_search_url: string | null;
     location: string | null;
     url: string;
     posted_at: string | null;
@@ -90,19 +91,31 @@ defineOptions({
         </form>
 
         <div v-if="listings.data.length" class="grid gap-4 lg:grid-cols-2">
-            <Link
+            <article
                 v-for="listing in listings.data"
                 :key="listing.id"
-                :href="`/job-listings/${listing.id}`"
                 class="rounded-xl border bg-card p-5 transition-colors hover:bg-accent/40"
             >
                 <div class="mb-3 flex items-start justify-between gap-4">
                     <div>
                         <h2 class="leading-snug font-semibold">
-                            {{ listing.title }}
+                            <Link :href="`/job-listings/${listing.id}`">
+                                {{ listing.title }}
+                            </Link>
                         </h2>
                         <p class="mt-1 text-sm text-muted-foreground">
-                            {{ listing.company || 'Unknown company' }}
+                            <a
+                                v-if="
+                                    listing.company &&
+                                    listing.company_search_url
+                                "
+                                :href="listing.company_search_url"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="underline-offset-4 hover:underline"
+                                >{{ listing.company }}</a
+                            >
+                            <span v-else>Unknown company</span>
                         </p>
                     </div>
                     <Badge variant="secondary">{{ listing.source }}</Badge>
@@ -116,7 +129,7 @@ defineOptions({
                     <span v-if="listing.salary">{{ listing.salary }}</span>
                     <span>{{ listing.posted_age || 'Date unknown' }}</span>
                 </div>
-            </Link>
+            </article>
         </div>
 
         <div

@@ -24,6 +24,34 @@
         </a>
         <a
             class="app-navbar-icon"
+            href="{{ route('news') }}"
+            aria-label="News"
+            title="News">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true">
+                <path d="M15 18h-5" />
+                <path d="M18 14h-8" />
+                <path d="M19 8h-9" />
+                <path d="M3 11h4" />
+                <path d="M3 15h4" />
+                <path d="M3 19h4" />
+                <rect
+                    width="18"
+                    height="18"
+                    x="3"
+                    y="3"
+                    rx="2"/>
+            </svg>
+        </a>
+        <a
+            class="app-navbar-icon"
             href="{{ route('jobs.index') }}"
             aria-label="Jobs"
             title="Jobs">

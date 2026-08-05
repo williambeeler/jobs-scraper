@@ -47,7 +47,11 @@
                             </h2>
 
                             <p class="mb-2 text-body-secondary">
-                                {{ $listing->company?->name ?: 'Unknown company' }}
+                                @if ($listing->company_search_url)
+                                    <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
+                                @else
+                                    Unknown company
+                                @endif
                                 @if ($listing->location)
                                     <span aria-hidden="true">&middot;</span> {{ $listing->location }}
                                 @endif
@@ -188,7 +192,12 @@
                                 <dt class="col-sm-3">Job title</dt>
                                 <dd class="col-sm-9">{{ $listing->title }}</dd>
                                 <dt class="col-sm-3">Company</dt>
-                                <dd class="col-sm-9">{{ $listing->company?->name ?: 'Not provided' }}
+                                <dd class="col-sm-9">
+                                    @if ($listing->company_search_url)
+                                        <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
+                                    @else
+                                        Not provided
+                                    @endif
                                 </dd>
                                 <dt class="col-sm-3">Location</dt>
                                 <dd class="col-sm-9">{{ $listing->location ?: 'Not provided' }}</dd>

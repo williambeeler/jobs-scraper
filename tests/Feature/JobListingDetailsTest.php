@@ -6,6 +6,18 @@ use App\Models\JobListing;
 
 class JobListingDetailsTest extends FeatureTestCase
 {
+    public function test_company_name_links_to_a_google_search_for_company_and_location(): void
+    {
+        $listing = $this->createListing('Research Role', 'https://example.com/research-role', now(), now());
+        $expectedUrl = 'https://www.google.com/search?q=Acme+Remote';
+
+        $this->assertSame($expectedUrl, $listing->company_search_url);
+
+        $this->get(route('jobs.index'))
+            ->assertOk()
+            ->assertSee('href="'.$expectedUrl.'" target="_blank" rel="noopener noreferrer"', false);
+    }
+
     public function test_only_the_job_listing_salary_can_be_updated(): void
     {
         $listing = $this->createListing('Original Role', 'https://example.com/original-role', now(), now());

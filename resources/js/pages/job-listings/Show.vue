@@ -10,6 +10,7 @@ defineProps<{
         source: string;
         title: string;
         company: string | null;
+        company_search_url: string | null;
         location: string | null;
         url: string;
         posted_at: string | null;
@@ -54,7 +55,15 @@ defineOptions({
                         {{ listing.title }}
                     </h1>
                     <p class="mt-2 text-lg text-muted-foreground">
-                        {{ listing.company || 'Unknown company' }}
+                        <a
+                            v-if="listing.company && listing.company_search_url"
+                            :href="listing.company_search_url"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="underline-offset-4 hover:underline"
+                            >{{ listing.company }}</a
+                        >
+                        <span v-else>Unknown company</span>
                     </p>
                 </div>
                 <Button as-child>

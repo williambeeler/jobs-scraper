@@ -34,6 +34,7 @@ Route::get('/jobs/kanban', KanbanController::class)->name('jobs.kanban');
 Route::get('/jobs/search', JobSearchController::class)->name('jobs.search');
 Route::post('/jobs/custom', CustomJobController::class)->name('jobs.custom.store');
 Route::post('/jobs/{jobListing}/kanban-status', KanbanStatusController::class)->name('jobs.kanban-status');
+Route::view('/news', 'coming-soon', ['pageTitle' => 'News'])->name('news');
 Route::view('/bible', 'coming-soon', ['pageTitle' => 'Bible'])->name('bible');
 Route::view('/learning', 'learning.dashboard')->name('learning');
 Route::prefix('learning/agenda')->name('learning.agenda')->group(function (): void {

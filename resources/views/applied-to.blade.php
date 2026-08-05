@@ -28,17 +28,18 @@
                     </h2>
                     <div class="list-group shadow-sm">
                         @foreach ($group['listings'] as $listing)
-                            <a
-                                href="{{ $listing->url }}"
-                                class="list-group-item list-group-item-action p-4 {{ $listing->is_whitelisted ? 'job-row-whitelisted' : '' }}"
-                                target="_blank"
-                                rel="noopener noreferrer">
+                            <article
+                                class="list-group-item p-4 {{ $listing->is_whitelisted ? 'job-row-whitelisted' : '' }}">
                                 <div
                                     class="d-flex flex-column flex-md-row justify-content-between gap-3">
                                     <div>
-                                        <h3 class="h5 mb-2">{{ $listing->title }}</h3>
+                                        <h3 class="h5 mb-2"><a href="{{ $listing->url }}" target="_blank" rel="noopener noreferrer">{{ $listing->title }}</a></h3>
                                         <p class="mb-2 text-body-secondary">
-                                            {{ $listing->company?->name ?: 'Unknown company' }}
+                                            @if ($listing->company_search_url)
+                                                <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
+                                            @else
+                                                Unknown company
+                                            @endif
                                             @if ($listing->location)
                                                 <span aria-hidden="true">&middot;</span>
                                                 {{ $listing->location }}
@@ -66,7 +67,7 @@
                                         >{{ $listing->source }}</span>
                                     </div>
                                 </div>
-                            </a>
+                            </article>
                         @endforeach
                     </div>
                 </section>
