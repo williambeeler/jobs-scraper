@@ -27,13 +27,10 @@
             </div>
         </section>
 
-        <div class="text-center py-4 mb-4">
-            <p class="mb-2 text-uppercase text-primary fw-semibold small">To be completed...</p>
-            <h2>Bible Stuff Here</h2>
-            <h2>Newest Added Jobs...</h2>
-            <h2>Newest News Items...</h2>
-            <h2>Learning Track stuff</h2>
-        </div>
+        <!-- Bible Stuff Here -->
+        <!-- Newest Added Jobs...  -->
+        <!-- Newest News Items...  -->
+        <!-- Learning Track stuff  -->
 
     </main>
 @endsection

@@ -10,6 +10,49 @@ use Illuminate\Support\Facades\Schema;
 
 class HomeAndCalendarTest extends FeatureTestCase
 {
+    public function test_all_visible_jobs_for_a_selected_day_can_be_marked_not_interested(): void
+    {
+        Carbon::setTestNow('2026-08-05 12:00:00 UTC');
+
+        $first = $this->createListing(
+            title: 'First August Fourth Job',
+            url: 'https://example.com/jobs/august-fourth-first',
+            lastSeenAt: now(),
+            createdAt: Carbon::parse('2026-08-04 15:00:00 UTC'),
+        );
+        $second = $this->createListing(
+            title: 'Second August Fourth Job',
+            url: 'https://example.com/jobs/august-fourth-second',
+            lastSeenAt: now(),
+            createdAt: Carbon::parse('2026-08-05 02:00:00 UTC'),
+        );
+        $otherDay = $this->createListing(
+            title: 'August Fifth Job',
+            url: 'https://example.com/jobs/august-fifth',
+            lastSeenAt: now(),
+            createdAt: Carbon::parse('2026-08-05 15:00:00 UTC'),
+        );
+
+        $this->get(route('jobs.index', ['date' => '2026-08-04']))
+            ->assertOk()
+            ->assertSee('Not interested in all')
+            ->assertSee('Mark all jobs as not interested?')
+            ->assertSee(route('jobs.daily.not-interested', '2026-08-04'), false);
+
+        $this->post(route('jobs.daily.not-interested', '2026-08-04'))
+            ->assertRedirect(route('jobs.index', ['date' => '2026-08-04']))
+            ->assertSessionHas('status', '2 jobs marked as not interested.');
+
+        $this->assertSame('not_interested', $first->fresh()->status->value);
+        $this->assertSame('not_interested', $second->fresh()->status->value);
+        $this->assertNull($otherDay->fresh()->status);
+
+        $this->get(route('jobs.index', ['date' => '2026-08-04']))
+            ->assertOk()
+            ->assertDontSee($first->title)
+            ->assertDontSee($second->title);
+    }
+
     public function test_home_page_lists_only_jobs_scraped_today(): void
     {
         Carbon::setTestNow('2026-07-13 12:00:00');

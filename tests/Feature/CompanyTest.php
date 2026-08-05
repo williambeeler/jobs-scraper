@@ -55,6 +55,29 @@ class CompanyTest extends FeatureTestCase
         ]);
     }
 
+    public function test_company_preference_can_be_updated_asynchronously(): void
+    {
+        $listing = $this->createListing('Async Company Role', 'https://example.com/async-company', now(), now());
+
+        $this->postJson(route('jobs.company-preference', $listing), ['type' => 'whitelist'])
+            ->assertOk()
+            ->assertExactJson([
+                'company_id' => $listing->company_id,
+                'type' => 'whitelist',
+            ]);
+
+        $this->assertDatabaseHas('company_preferences', [
+            'company_id' => $listing->company_id,
+            'type' => 'whitelist',
+        ]);
+
+        $this->get(route('jobs.index'))
+            ->assertOk()
+            ->assertSee('data-company-preference-form', false)
+            ->assertSee('data-company-id="'.$listing->company_id.'"', false)
+            ->assertSee('data-job-row-star', false);
+    }
+
     public function test_company_normalization_relationships_and_preference_helpers(): void
     {
         $company = Company::findOrCreateByName('  Acme   Corporation ');

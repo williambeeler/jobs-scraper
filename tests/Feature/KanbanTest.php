@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\KanbanStatus;
 use App\Models\Company;
 use App\Models\CompanyPreference;
 use App\Models\JobListing;
@@ -9,6 +10,41 @@ use Illuminate\Support\Carbon;
 
 class KanbanTest extends FeatureTestCase
 {
+    public function test_rejected_jobs_can_be_cleared_from_the_kanban_without_being_deleted(): void
+    {
+        $rejected = $this->createListing(
+            title: 'Rejected Kanban Job',
+            url: 'https://example.com/jobs/rejected-kanban',
+            lastSeenAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-22 12:00:00 UTC'),
+        );
+        $rejected->update(['kanban_status' => KanbanStatus::Rejected]);
+
+        $this->get(route('jobs.kanban'))
+            ->assertOk()
+            ->assertSee($rejected->title)
+            ->assertSee(route('jobs.kanban.rejected.clear'), false)
+            ->assertSee('>Clear<', false);
+
+        $this->post(route('jobs.kanban.rejected.clear'))
+            ->assertRedirect(route('jobs.kanban'))
+            ->assertSessionHas('status', '1 rejected job cleared from the Kanban.');
+
+        $this->assertDatabaseHas('job_listings', [
+            'id' => $rejected->id,
+            'kanban_status' => 'rejected_cleared',
+        ]);
+        $this->assertDatabaseHas('job_listing_kanban_transitions', [
+            'job_listing_id' => $rejected->id,
+            'from_status' => 'rejected',
+            'to_status' => 'rejected_cleared',
+        ]);
+
+        $this->get(route('jobs.kanban'))
+            ->assertOk()
+            ->assertDontSee($rejected->title);
+    }
+
     public function test_active_jobs_default_to_the_kanban_backlog_and_not_interested_jobs_are_hidden(): void
     {
         $active = $this->createListing(

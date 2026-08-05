@@ -51,7 +51,10 @@ class CompanyPreferenceController extends Controller
         }
 
         if ($request->expectsJson()) {
-            return response()->json(['type' => $type->value]);
+            return response()->json([
+                'company_id' => $jobListing->company_id,
+                'type' => $type->value,
+            ]);
         }
 
         return back();

@@ -13,6 +13,8 @@ use App\Http\Controllers\CalendarCountsController;
 use App\Http\Controllers\CareerPathController;
 use App\Http\Controllers\CareerPathFileController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\ClearDailyJobListingsController;
+use App\Http\Controllers\ClearRejectedKanbanController;
 use App\Http\Controllers\CompanyPreferenceController;
 use App\Http\Controllers\CustomJobController;
 use App\Http\Controllers\DashboardController;
@@ -37,9 +39,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', DashboardController::class)->name('home');
 Route::get('/jobs', HomeController::class)->name('jobs.index');
+Route::post('/jobs/{date}/not-interested', ClearDailyJobListingsController::class)
+    ->where('date', '\\d{4}-\\d{2}-\\d{2}')
+    ->name('jobs.daily.not-interested');
 Route::view('/jobs/calendar', 'calendar')->name('jobs.calendar');
 Route::get('/jobs/calendar/counts', CalendarCountsController::class)->name('jobs.calendar.counts');
 Route::get('/jobs/kanban', KanbanController::class)->name('jobs.kanban');
+Route::post('/jobs/kanban/rejected/clear', ClearRejectedKanbanController::class)->name('jobs.kanban.rejected.clear');
 Route::get('/jobs/search', JobSearchController::class)->name('jobs.search');
 Route::post('/jobs/custom', CustomJobController::class)->name('jobs.custom.store');
 Route::post('/jobs/{jobListing}/kanban-status', KanbanStatusController::class)->name('jobs.kanban-status');
@@ -101,7 +107,6 @@ Route::redirect('/settings', '/settings/backup')->name('settings');
 Route::get('/settings/backup', [BackupController::class, 'index'])->name('settings.backup');
 Route::post('/settings/backup', [BackupController::class, 'store'])->name('settings.backup.store');
 Route::delete('/settings/backup', [BackupController::class, 'destroy'])->name('settings.backup.destroy');
-Route::view('/settings/restore', 'settings.restore')->name('settings.restore');
 Route::post('/jobs/{jobListing}/status', JobListingStatusController::class)->name('jobs.status');
 Route::put('/jobs/{jobListing}/details', JobListingDetailsController::class)->name('jobs.details.update');
 Route::post('/jobs/{jobListing}/notes', [JobListingNoteController::class, 'store'])->name('jobs.notes.store');

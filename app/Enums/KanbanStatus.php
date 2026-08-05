@@ -10,4 +10,5 @@ enum KanbanStatus: string
     case Interview = 'interview';
     case JobWon = 'job_won';
     case Rejected = 'rejected';
+    case RejectedCleared = 'rejected_cleared';
 }

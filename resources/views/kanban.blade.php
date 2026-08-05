@@ -30,8 +30,22 @@
                         <h2 class="h6 fw-bold mb-0" id="kanban-{{ $column['status']->value }}-title">
                             {{ $column['title'] }}
                         </h2>
-                        <span class="badge rounded-pill text-bg-secondary"
-                            data-column-count>{{ $columnListings->count() }}</span>
+                        <div class="d-flex align-items-center gap-2">
+                            @if ($column['status'] === \App\Enums\KanbanStatus::Rejected)
+                                <form
+                                    method="POST"
+                                    action="{{ route('jobs.kanban.rejected.clear') }}"
+                                    onsubmit="return confirm('Clear all rejected jobs from the Kanban?');">
+                                    @csrf
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-outline-secondary py-0"
+                                        {{ $columnListings->isEmpty() ? 'disabled' : '' }}>Clear</button>
+                                </form>
+                            @endif
+                            <span class="badge rounded-pill text-bg-secondary"
+                                data-column-count>{{ $columnListings->count() }}</span>
+                        </div>
                     </header>
 
                     <div

@@ -23,6 +23,7 @@ class KanbanController extends Controller
         ]);
 
         $listings = JobListing::query()
+            ->where('kanban_status', '!=', KanbanStatus::RejectedCleared)
             ->where(fn ($query) => $query
                 ->where('listing_origin', JobListingOrigin::Custom->value)
                 ->orWhere(fn ($query) => $query

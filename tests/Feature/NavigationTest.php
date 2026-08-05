@@ -47,18 +47,17 @@ class NavigationTest extends FeatureTestCase
             ->assertSee('aria-current="page"', false);
     }
 
-    public function test_settings_backup_page_has_backup_and_restore_navigation(): void
+    public function test_settings_backup_page_has_backup_navigation_without_restore(): void
     {
         $this->get(route('settings.backup'))
             ->assertOk()
             ->assertSee('Settings')
             ->assertSee('Create database backup')
             ->assertSee('Previous backups')
-            ->assertSee(route('settings.restore'), false);
+            ->assertSee('>Backup<', false)
+            ->assertDontSee('>Restore<', false);
 
-        $this->get(route('settings.restore'))
-            ->assertOk()
-            ->assertSee('Restore controls will be added here');
+        $this->get('/settings/restore')->assertNotFound();
     }
 
     public function test_crm_navigation_links_to_the_primary_sections(): void

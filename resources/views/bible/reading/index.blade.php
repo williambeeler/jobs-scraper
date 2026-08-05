@@ -26,7 +26,7 @@
         >
             <section class="bible-hero">
                 <div>
-                    <div class="bible-hero-kicker">Daily Dash</div>
+                    <div class="bible-hero-kicker">Bible Study Worksheets</div>
                     <div class="bible-hero-year-wrap">
                         <a
                             class="bible-year-bumper"
