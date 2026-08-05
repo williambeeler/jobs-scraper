@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DailyDash\Bible\Support;
+namespace App\Support;
 
 final class BibleBooks
 {

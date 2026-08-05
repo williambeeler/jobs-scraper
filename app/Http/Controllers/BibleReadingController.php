@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace DailyDash\Bible\Http\Controllers;
+namespace App\Http\Controllers;
 
-use DailyDash\Bible\Models\BibleReadingChapter;
-use DailyDash\Bible\Support\BibleBooks;
+use App\Models\BibleReadingChapter;
+use App\Support\BibleBooks;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 
 class BibleReadingController extends Controller
@@ -30,7 +29,7 @@ class BibleReadingController extends Controller
             ->map(fn ($chapters) => $chapters->pluck('chapter_number')->all())
             ->all();
 
-        return view('bible::reading.index', [
+        return view('bible.reading.index', [
             'booksByTestament' => BibleBooks::grouped(),
             'currentYear' => $currentYear,
             'displayYear' => $displayYear,

@@ -86,9 +86,9 @@
             <span>CRM</span>
         </a>
         <a
-            @class(['app-navbar-icon', 'is-active' => request()->routeIs('bible')])
+            @class(['app-navbar-icon', 'is-active' => request()->routeIs('bible', 'bible.*')])
             href="{{ route('bible') }}"
-            @if (request()->routeIs('bible')) aria-current="page" @endif
+            @if (request()->routeIs('bible', 'bible.*')) aria-current="page" @endif
             aria-label="Bible"
             title="Bible">
             <svg

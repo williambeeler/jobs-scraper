@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\BibleReadingController;
 use App\Http\Controllers\CalendarCountsController;
 use App\Http\Controllers\CareerPathController;
 use App\Http\Controllers\CareerPathFileController;
@@ -35,7 +36,11 @@ Route::get('/jobs/search', JobSearchController::class)->name('jobs.search');
 Route::post('/jobs/custom', CustomJobController::class)->name('jobs.custom.store');
 Route::post('/jobs/{jobListing}/kanban-status', KanbanStatusController::class)->name('jobs.kanban-status');
 Route::view('/news', 'coming-soon', ['pageTitle' => 'News'])->name('news');
-Route::view('/bible', 'coming-soon', ['pageTitle' => 'Bible'])->name('bible');
+Route::get('/bible', [BibleReadingController::class, 'index'])->name('bible');
+Route::put('/bible/{year}/books/{book}/chapters/{chapter}', [BibleReadingController::class, 'update'])
+    ->whereNumber('year')
+    ->whereNumber('chapter')
+    ->name('bible.reading.chapters.update');
 Route::view('/learning', 'learning.dashboard')->name('learning');
 Route::prefix('learning/agenda')->name('learning.agenda')->group(function (): void {
     Route::get('/', [LearningTopicController::class, 'index']);

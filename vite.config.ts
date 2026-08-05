@@ -11,7 +11,9 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/bible.css',
                 'resources/js/app.ts',
+                'resources/js/bible.js',
                 'resources/js/calendar.ts',
                 'resources/js/kanban.ts',
                 'resources/js/notes.ts',

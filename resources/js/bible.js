@@ -1,5 +1,6 @@
 function updateProgress(page, completedCount, totalCount) {
-    const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+    const progress =
+        totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
     const progressValue = page.querySelector('[data-bible-progress]');
     const progressBar = page.querySelector('.bible-progress-bar span');
     const subtitle = page.querySelector('.bible-hero-subtitle');
@@ -18,9 +19,17 @@ function updateProgress(page, completedCount, totalCount) {
 }
 
 function updateBookProgress(page, bookSlug) {
-    const checkboxes = Array.from(page.querySelectorAll(`.bible-chapter-checkbox[data-book="${bookSlug}"]`));
-    const checkedCount = checkboxes.filter((checkbox) => checkbox.checked).length;
-    const progress = page.querySelector(`[data-bible-book-progress="${bookSlug}"]`);
+    const checkboxes = Array.from(
+        page.querySelectorAll(
+            `.bible-chapter-checkbox[data-book="${bookSlug}"]`,
+        ),
+    );
+    const checkedCount = checkboxes.filter(
+        (checkbox) => checkbox.checked,
+    ).length;
+    const progress = page.querySelector(
+        `[data-bible-book-progress="${bookSlug}"]`,
+    );
 
     if (progress) {
         progress.textContent = `${checkedCount}/${checkboxes.length}`;
@@ -29,6 +38,7 @@ function updateBookProgress(page, bookSlug) {
 
 function setFeedback(page, message, state = '') {
     const feedback = page.querySelector('[data-bible-feedback]');
+
     if (!feedback) {
         return;
     }
@@ -40,11 +50,14 @@ function setFeedback(page, message, state = '') {
 
 function initBibleReadingPage() {
     const page = document.querySelector('[data-bible-reading-page]');
+
     if (!page) {
         return;
     }
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const csrfToken = document.querySelector(
+        'meta[name="csrf-token"]',
+    )?.content;
     const urlTemplate = page.dataset.updateUrlTemplate;
 
     page.querySelectorAll('.bible-chapter-checkbox').forEach((checkbox) => {
@@ -57,7 +70,12 @@ function initBibleReadingPage() {
 
             if (!csrfToken || !urlTemplate || !book || !chapter || !year) {
                 target.checked = previousChecked;
-                setFeedback(page, 'The page is missing the data needed to save changes.', 'error');
+                setFeedback(
+                    page,
+                    'The page is missing the data needed to save changes.',
+                    'error',
+                );
+
                 return;
             }
 
@@ -66,13 +84,17 @@ function initBibleReadingPage() {
                 .replace('__BOOK__', book)
                 .replace('__CHAPTER__', chapter);
 
-            setFeedback(page, `Saving ${book.replaceAll('-', ' ')} ${chapter}...`, 'saving');
+            setFeedback(
+                page,
+                `Saving ${book.replaceAll('-', ' ')} ${chapter}...`,
+                'saving',
+            );
 
             try {
                 const response = await window.fetch(updateUrl, {
                     method: 'PUT',
                     headers: {
-                        'Accept': 'application/json',
+                        Accept: 'application/json',
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
@@ -82,17 +104,30 @@ function initBibleReadingPage() {
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Request failed with status ${response.status}`);
+                    throw new Error(
+                        `Request failed with status ${response.status}`,
+                    );
                 }
 
                 const payload = await response.json();
-                updateProgress(page, payload.completed_chapters_count, payload.total_chapters_count);
+                updateProgress(
+                    page,
+                    payload.completed_chapters_count,
+                    payload.total_chapters_count,
+                );
                 updateBookProgress(page, book);
-                setFeedback(page, target.checked ? 'Chapter saved.' : 'Chapter unchecked.');
-            } catch (_error) {
+                setFeedback(
+                    page,
+                    target.checked ? 'Chapter saved.' : 'Chapter unchecked.',
+                );
+            } catch {
                 target.checked = previousChecked;
                 updateBookProgress(page, book);
-                setFeedback(page, 'That change could not be saved. Please try again.', 'error');
+                setFeedback(
+                    page,
+                    'That change could not be saved. Please try again.',
+                    'error',
+                );
             }
         });
     });
