@@ -78,6 +78,8 @@
         @unless (request()->routeIs('home'))
             @if (request()->routeIs('crm.*'))
                 @include('menus.subnav-crm')
+            @elseif (request()->routeIs('news', 'news.*'))
+                @include('menus.subnav-rss')
             @elseif (request()->routeIs('learning', 'learning.*'))
                 @include('menus.subnav-learning')
             @elseif (request()->routeIs('settings.*'))

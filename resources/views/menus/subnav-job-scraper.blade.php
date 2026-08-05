@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand bg-white border-bottom shadow-sm">
     <div class="container d-flex gap-4">
-        <a class="navbar-brand fw-bold mb-0" href="{{ route('jobs.index') }}">Job Scraper</a>
+        <a class="navbar-brand fw-bold mb-0" href="{{ route('jobs.index') }}">Jobs</a>
         <div class="navbar-nav flex-row gap-3">
             <div class="nav-item dropdown">
                 <button
@@ -28,11 +28,9 @@
                     Settings
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item"
-                            href="{{ route('jobs.company-preferences.index') }}">Companies List</a></li>
+                    <li><a class="dropdown-item" href="{{ route('jobs.company-preferences.index') }}">Companies List</a></li>
                     <li><a class="dropdown-item" href="{{ route('jobs.cron') }}">Cron</a></li>
-                    <li><a class="dropdown-item"
-                            href="{{ route('jobs.excluded-terms.index') }}">{{ 'Excluded terms' }}</a>
+                    <li><a class="dropdown-item" href="{{ route('jobs.excluded-terms.index') }}">{{ 'Excluded terms' }}</a>
                     </li>
                 </ul>
             </div>

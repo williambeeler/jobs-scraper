@@ -38,6 +38,15 @@ class NavigationTest extends FeatureTestCase
             ->assertSee('data-kanban-column', false);
     }
 
+    public function test_news_page_displays_the_rss_subnavigation(): void
+    {
+        $this->get(route('news'))
+            ->assertOk()
+            ->assertSee('navbar navbar-expand bg-white', false)
+            ->assertSee('class="app-navbar-icon is-active"', false)
+            ->assertSee('aria-current="page"', false);
+    }
+
     public function test_settings_backup_page_has_backup_and_restore_navigation(): void
     {
         $this->get(route('settings.backup'))

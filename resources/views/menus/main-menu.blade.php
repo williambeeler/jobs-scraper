@@ -25,9 +25,9 @@
             <span>Dashboard</span>
         </a>
         <a
-            @class(['app-navbar-icon', 'is-active' => request()->routeIs('news')])
+            @class(['app-navbar-icon', 'is-active' => request()->routeIs('news', 'news.*')])
             href="{{ route('news') }}"
-            @if (request()->routeIs('news')) aria-current="page" @endif
+            @if (request()->routeIs('news', 'news.*')) aria-current="page" @endif
             aria-label="News"
             title="News">
             <svg

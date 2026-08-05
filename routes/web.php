@@ -28,6 +28,8 @@ use App\Http\Controllers\KanbanController;
 use App\Http\Controllers\KanbanStatusController;
 use App\Http\Controllers\LearningModuleController;
 use App\Http\Controllers\LearningTopicController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\NewsFeedController;
 use App\Http\Controllers\PortfolioProjectController;
 use App\Http\Controllers\RunScrapeSchedulesController;
 use App\Http\Controllers\ScrapeScheduleController;
@@ -41,7 +43,12 @@ Route::get('/jobs/kanban', KanbanController::class)->name('jobs.kanban');
 Route::get('/jobs/search', JobSearchController::class)->name('jobs.search');
 Route::post('/jobs/custom', CustomJobController::class)->name('jobs.custom.store');
 Route::post('/jobs/{jobListing}/kanban-status', KanbanStatusController::class)->name('jobs.kanban-status');
-Route::view('/news', 'coming-soon', ['pageTitle' => 'News'])->name('news');
+Route::get('/news', NewsController::class)->name('news');
+Route::get('/news/feeds', [NewsFeedController::class, 'index'])->name('news.feeds.index');
+Route::post('/news/feeds', [NewsFeedController::class, 'store'])->name('news.feeds.store');
+Route::post('/news/feeds/refresh', [NewsFeedController::class, 'refreshAll'])->name('news.feeds.refresh-all');
+Route::post('/news/feeds/{feed}/refresh', [NewsFeedController::class, 'refresh'])->name('news.feeds.refresh');
+Route::delete('/news/feeds/{feed}', [NewsFeedController::class, 'destroy'])->name('news.feeds.destroy');
 Route::get('/bible', [BibleReadingController::class, 'index'])->name('bible');
 Route::put('/bible/{year}/books/{book}/chapters/{chapter}', [BibleReadingController::class, 'update'])
     ->whereNumber('year')
