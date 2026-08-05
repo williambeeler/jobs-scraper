@@ -13,7 +13,10 @@ class NavigationTest extends FeatureTestCase
             ->assertSee('data-bs-toggle="dropdown"', false)
             ->assertSeeInOrder(['Tools', 'Applied to', 'Settings', 'Companies List', 'Cron', 'Excluded terms'])
             ->assertSee(route('jobs.company-preferences.index'), false)
-            ->assertSee('aria-label="Home"', false)
+            ->assertSee('aria-label="Dashboard"', false)
+            ->assertSeeInOrder(['Dashboard', 'News', 'Jobs', 'CRM', 'Bible', 'Learning', 'Settings'])
+            ->assertSee('class="app-navbar-icon is-active"', false)
+            ->assertSee('aria-current="page"', false)
             ->assertSee('aria-label="Settings"', false);
 
         $this->get(route('jobs.applied-to'))

@@ -36,19 +36,29 @@
                 color: #b7c3d7;
                 display: inline-flex;
                 align-items: center;
-                justify-content: center;
-                width: 2.5rem;
+                gap: .45rem;
                 height: 2.5rem;
+                padding: 0 .75rem;
                 border-radius: .625rem;
+                font-size: .875rem;
+                font-weight: 500;
+                text-decoration: none;
+                white-space: nowrap;
             }
 
             .app-navbar-icon:hover,
-            .app-navbar-icon:focus-visible {
+            .app-navbar-icon:focus-visible,
+            .app-navbar-icon.is-active {
                 color: #fff;
                 background: rgba(255, 255, 255, .1);
             }
 
+            .app-navbar-icon.is-active {
+                box-shadow: inset 0 -2px 0 #60a5fa;
+            }
+
             .app-navbar-icon svg {
+                flex-shrink: 0;
                 width: 1.25rem;
                 height: 1.25rem;
             }
