@@ -1,1 +1,0 @@
-{{ $company->poc_email ?? '—' }}

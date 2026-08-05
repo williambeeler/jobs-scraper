@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Crm\Models\Tag;
+use App\Crm\Support\TableNames;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        config()->set('tags.tag_model', Tag::class);
+        config()->set('tags.taggable.table_name', TableNames::get('taggables'));
     }
 
     /**

@@ -1,5 +1,11 @@
 <?php
 
+use App\Crm\Http\Controllers\CompanyController as CrmCompanyController;
+use App\Crm\Http\Controllers\MyBusinessController as CrmMyBusinessController;
+use App\Crm\Http\Controllers\PhoneCallController as CrmPhoneCallController;
+use App\Crm\Http\Controllers\SavedSearchController as CrmSavedSearchController;
+use App\Crm\Http\Controllers\StatusController as CrmStatusController;
+use App\Crm\Http\Controllers\ToolsController as CrmToolsController;
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BibleReadingController;
@@ -110,3 +116,41 @@ Route::post('/jobs/cron/{scrapeSchedule}/run', [ScrapeScheduleController::class,
 Route::get('/jobs/cron/run', RunScrapeSchedulesController::class)->name('jobs.cron.run');
 Route::get('/cron/run', RunScrapeSchedulesController::class)->name('jobs.cron.run.legacy');
 Route::get('/jobs/applied-to', AppliedJobController::class)->name('jobs.applied-to');
+
+Route::prefix(config('crm.route_prefix', 'crm'))
+    ->name('crm.')
+    ->group(function (): void {
+        Route::get('/saved-searches', [CrmSavedSearchController::class, 'index'])->name('saved-searches.index');
+        Route::post('/saved-searches', [CrmSavedSearchController::class, 'store'])->name('saved-searches.store');
+
+        Route::get('/my-business', [CrmMyBusinessController::class, 'index'])->name('my-business.index');
+        Route::post('/my-business/address', [CrmMyBusinessController::class, 'storeAddress'])->name('my-business.address.store');
+        Route::patch('/my-business/{businessProfile}/address', [CrmMyBusinessController::class, 'updateAddress'])->name('my-business.address.update');
+        Route::delete('/my-business/{businessProfile}', [CrmMyBusinessController::class, 'destroy'])->name('my-business.destroy');
+        Route::get('/my-business/labels/print', [CrmMyBusinessController::class, 'printLabels'])->name('my-business.labels.print');
+
+        Route::view('/tools', 'crm.tools.index')->name('tools.index');
+        Route::get('/tools/google-platform', [CrmToolsController::class, 'googlePlatform'])->name('tools.googlePlatform');
+        Route::get('/tools/google-platform/oauth/redirect', [CrmToolsController::class, 'redirectGoogleCloudOAuth'])->name('tools.googlePlatform.oauth.redirect');
+        Route::get('/tools/google-platform/oauth/callback', [CrmToolsController::class, 'handleGoogleCloudOAuthCallback'])->name('tools.googlePlatform.oauth.callback');
+        Route::post('/tools/google-platform/remove', [CrmToolsController::class, 'removeGoogleCloudCredentials'])->name('tools.googlePlatform.remove');
+        Route::get('/tools/openai-platform', [CrmToolsController::class, 'openAiPlatform'])->name('tools.openAiPlatform');
+        Route::post('/tools/openai-platform/usage-key', [CrmToolsController::class, 'storeOpenAiUsageKey'])->name('tools.openAiPlatform.usageKey.store');
+        Route::post('/tools/openai-platform/usage-key/remove', [CrmToolsController::class, 'removeOpenAiUsageKey'])->name('tools.openAiPlatform.usageKey.remove');
+        Route::resource('statuses', CrmStatusController::class);
+
+        Route::post('/companies/bulk-action', [CrmCompanyController::class, 'bulkAction'])->name('companies.bulk-action');
+        Route::post('/companies/{company}/ai-enrich-clean', [CrmCompanyController::class, 'aiEnrichAndClean'])->name('companies.ai-enrich-clean');
+        Route::post('/companies/{company}/ai-opportunity-score', [CrmCompanyController::class, 'aiOpportunityScore'])->name('companies.ai-opportunity-score');
+        Route::post('/companies/bulk-tag', [CrmCompanyController::class, 'bulkTag'])->name('companies.bulk-tag');
+        Route::get('/companies/data', [CrmCompanyController::class, 'getData'])->name('companies.data');
+        Route::get('/companies/google-scrape', [CrmCompanyController::class, 'googleScrape'])->name('companies.googleScrape');
+        Route::get('/companies/{company}/modal', [CrmCompanyController::class, 'modal'])->name('companies.modal');
+        Route::post('/companies/{company}/notes', [CrmCompanyController::class, 'storeNote'])->name('companies.notes.store');
+        Route::post('/companies/{company}/phone-calls', [CrmPhoneCallController::class, 'store'])->name('companies.phone-calls.store');
+        Route::patch('/companies/{company}/callback', [CrmCompanyController::class, 'updateCallback'])->name('companies.callback.update');
+        Route::patch('/companies/{company}/classification', [CrmCompanyController::class, 'updateClassification'])->name('companies.classification.update');
+        Route::get('/companies/sort', [CrmCompanyController::class, 'sortTags'])->name('companies.sort-tags');
+
+        Route::resource('companies', CrmCompanyController::class);
+    });

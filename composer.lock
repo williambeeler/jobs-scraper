@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e17b1b29c67ac94699cda30ac51633aa",
+    "content-hash": "b47a096be56ea85ba5e104cf31bcab70",
     "packages": [
         {
             "name": "brick/math",
@@ -7757,54 +7757,6 @@
                 }
             ],
             "time": "2026-04-26T05:33:54+00:00"
-        },
-        {
-            "name": "williambeeler/crm",
-            "version": "0.1.0",
-            "dist": {
-                "type": "path",
-                "url": "packages/crm",
-                "reference": "7a68ebc41dd05a15b49542092d5117beb83e8000"
-            },
-            "require": {
-                "inertiajs/inertia-laravel": "^3.0",
-                "laravel/framework": "^13.0",
-                "league/csv": "^9.27",
-                "maatwebsite/excel": "^3.1",
-                "php": "^8.2",
-                "prism-php/prism": "^0.99.19",
-                "spatie/laravel-backup": "^10.0",
-                "spatie/laravel-tags": "^4.10",
-                "tightenco/ziggy": "^2.6"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "WilliamBeeler\\Crm\\Providers\\CrmServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "WilliamBeeler\\Crm\\": "src/",
-                    "WilliamBeeler\\Crm\\Database\\Factories\\": "database/factories/",
-                    "WilliamBeeler\\Crm\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "WilliamBeeler\\Crm\\Tests\\": "tests/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A reusable CRM package for Laravel applications.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
         }
     ],
     "packages-dev": [
