@@ -103,6 +103,21 @@ class ScrapeScheduleTest extends FeatureTestCase
             ->assertSee('Working Nomads');
     }
 
+    public function test_christian_tech_jobs_can_be_saved_as_a_keyword_source(): void
+    {
+        $this->post(route('jobs.cron.store'), [
+            'keywords' => 'software remote',
+            'sources' => ['christian_tech_jobs'],
+            'max_days' => 30,
+            'interval_hours' => 12,
+            'is_active' => true,
+        ])->assertRedirect(route('jobs.cron'));
+
+        $this->get(route('jobs.cron'))
+            ->assertOk()
+            ->assertSee('Christian Tech Jobs');
+    }
+
     public function test_cron_page_lists_configurations_before_the_form(): void
     {
         $this->get(route('jobs.cron'))

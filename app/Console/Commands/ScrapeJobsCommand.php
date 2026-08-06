@@ -9,6 +9,7 @@ use App\Models\ExcludedTerm;
 use App\Models\JobListing;
 use App\Models\ScrapeRun;
 use App\Models\ScrapeSchedule;
+use App\Services\JobScraping\ChristianTechJobsScraper;
 use App\Services\JobScraping\DiceScraper;
 use App\Services\JobScraping\HttpClient;
 use App\Services\JobScraping\JobSourceScraper;
@@ -36,7 +37,7 @@ class ScrapeJobsCommand extends Command
         $keywords = trim((string) $this->option('keywords'));
         $days = filter_var($this->option('days'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
         $sources = $this->selectedSources();
-        $allowedSources = ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs', 'usajobs'];
+        $allowedSources = ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs', 'usajobs', 'christian_tech_jobs'];
         $unknownSources = array_values(array_diff($sources, $allowedSources));
 
         if ($unknownSources !== []) {
@@ -45,7 +46,7 @@ class ScrapeJobsCommand extends Command
             return self::INVALID;
         }
 
-        $keywordSources = array_intersect($sources, ['linkedin', 'dice', 'working_nomads', 'usajobs']);
+        $keywordSources = array_intersect($sources, ['linkedin', 'dice', 'working_nomads', 'usajobs', 'christian_tech_jobs']);
         if ($keywords === '' && $keywordSources !== []) {
             $this->error('The --keywords option cannot be empty for keyword-based sources.');
 
@@ -150,7 +151,7 @@ class ScrapeJobsCommand extends Command
     {
         $options = $this->option('source');
         if ($options === []) {
-            return ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs', 'usajobs'];
+            return ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs', 'usajobs', 'christian_tech_jobs'];
         }
 
         $sources = [];
@@ -177,6 +178,7 @@ class ScrapeJobsCommand extends Command
             'wordpress_jobs' => new WordPressJobsScraper($http, $days),
             'larajobs' => new LaraJobsScraper($http, $days),
             'usajobs' => new UsaJobsScraper($http, $days),
+            'christian_tech_jobs' => new ChristianTechJobsScraper($http, $days),
         ];
     }
 
