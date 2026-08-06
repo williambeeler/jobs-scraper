@@ -86,8 +86,8 @@
                 @include('menus.subnav-settings')
             @elseif (request()->routeIs('jobs.*'))
                 @include('menus.subnav-job-scraper')
-            @else
-
+            @elseif (request()->routeIs('bible', 'bible.*'))
+                @include('menus.subnav-bible')
             @endif
         @endunless
 

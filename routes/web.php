@@ -55,7 +55,8 @@ Route::post('/news/feeds', [NewsFeedController::class, 'store'])->name('news.fee
 Route::post('/news/feeds/refresh', [NewsFeedController::class, 'refreshAll'])->name('news.feeds.refresh-all');
 Route::post('/news/feeds/{feed}/refresh', [NewsFeedController::class, 'refresh'])->name('news.feeds.refresh');
 Route::delete('/news/feeds/{feed}', [NewsFeedController::class, 'destroy'])->name('news.feeds.destroy');
-Route::get('/bible', [BibleReadingController::class, 'index'])->name('bible');
+Route::get('/bible', [BibleReadingController::class, 'dashboard'])->name('bible');
+Route::get('/bible/worksheets', [BibleReadingController::class, 'worksheets'])->name('bible.worksheets');
 Route::put('/bible/{year}/books/{book}/chapters/{chapter}', [BibleReadingController::class, 'update'])
     ->whereNumber('year')
     ->whereNumber('chapter')

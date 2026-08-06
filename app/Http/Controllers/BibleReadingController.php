@@ -12,11 +12,25 @@ use Illuminate\View\View;
 
 class BibleReadingController extends Controller
 {
-    public function index(Request $request): View
+    public function dashboard(): View
+    {
+        $currentYear = now()->year;
+
+        return view('bible.index', $this->yearData($currentYear, $currentYear, false));
+    }
+
+    public function worksheets(Request $request): View
     {
         $currentYear = now()->year;
         $selectedYear = $request->integer('year');
         $displayYear = $selectedYear > 0 ? $selectedYear : $currentYear;
+
+        return view('bible.reading.index', $this->yearData($displayYear, $currentYear, true));
+    }
+
+    /** @return array<string, mixed> */
+    private function yearData(int $displayYear, int $currentYear, bool $includeBooks): array
+    {
 
         $readings = BibleReadingChapter::query()
             ->where('reading_year', $displayYear)
@@ -24,19 +38,22 @@ class BibleReadingController extends Controller
             ->orderBy('chapter_number')
             ->get();
 
-        $readChapters = $readings
-            ->groupBy('book_slug')
-            ->map(fn ($chapters) => $chapters->pluck('chapter_number')->all())
-            ->all();
-
-        return view('bible.reading.index', [
-            'booksByTestament' => BibleBooks::grouped(),
+        $data = [
             'currentYear' => $currentYear,
             'displayYear' => $displayYear,
-            'readChapters' => $readChapters,
             'completedChaptersCount' => $readings->count(),
             'totalChaptersCount' => BibleBooks::totalChapters(),
-        ]);
+        ];
+
+        if ($includeBooks) {
+            $data['booksByTestament'] = BibleBooks::grouped();
+            $data['readChapters'] = $readings
+                ->groupBy('book_slug')
+                ->map(fn ($chapters) => $chapters->pluck('chapter_number')->all())
+                ->all();
+        }
+
+        return $data;
     }
 
     public function update(Request $request, int $year, string $book, int $chapter): JsonResponse

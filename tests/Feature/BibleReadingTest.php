@@ -7,12 +7,28 @@ use Illuminate\Support\Carbon;
 
 class BibleReadingTest extends FeatureTestCase
 {
-    public function test_bible_page_displays_the_reading_tracker_for_the_selected_year(): void
+    public function test_bible_dashboard_displays_only_the_current_year_worksheet_summary(): void
     {
         Carbon::setTestNow('2026-08-05 12:00:00');
         $this->withoutVite();
 
-        $this->get(route('bible', ['year' => 2025]))
+        $this->get(route('bible'))
+            ->assertOk()
+            ->assertViewIs('bible.index')
+            ->assertViewHas('displayYear', 2026)
+            ->assertSee('Bible Study Worksheets')
+            ->assertSee('2026')
+            ->assertSee(route('bible.worksheets'), false)
+            ->assertDontSee('Old Testament')
+            ->assertDontSee('data-bible-reading-page', false);
+    }
+
+    public function test_worksheets_page_displays_the_reading_tracker_for_the_selected_year(): void
+    {
+        Carbon::setTestNow('2026-08-05 12:00:00');
+        $this->withoutVite();
+
+        $this->get(route('bible.worksheets', ['year' => 2025]))
             ->assertOk()
             ->assertViewIs('bible.reading.index')
             ->assertViewHas('displayYear', 2025)
@@ -20,6 +36,7 @@ class BibleReadingTest extends FeatureTestCase
             ->assertSee('Old Testament')
             ->assertSee('New Testament')
             ->assertSee('aria-current="page"', false)
+            ->assertSee('href="'.route('bible.worksheets').'"', false)
             ->assertSee('data-bible-reading-page', false);
     }
 

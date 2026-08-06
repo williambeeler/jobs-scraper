@@ -2,13 +2,6 @@
 
 @section('title', 'Bible Reading | ' . config('app.name'))
 
-@php
-    $completionPercent =
-        $totalChaptersCount > 0
-            ? (int) round(($completedChaptersCount / $totalChaptersCount) * 100)
-            : 0;
-@endphp
-
 @push('styles')
     @vite('resources/css/bible.css')
 @endpush
@@ -24,48 +17,7 @@
             data-bible-reading-page
             data-update-url-template="{{ route('bible.reading.chapters.update', ['year' => '__YEAR__', 'book' => '__BOOK__', 'chapter' => '__CHAPTER__']) }}"
         >
-            <section class="bible-hero">
-                <div>
-                    <div class="bible-hero-kicker">Bible Study Worksheets</div>
-                    <div class="bible-hero-year-wrap">
-                        <a
-                            class="bible-year-bumper"
-                            href="{{ route('bible', ['year' => $displayYear - 1]) }}"
-                            aria-label="Show {{ $displayYear - 1 }}"
-                        >
-                            <span aria-hidden="true">&lsaquo;</span>
-                        </a>
-
-                        <div>
-                            <h1 class="bible-hero-year">{{ $displayYear }}</h1>
-                            <p class="bible-hero-subtitle mb-0">
-                                {{ $completedChaptersCount }} of {{ $totalChaptersCount }} chapters
-                                completed
-                            </p>
-                        </div>
-
-                        <a
-                            class="bible-year-bumper"
-                            href="{{ route('bible', ['year' => $displayYear + 1]) }}"
-                            aria-label="Show {{ $displayYear + 1 }}"
-                        >
-                            <span aria-hidden="true">&rsaquo;</span>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="bible-progress-panel">
-                    <div class="bible-progress-label">Year progress</div>
-                    <div class="bible-progress-value" data-bible-progress>{{ $completionPercent }}%
-                    </div>
-                    <div class="bible-progress-bar" aria-hidden="true">
-                        <span style="width: {{ $completionPercent }}%"></span>
-                    </div>
-                    <div class="bible-progress-footnote" data-bible-feedback>
-                        {{ $displayYear === $currentYear ? 'Current year loaded by default.' : 'Use the book icon to jump back to the current year.' }}
-                    </div>
-                </div>
-            </section>
+            @include('bible._worksheet-hero')
 
             @foreach ($booksByTestament as $testament => $books)
                 <section class="bible-section">
