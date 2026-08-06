@@ -9,6 +9,8 @@ use App\Crm\Http\Controllers\ToolsController as CrmToolsController;
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BibleReadingController;
+use App\Http\Controllers\BibleReadingPlanController;
+use App\Http\Controllers\BibleSearchController;
 use App\Http\Controllers\CalendarCountsController;
 use App\Http\Controllers\CareerPathController;
 use App\Http\Controllers\CareerPathFileController;
@@ -57,6 +59,9 @@ Route::post('/news/feeds/{feed}/refresh', [NewsFeedController::class, 'refresh']
 Route::delete('/news/feeds/{feed}', [NewsFeedController::class, 'destroy'])->name('news.feeds.destroy');
 Route::get('/bible', [BibleReadingController::class, 'dashboard'])->name('bible');
 Route::get('/bible/worksheets', [BibleReadingController::class, 'worksheets'])->name('bible.worksheets');
+Route::get('/bible/reading-plans', [BibleReadingPlanController::class, 'index'])->name('bible.plans.index');
+Route::post('/bible/reading-plans/days/{day}/complete', [BibleReadingPlanController::class, 'complete'])->name('bible.plans.complete');
+Route::get('/bible/search', BibleSearchController::class)->name('bible.search');
 Route::put('/bible/{year}/books/{book}/chapters/{chapter}', [BibleReadingController::class, 'update'])
     ->whereNumber('year')
     ->whereNumber('chapter')

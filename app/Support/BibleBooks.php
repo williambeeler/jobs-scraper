@@ -6,6 +6,24 @@ namespace App\Support;
 
 final class BibleBooks
 {
+    /** @return array<int, array{slug: string, name: string, chapters: int}> */
+    public static function all(): array
+    {
+        return array_values(array_merge(...array_values(self::grouped())));
+    }
+
+    /** @return array{slug: string, name: string, chapters: int, id: int}|null */
+    public static function find(string $slug): ?array
+    {
+        foreach (self::all() as $index => $book) {
+            if ($book['slug'] === $slug) {
+                return [...$book, 'id' => $index + 1];
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @return array<string, array<int, array{slug: string, name: string, chapters: int}>>
      */
@@ -87,28 +105,12 @@ final class BibleBooks
 
     public static function hasBook(string $slug): bool
     {
-        foreach (self::grouped() as $books) {
-            foreach ($books as $book) {
-                if ($book['slug'] === $slug) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return self::find($slug) !== null;
     }
 
     public static function chapterCount(string $slug): ?int
     {
-        foreach (self::grouped() as $books) {
-            foreach ($books as $book) {
-                if ($book['slug'] === $slug) {
-                    return $book['chapters'];
-                }
-            }
-        }
-
-        return null;
+        return self::find($slug)['chapters'] ?? null;
     }
 
     public static function totalChapters(): int
