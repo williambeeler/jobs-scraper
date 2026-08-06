@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\JobListingOrigin;
 use App\Models\JobListing;
+use App\Models\NewsArticle;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
 
@@ -57,6 +58,14 @@ class DashboardController extends Controller
         return view('welcome', [
             'greeting' => $greetings[$today->dayOfYear % count($greetings)],
             'dates' => $dates,
+            'newsArticles' => NewsArticle::query()
+                ->with('feed')
+                ->whereHas('feed', fn ($query) => $query->where('is_active', true))
+                ->orderByRaw('published_at IS NULL')
+                ->orderByDesc('published_at')
+                ->orderByDesc('id')
+                ->limit(15)
+                ->get(),
         ]);
     }
 }

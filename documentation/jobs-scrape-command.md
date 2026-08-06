@@ -36,7 +36,7 @@ WordPress Jobs and LaraJobs are full-board sources. They ignore `--keywords`, co
 | --- | --- | --- |
 | `--keywords=...` | `wordpress remote` | Search phrase sent to each selected source. |
 | `--days=...` | `5` | Maximum listing age in days. Must be a positive integer. |
-| `--source=...` | All sources | Limits the scrape to `linkedin`, `dice`, `working_nomads`, `wordpress_jobs`, or `larajobs`. May be repeated or comma-separated. |
+| `--source=...` | All sources | Limits the scrape to `linkedin`, `dice`, `working_nomads`, `wordpress_jobs`, `larajobs`, or `usajobs`. May be repeated or comma-separated. |
 | `-v`, `--verbose` | Off | Shows each HTTP request and response status. This is Artisan's standard verbosity option. |
 
 Use `php artisan jobs:scrape --help` to display the command's built-in help.

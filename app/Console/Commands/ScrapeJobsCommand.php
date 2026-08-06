@@ -14,6 +14,7 @@ use App\Services\JobScraping\HttpClient;
 use App\Services\JobScraping\JobSourceScraper;
 use App\Services\JobScraping\LaraJobsScraper;
 use App\Services\JobScraping\LinkedInScraper;
+use App\Services\JobScraping\UsaJobsScraper;
 use App\Services\JobScraping\WordPressJobsScraper;
 use App\Services\JobScraping\WorkingNomadsScraper;
 use Illuminate\Console\Command;
@@ -35,7 +36,7 @@ class ScrapeJobsCommand extends Command
         $keywords = trim((string) $this->option('keywords'));
         $days = filter_var($this->option('days'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
         $sources = $this->selectedSources();
-        $allowedSources = ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs'];
+        $allowedSources = ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs', 'usajobs'];
         $unknownSources = array_values(array_diff($sources, $allowedSources));
 
         if ($unknownSources !== []) {
@@ -44,7 +45,7 @@ class ScrapeJobsCommand extends Command
             return self::INVALID;
         }
 
-        $keywordSources = array_intersect($sources, ['linkedin', 'dice', 'working_nomads']);
+        $keywordSources = array_intersect($sources, ['linkedin', 'dice', 'working_nomads', 'usajobs']);
         if ($keywords === '' && $keywordSources !== []) {
             $this->error('The --keywords option cannot be empty for keyword-based sources.');
 
@@ -149,7 +150,7 @@ class ScrapeJobsCommand extends Command
     {
         $options = $this->option('source');
         if ($options === []) {
-            return ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs'];
+            return ['linkedin', 'dice', 'working_nomads', 'wordpress_jobs', 'larajobs', 'usajobs'];
         }
 
         $sources = [];
@@ -175,6 +176,7 @@ class ScrapeJobsCommand extends Command
             'working_nomads' => new WorkingNomadsScraper($http, $days),
             'wordpress_jobs' => new WordPressJobsScraper($http, $days),
             'larajobs' => new LaraJobsScraper($http, $days),
+            'usajobs' => new UsaJobsScraper($http, $days),
         ];
     }
 

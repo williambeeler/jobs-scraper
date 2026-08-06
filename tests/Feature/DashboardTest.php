@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\NewsArticle;
+use App\Models\NewsFeed;
 use Illuminate\Support\Carbon;
 
 class DashboardTest extends FeatureTestCase
@@ -50,5 +52,34 @@ class DashboardTest extends FeatureTestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Good afternoon, William!');
+    }
+
+    public function test_dashboard_shows_the_latest_fifteen_rss_articles(): void
+    {
+        $feed = NewsFeed::query()->create([
+            'name' => 'Example News',
+            'url' => 'https://example.com/feed.xml',
+            'url_hash' => hash('sha256', 'https://example.com/feed.xml'),
+            'is_active' => true,
+        ]);
+
+        foreach (range(1, 16) as $number) {
+            NewsArticle::query()->create([
+                'news_feed_id' => $feed->id,
+                'guid_hash' => hash('sha256', "article-{$number}"),
+                'title' => "Article {$number}",
+                'url' => "https://example.com/articles/{$number}",
+                'published_at' => Carbon::parse('2026-08-05 12:00:00')->addMinutes($number),
+            ]);
+        }
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee("Today's News", false)
+            ->assertSee('Article 16')
+            ->assertSee('Article 2')
+            ->assertDontSee('href="https://example.com/articles/1"', false)
+            ->assertSeeInOrder(['Article 16', 'Article 15', 'Article 14'])
+            ->assertViewHas('newsArticles', fn ($articles) => $articles->count() === 15);
     }
 }

@@ -10,6 +10,7 @@
             'working_nomads' => 'Working Nomads',
             'wordpress_jobs' => 'WordPress Jobs',
             'larajobs' => 'LaraJobs',
+            'usajobs' => 'USAJOBS',
         ];
         $selectedSources = old('sources', $editingSchedule?->sources ?? []);
     @endphp
@@ -147,7 +148,7 @@
                             name="keywords"
                             value="{{ old('keywords', $editingSchedule?->keywords ?? '') }}"
                             placeholder="wordpress developer remote">
-                        <div class="form-text">Required for LinkedIn, Dice, and Working Nomads; ignored
+                        <div class="form-text">Required for LinkedIn, Dice, Working Nomads, and USAJOBS; ignored
                             by full-board sources.</div>
                     </div>
 
@@ -160,6 +161,7 @@
             'working_nomads' => 'Working Nomads',
             'wordpress_jobs' => 'WordPress Jobs (all listings)',
             'larajobs' => 'LaraJobs (all listings)',
+            'usajobs' => 'USAJOBS (remote only)',
         ] as $value => $label)
                                 <div class="col-sm-6 col-lg-4">
                                     <div class="form-check">

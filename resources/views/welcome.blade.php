@@ -29,7 +29,44 @@
 
         <!-- Bible Stuff Here -->
         <!-- Newest Added Jobs...  -->
-        <!-- Newest News Items...  -->
+        <section class="mx-auto mt-5" aria-labelledby="todays-news-heading">
+            <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                <h2 class="h3 fw-bold mb-0" id="todays-news-heading">Today's News</h2>
+                <a class="btn btn-sm btn-outline-primary" href="{{ route('news') }}">View all news</a>
+            </div>
+
+            <div class="list-group shadow-sm">
+                @forelse ($newsArticles as $article)
+                    <a
+                        class="list-group-item list-group-item-action px-4 py-3"
+                        href="{{ $article->url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div>
+                                <h3 class="h6 fw-semibold mb-1">{{ $article->title }}</h3>
+                                <span class="small text-body-secondary">{{ $article->feed->name }}</span>
+                            </div>
+                            @if ($article->published_at)
+                                <time
+                                    class="small text-body-secondary text-nowrap"
+                                    datetime="{{ $article->published_at->toIso8601String() }}"
+                                >
+                                    {{ $article->published_at->isToday()
+                                        ? $article->published_at->format('g:i A')
+                                        : $article->published_at->format('M j') }}
+                                </time>
+                            @endif
+                        </div>
+                    </a>
+                @empty
+                    <div class="list-group-item px-4 py-4 text-body-secondary">
+                        No articles have been collected from your RSS subscriptions yet.
+                    </div>
+                @endforelse
+            </div>
+        </section>
         <!-- Learning Track stuff  -->
 
     </main>

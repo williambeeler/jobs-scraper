@@ -112,7 +112,7 @@ class ScrapeScheduleController extends Controller
             'keywords' => [
                 Rule::requiredIf(fn (): bool => array_intersect(
                     (array) $request->input('sources', []),
-                    ['linkedin', 'dice', 'working_nomads'],
+                    ['linkedin', 'dice', 'working_nomads', 'usajobs'],
                 ) !== []),
                 'nullable',
                 'string',
@@ -125,6 +125,7 @@ class ScrapeScheduleController extends Controller
                 'working_nomads',
                 'wordpress_jobs',
                 'larajobs',
+                'usajobs',
             ])],
             'max_days' => ['required', 'integer', 'min:1', 'max:365'],
             'interval_hours' => ['required', 'integer', 'min:1', 'max:8760'],
