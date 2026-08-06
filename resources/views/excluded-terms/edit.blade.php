@@ -3,7 +3,7 @@
 @section('title', 'Edit excluded term | ' . config('app.name'))
 
 @section('content')
-    <main class="container py-5" style="max-width: 760px;">
+    <main class="container py-5">
         <h1 class="display-6 fw-bold mb-4">Edit excluded term</h1>
         <form
             method="POST"

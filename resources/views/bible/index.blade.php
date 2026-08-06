@@ -11,6 +11,11 @@
         <div class="bible-page">
             @include('bible._worksheet-hero')
 
+            @include('bible._search-form', [
+                'searchInputId' => 'bible-dashboard-search-query',
+                'translationInputId' => 'bible-dashboard-search-translation',
+            ])
+
             <section class="bible-dashboard-card">
                 <div>
                     <div class="bible-hero-kicker">Daily Reading</div>

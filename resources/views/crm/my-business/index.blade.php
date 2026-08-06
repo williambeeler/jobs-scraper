@@ -3,7 +3,7 @@
 @section('title', 'My Business | ' . config('app.name'))
 
 @section('content')
-    <main class="container py-5" style="max-width: 1100px;">
+    <main class="container py-5">
         <header class="mb-4">
             <p class="mb-2 text-uppercase text-primary fw-semibold small">CRM</p>
             <h1 class="display-6 fw-bold mb-2">My Business</h1>
@@ -20,7 +20,7 @@
         </nav>
 
         @if ($activeTab === 'labels')
-            <section class="card shadow-sm" style="max-width: 680px;">
+            <section class="card shadow-sm">
                 <div class="card-header bg-white p-4 pb-0 border-0">
                     <h2 class="h5 mb-1">Print Avery 94200 labels</h2>
                     <p class="small text-body-secondary mb-0">Choose the return address to print.</p>

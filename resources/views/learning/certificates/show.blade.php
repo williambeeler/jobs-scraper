@@ -3,7 +3,7 @@
 @section('title', $certificate->title . ' | ' . config('app.name'))
 
 @section('content')
-    <main class="container py-5" style="max-width: 960px;">
+    <main class="container py-5">
         @if (session('status'))
             <div class="alert alert-success" role="status">{{ session('status') }}</div>
         @endif

@@ -3,22 +3,7 @@
 @section('title', 'News | ' . config('app.name'))
 
 @push('styles')
-    <style>
-        .news-article-image {
-            width: 100px;
-            height: 100px;
-            flex: 0 0 100px;
-            object-fit: cover;
-            border-radius: .5rem;
-            background: #f8f9fa;
-        }
-
-        .news-article-image.is-feed-icon {
-            object-fit: contain;
-            padding: 1rem;
-            border: 1px solid #dee2e6;
-        }
-    </style>
+    @vite('resources/css/news.css')
 @endpush
 
 @section('content')
@@ -63,56 +48,7 @@
                 </h2>
                 <div class="vstack gap-3">
                     @foreach ($datedArticles as $article)
-                        <article class="card shadow-sm">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start gap-3">
-                                    @if ($article->image_url || $article->feed->icon_url)
-                                        <img
-                                            @class(['news-article-image', 'is-feed-icon' => !$article->image_url])
-                                            src="{{ $article->image_url ?: $article->feed->icon_url }}"
-                                            alt=""
-                                            width="100"
-                                            height="100"
-                                            loading="lazy"
-                                        >
-                                    @endif
-                                    <div class="flex-grow-1">
-                                        <div
-                                            class="d-flex flex-column flex-md-row justify-content-between gap-2">
-                                            <div>
-                                                <h3 class="h5 mb-1">
-                                                    <a
-                                                        href="{{ $article->url }}"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        {{ $article->title }}
-                                                    </a>
-                                                </h3>
-                                                <div class="small text-secondary mb-2">
-                                                    {{ $article->feed->name }}
-                                                    @if ($article->author)
-                                                        <span aria-hidden="true">&middot;</span>
-                                                        {{ $article->author }}
-                                                    @endif
-                                                </div>
-                                            </div>
-                                            @if ($article->published_at)
-                                                <time class="small text-secondary text-nowrap"
-                                                    datetime="{{ $article->published_at->toIso8601String() }}"
-                                                >
-                                                    {{ $article->published_at->format('g:i A') }}
-                                                </time>
-                                            @endif
-                                        </div>
-                                        @if ($article->summary)
-                                            <p class="mb-0 text-body-secondary">
-                                                {{ str($article->summary)->limit(350) }}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
+                        @include('news._article')
                     @endforeach
                 </div>
             </section>

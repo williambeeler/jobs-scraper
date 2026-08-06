@@ -3,7 +3,7 @@
 @section('title', $company['name'] . ' | ' . config('app.name'))
 
 @section('content')
-    <main class="container py-5" style="max-width: 1100px;">
+    <main class="container py-5">
         <header
             class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4"
         >

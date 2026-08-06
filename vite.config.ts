@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/bible.css',
                 'resources/css/crm.css',
+                'resources/css/news.css',
                 'resources/js/app.ts',
                 'resources/js/bible.js',
                 'resources/js/crm.js',

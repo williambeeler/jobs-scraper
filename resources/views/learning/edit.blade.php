@@ -3,7 +3,7 @@
 @section('title', 'Edit ' . $topic->title . ' | ' . config('app.name'))
 
 @section('content')
-    <main class="container py-5" style="max-width: 760px;">
+    <main class="container py-5">
         <p class="mb-2 text-uppercase text-primary fw-semibold small">Learning center</p>
         <h1 class="display-6 fw-bold mb-4">Edit topic</h1>
 

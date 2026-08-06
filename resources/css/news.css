@@ -1,0 +1,26 @@
+.news-article-image {
+    width: 100px;
+    height: 100px;
+    flex: 0 0 100px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    background: #f8f9fa;
+}
+
+.news-article-image.is-feed-icon {
+    object-fit: contain;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+}
+
+.news-article .min-w-0 {
+    min-width: 0;
+}
+
+@media (max-width: 575.98px) {
+    .news-article-image {
+        width: 72px;
+        height: 72px;
+        flex-basis: 72px;
+    }
+}

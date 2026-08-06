@@ -60,6 +60,7 @@ class DashboardTest extends FeatureTestCase
             'name' => 'Example News',
             'url' => 'https://example.com/feed.xml',
             'url_hash' => hash('sha256', 'https://example.com/feed.xml'),
+            'icon_url' => 'https://example.com/feed-icon.png',
             'is_active' => true,
         ]);
 
@@ -69,6 +70,9 @@ class DashboardTest extends FeatureTestCase
                 'guid_hash' => hash('sha256', "article-{$number}"),
                 'title' => "Article {$number}",
                 'url' => "https://example.com/articles/{$number}",
+                'image_url' => $number === 16 ? 'https://example.com/article-16.jpg' : null,
+                'author' => $number === 16 ? 'Example Author' : null,
+                'summary' => $number === 16 ? 'A normalized article summary.' : null,
                 'published_at' => Carbon::parse('2026-08-05 12:00:00')->addMinutes($number),
             ]);
         }
@@ -77,6 +81,10 @@ class DashboardTest extends FeatureTestCase
             ->assertOk()
             ->assertSee("Today's News", false)
             ->assertSee('Article 16')
+            ->assertSee('src="https://example.com/article-16.jpg"', false)
+            ->assertSeeInOrder(['Example News', 'Example Author'])
+            ->assertSee('A normalized article summary.')
+            ->assertSee('news-article-image', false)
             ->assertSee('Article 2')
             ->assertDontSee('href="https://example.com/articles/1"', false)
             ->assertSeeInOrder(['Article 16', 'Article 15', 'Article 14'])

@@ -9,31 +9,11 @@
 @section('content')
     <main class="container py-5">
         <div class="bible-page">
-            <header class="bible-search-header">
-                <div class="bible-hero-kicker">Bible Search</div>
-                <h1>Search Scripture</h1>
-                <p>Search for words or phrases, or enter a reference such as <strong>John 3</strong>, <strong>John 3:16</strong>, or <strong>John 3:16-4:2</strong>.</p>
-
-                <form method="GET" action="{{ route('bible.search') }}" class="bible-search-form">
-                    <label class="visually-hidden" for="bible-search-query">Search Scripture</label>
-                    <input
-                        id="bible-search-query"
-                        class="form-control form-control-lg"
-                        type="search"
-                        name="q"
-                        value="{{ $query }}"
-                        placeholder="Search words, verses, or chapters…"
-                        autofocus
-                    >
-                    <label class="visually-hidden" for="bible-search-translation">Bible translation</label>
-                    <select id="bible-search-translation" class="form-select form-select-lg" name="translation">
-                        @foreach ($translations as $option)
-                            <option value="{{ $option->value }}" @selected($translation === $option)>{{ $option->label() }}</option>
-                        @endforeach
-                    </select>
-                    <button class="btn btn-primary btn-lg" type="submit">Search</button>
-                </form>
-            </header>
+            @include('bible._search-form', [
+                'searchInputId' => 'bible-search-query',
+                'translationInputId' => 'bible-search-translation',
+                'autofocusSearch' => true,
+            ])
 
             @if ($results)
                 <section class="bible-search-results" aria-live="polite">
@@ -65,7 +45,7 @@
                     @endforelse
 
                     @if ($results->hasPages())
-                        <div>{{ $results->links() }}</div>
+                        <div>{{ $results->links('pagination::bootstrap-5') }}</div>
                     @endif
                 </section>
             @endif

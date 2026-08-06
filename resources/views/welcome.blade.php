@@ -2,6 +2,10 @@
 
 @section('title', 'Dashboard | ' . config('app.name'))
 
+@push('styles')
+    @vite('resources/css/news.css')
+@endpush
+
 @section('content')
     <main class="container py-5">
         <header class="text-center py-4 mb-4">
@@ -9,7 +13,7 @@
             <h1 class="display-5 fw-bold mb-0">{{ $greeting }}</h1>
         </header>
 
-        <section class="mx-auto" style="max-width: 720px;" aria-labelledby="recent-jobs-heading">
+        <section aria-labelledby="recent-jobs-heading">
             <h2 class="visually-hidden" id="recent-jobs-heading">Recent job listings</h2>
             <div class="list-group shadow-sm">
                 @foreach ($dates as $item)
@@ -35,33 +39,11 @@
                 <a class="btn btn-sm btn-outline-primary" href="{{ route('news') }}">View all news</a>
             </div>
 
-            <div class="list-group shadow-sm">
+            <div class="vstack gap-3">
                 @forelse ($newsArticles as $article)
-                    <a
-                        class="list-group-item list-group-item-action px-4 py-3"
-                        href="{{ $article->url }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <div class="d-flex justify-content-between align-items-start gap-3">
-                            <div>
-                                <h3 class="h6 fw-semibold mb-1">{{ $article->title }}</h3>
-                                <span class="small text-body-secondary">{{ $article->feed->name }}</span>
-                            </div>
-                            @if ($article->published_at)
-                                <time
-                                    class="small text-body-secondary text-nowrap"
-                                    datetime="{{ $article->published_at->toIso8601String() }}"
-                                >
-                                    {{ $article->published_at->isToday()
-                                        ? $article->published_at->format('g:i A')
-                                        : $article->published_at->format('M j') }}
-                                </time>
-                            @endif
-                        </div>
-                    </a>
+                    @include('news._article')
                 @empty
-                    <div class="list-group-item px-4 py-4 text-body-secondary">
+                    <div class="card shadow-sm card-body px-4 py-4 text-body-secondary">
                         No articles have been collected from your RSS subscriptions yet.
                     </div>
                 @endforelse

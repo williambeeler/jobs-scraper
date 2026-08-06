@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\BibleTranslation;
 use App\Models\BibleReadingChapter;
 use App\Support\BibleBooks;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +17,12 @@ class BibleReadingController extends Controller
     {
         $currentYear = now()->year;
 
-        return view('bible.index', $this->yearData($currentYear, $currentYear, false));
+        return view('bible.index', [
+            ...$this->yearData($currentYear, $currentYear, false),
+            'query' => '',
+            'translation' => BibleTranslation::default(),
+            'translations' => BibleTranslation::cases(),
+        ]);
     }
 
     public function worksheets(Request $request): View

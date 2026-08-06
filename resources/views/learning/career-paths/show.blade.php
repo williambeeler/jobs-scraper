@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', $careerPath->title . ' | ' . config('app.name'))
 @section('content')
-    <main class="container py-5" style="max-width: 960px;">
+    <main class="container py-5">
         @if (session('status'))<div class="alert alert-success">{{ session('status') }}</div>@endif
         <header class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
             <div>
