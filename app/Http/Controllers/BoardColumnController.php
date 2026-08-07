@@ -28,6 +28,14 @@ class BoardColumnController extends Controller
         return back()->with('status', 'Column renamed.');
     }
 
+    public function destroy(Board $board, BoardColumn $column): RedirectResponse
+    {
+        abort_unless($column->board_id === $board->id, 404);
+        $column->delete();
+
+        return redirect()->route('todo.boards.show', $board)->with('status', 'Column deleted.');
+    }
+
     public function reorder(Request $request, Board $board): JsonResponse
     {
         $validated = $request->validate([

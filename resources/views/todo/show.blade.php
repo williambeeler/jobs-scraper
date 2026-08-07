@@ -34,6 +34,10 @@
                                 @method('PUT')
                                 <input class="form-control form-control-sm fw-semibold" name="name" value="{{ $column->name }}" aria-label="Column name" required data-column-title-input>
                                 <button class="btn btn-sm btn-primary" type="submit">Save</button>
+                                <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#delete-column-{{ $column->id }}" aria-label="Delete {{ $column->name }} column" title="Delete column">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/></svg>
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" type="button" data-column-title-cancel aria-label="Cancel editing {{ $column->name }} column" title="Cancel">&times;</button>
                             </form>
                         </div>
                         @if ($board->show_card_count)
@@ -232,6 +236,36 @@
         </div>
     @endforeach
 
+    @foreach ($board->columns as $column)
+        <div class="modal fade" id="delete-column-{{ $column->id }}" tabindex="-1" aria-labelledby="delete-column-{{ $column->id }}-title" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="delete-column-{{ $column->id }}-title">Delete {{ $column->name }}?</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        This will permanently delete the column and
+                        @if ($column->cards->count() === 1)
+                            its 1 card.
+                        @else
+                            its {{ $column->cards->count() }} cards.
+                        @endif
+                        This action cannot be undone.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="POST" action="{{ route('todo.columns.destroy', [$board, $column]) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger" type="submit">Delete column</button>
+                    </form>
+                </div>
+            </div></div>
+        </div>
+    @endforeach
+
     <div class="modal fade" id="edit-board-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
             <form method="POST" action="{{ route('todo.boards.update', $board) }}">
@@ -276,6 +310,7 @@
         .todo-column-title-wrap { flex: 1; min-width: 0; }
         .todo-column-title { width: 100%; padding: .3rem .45rem; border: 1px solid transparent; border-radius: .375rem; background: transparent; font-weight: 600; text-align: left; cursor: pointer; }
         .todo-column-title-form { display: flex; gap: .35rem; }
+        .todo-column-title-form .form-control { min-width: 0; }
         .todo-column-title-form.d-none { display: none !important; }
         .todo-column-ghost { opacity: .4; }
         .todo-card-list { min-height: 3rem; }

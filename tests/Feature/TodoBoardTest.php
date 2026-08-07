@@ -52,6 +52,32 @@ class TodoBoardTest extends FeatureTestCase
             ->assertSee('data-reorder-url="'.route('todo.columns.reorder', $board).'"', false);
     }
 
+    public function test_a_column_can_be_deleted_after_confirmation(): void
+    {
+        $this->post(route('todo.boards.store'), ['name' => 'Cleanup Board', 'show_card_count' => true]);
+        $board = Board::query()->firstOrFail();
+        $column = $board->columns()->where('name', 'Backlog')->firstOrFail();
+        $this->post(route('todo.cards.store', [$board, $column]), ['title' => 'Remove with column']);
+        $card = $board->cards()->firstOrFail();
+
+        $this->get(route('todo.boards.show', $board))
+            ->assertOk()
+            ->assertSee('data-column-title-cancel', false)
+            ->assertSee('data-bs-target="#delete-column-'.$column->id.'"', false)
+            ->assertSee('This action cannot be undone.')
+            ->assertSee(route('todo.columns.destroy', [$board, $column]), false);
+
+        $this->post(route('todo.boards.store'), ['name' => 'Another Board', 'show_card_count' => true]);
+        $otherBoard = Board::query()->where('name', 'Another Board')->firstOrFail();
+        $this->delete(route('todo.columns.destroy', [$otherBoard, $column]))->assertNotFound();
+
+        $this->delete(route('todo.columns.destroy', [$board, $column]))
+            ->assertRedirect(route('todo.boards.show', $board));
+
+        $this->assertModelMissing($column);
+        $this->assertModelMissing($card);
+    }
+
     public function test_card_counts_can_be_hidden_per_board(): void
     {
         $this->post(route('todo.boards.store'), ['name' => 'Quiet Board', 'show_card_count' => false]);

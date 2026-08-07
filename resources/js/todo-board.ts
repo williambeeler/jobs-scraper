@@ -109,6 +109,23 @@ document.addEventListener('click', (event) => {
         return;
     }
 
+    const cancel = target.closest<HTMLElement>('[data-column-title-cancel]');
+
+    if (cancel) {
+        const wrapper = cancel.closest<HTMLElement>('.todo-column-title-wrap');
+        const title = wrapper?.querySelector<HTMLElement>('[data-column-title]');
+        const form = wrapper?.querySelector<HTMLFormElement>('[data-column-title-form]');
+        const input = wrapper?.querySelector<HTMLInputElement>('[data-column-title-input]');
+
+        form?.reset();
+        form?.classList.add('d-none');
+        title?.classList.remove('d-none');
+        input?.blur();
+        title?.focus();
+
+        return;
+    }
+
     const title = target.closest<HTMLElement>('[data-column-title]');
 
     if (!title) {

@@ -79,6 +79,7 @@ Route::put('/todo/{board}', [BoardController::class, 'update'])->name('todo.boar
 Route::post('/todo/{board}/columns', [BoardColumnController::class, 'store'])->name('todo.columns.store');
 Route::patch('/todo/{board}/columns/reorder', [BoardColumnController::class, 'reorder'])->name('todo.columns.reorder');
 Route::put('/todo/{board}/columns/{column}', [BoardColumnController::class, 'update'])->name('todo.columns.update');
+Route::delete('/todo/{board}/columns/{column}', [BoardColumnController::class, 'destroy'])->name('todo.columns.destroy');
 Route::post('/todo/{board}/columns/{column}/cards', [CardController::class, 'store'])->name('todo.cards.store');
 Route::patch('/todo/{board}/cards/{card}/move', [CardController::class, 'move'])->name('todo.cards.move');
 Route::put('/todo/{board}/cards/{card}', [CardController::class, 'update'])->name('todo.cards.update');
