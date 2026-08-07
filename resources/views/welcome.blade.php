@@ -15,20 +15,15 @@
 
         <section aria-labelledby="recent-jobs-heading">
             <h2 class="visually-hidden" id="recent-jobs-heading">Recent job listings</h2>
-            <div class="list-group shadow-sm">
-                @foreach ($dates as $item)
-                    <a class="list-group-item list-group-item-action p-4 d-flex justify-content-between align-items-center gap-3"
-                        href="{{ $item['url'] }}">
-                        <div>
-                            <p class="h5 mb-1">{{ $item['date']->format('l, F j') }}</p>
-                            <small class="text-body-secondary">{{ $item['date']->isToday() ? 'Today' : $item['date']->format('Y') }}</small>
-                        </div>
-                        <span class="badge rounded-pill text-bg-primary fs-6">
-                            {{ trans_choice(':count job|:count jobs', $item['count'], ['count' => $item['count']]) }}
-                        </span>
-                    </a>
-                @endforeach
-            </div>
+            @if ($listings->isEmpty())
+                <div class="alert alert-secondary mb-0" role="status">No recent job listings are available.</div>
+            @else
+                <div class="list-group shadow-sm">
+                    @foreach ($listings as $listing)
+                        @include('jobs._listing-row')
+                    @endforeach
+                </div>
+            @endif
         </section>
 
         <!-- Bible Stuff Here -->
@@ -53,3 +48,7 @@
 
     </main>
 @endsection
+
+@push('scripts')
+    @vite('resources/js/dashboard-jobs.ts')
+@endpush

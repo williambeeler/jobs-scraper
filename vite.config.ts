@@ -18,6 +18,7 @@ export default defineConfig({
                 'resources/js/bible.js',
                 'resources/js/crm.js',
                 'resources/js/calendar.ts',
+                'resources/js/dashboard-jobs.ts',
                 'resources/js/kanban.ts',
                 'resources/js/notes.ts',
             ],

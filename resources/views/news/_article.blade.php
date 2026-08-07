@@ -33,8 +33,9 @@
                         <time
                             class="small text-secondary text-nowrap"
                             datetime="{{ $article->published_at->toIso8601String() }}"
+                            title="Published {{ $article->published_at->timezone(config('app.display_timezone'))->format('F j, Y \a\t g:i A') }}"
                         >
-                            {{ $article->published_at->format('g:i A') }}
+                            {{ $article->publishedLabel() }}
                         </time>
                     @endif
                 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CompanyPreferenceType;
 use App\Enums\JobListingOrigin;
 use App\Models\JobListing;
 use App\Models\NewsArticle;
@@ -34,30 +35,21 @@ class DashboardController extends Controller
             ],
         };
 
-        $dates = collect(range(0, 2))->map(function (int $daysAgo) use ($today): array {
-            $date = $today->copy()->subDays($daysAgo);
-            $count = JobListing::query()
+        return view('welcome', [
+            'greeting' => $greetings[$today->dayOfYear % count($greetings)],
+            'listings' => JobListing::query()
                 ->visible()
                 ->where('listing_origin', JobListingOrigin::Scraped->value)
                 ->whereNull('status')
-                ->whereBetween('created_at', [
-                    $date->copy()->startOfDay()->utc(),
-                    $date->copy()->endOfDay()->utc(),
-                ])
-                ->count();
-
-            return [
-                'date' => $date,
-                'count' => $count,
-                'url' => $daysAgo === 0
-                    ? route('jobs.index')
-                    : route('jobs.index', ['date' => $date->toDateString()]),
-            ];
-        });
-
-        return view('welcome', [
-            'greeting' => $greetings[$today->dayOfYear % count($greetings)],
-            'dates' => $dates,
+                ->with('company')
+                ->withExists(['companyPreference as is_whitelisted' => fn ($query) => $query
+                    ->where('type', CompanyPreferenceType::Whitelist)])
+                ->withExists(['companyPreference as is_verified' => fn ($query) => $query
+                    ->where('type', CompanyPreferenceType::Verified)])
+                ->latest('created_at')
+                ->latest('id')
+                ->limit(10)
+                ->get(),
             'newsArticles' => NewsArticle::query()
                 ->with('feed')
                 ->whereHas('feed', fn ($query) => $query->where('is_active', true))

@@ -12,3 +12,8 @@ Schedule::command('backup:run --only-db --disable-notifications')
     ->dailyAt('10:00')
     ->timezone((string) config('app.display_timezone', 'America/Chicago'))
     ->withoutOverlapping();
+
+Schedule::command('news:refresh-feeds')
+    ->everyThreeHours()
+    ->timezone((string) config('app.display_timezone', 'America/Chicago'))
+    ->withoutOverlapping(180);

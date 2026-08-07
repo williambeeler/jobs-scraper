@@ -8,41 +8,34 @@ use Illuminate\Support\Carbon;
 
 class DashboardTest extends FeatureTestCase
 {
-    public function test_dashboard_shows_a_time_appropriate_greeting_and_three_job_dates(): void
+    public function test_dashboard_shows_a_time_appropriate_greeting_and_the_ten_newest_jobs(): void
     {
         Carbon::setTestNow('2026-08-04 14:00:00 UTC');
 
-        $this->createListing(
-            title: 'Today job',
-            url: 'https://example.com/jobs/today-dashboard',
-            lastSeenAt: Carbon::parse('2026-08-04 15:00:00 UTC'),
-            createdAt: Carbon::parse('2026-08-04 15:00:00 UTC'),
-        );
-        $this->createListing(
-            title: 'Yesterday job one',
-            url: 'https://example.com/jobs/yesterday-dashboard-one',
-            lastSeenAt: Carbon::parse('2026-08-03 15:00:00 UTC'),
-            createdAt: Carbon::parse('2026-08-03 15:00:00 UTC'),
-        );
-        $this->createListing(
-            title: 'Yesterday job two',
-            url: 'https://example.com/jobs/yesterday-dashboard-two',
-            lastSeenAt: Carbon::parse('2026-08-03 16:00:00 UTC'),
-            createdAt: Carbon::parse('2026-08-03 16:00:00 UTC'),
-        );
+        foreach (range(1, 11) as $number) {
+            $seenAt = Carbon::parse('2026-08-04 15:00:00 UTC')->addMinutes($number);
+            $this->createListing(
+                title: "Dashboard job {$number}",
+                url: "https://example.com/jobs/dashboard-{$number}",
+                lastSeenAt: $seenAt,
+                createdAt: $seenAt,
+            );
+        }
 
         $this->get(route('home'))
             ->assertOk()
             ->assertViewIs('welcome')
             ->assertSee('Good morning, William!')
-            ->assertSee('Tuesday, August 4')
-            ->assertSee('Monday, August 3')
-            ->assertSee('Sunday, August 2')
-            ->assertSee('1 job')
-            ->assertSee('2 jobs')
-            ->assertSee(route('jobs.index'), false)
-            ->assertSee(route('jobs.index', ['date' => '2026-08-03']), false)
-            ->assertSee(route('jobs.index', ['date' => '2026-08-02']), false);
+            ->assertSee('Dashboard job 11')
+            ->assertSee('Dashboard job 2')
+            ->assertDontSee('href="https://example.com/jobs/dashboard-1"', false)
+            ->assertSeeInOrder(['Dashboard job 11', 'Dashboard job 10', 'Dashboard job 9'])
+            ->assertSee('Not Interested')
+            ->assertSee('Applied')
+            ->assertSee('data-company-preference-form', false)
+            ->assertSee('data-job-status-form', false)
+            ->assertSee('dashboard-jobs-', false)
+            ->assertViewHas('listings', fn ($listings) => $listings->count() === 10);
     }
 
     public function test_dashboard_uses_an_afternoon_greeting(): void

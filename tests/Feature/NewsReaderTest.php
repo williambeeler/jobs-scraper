@@ -4,10 +4,77 @@ namespace Tests\Feature;
 
 use App\Models\NewsArticle;
 use App\Models\NewsFeed;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 
 class NewsReaderTest extends FeatureTestCase
 {
+    public function test_the_scheduled_news_refresh_imports_active_feeds(): void
+    {
+        Http::fake([
+            'https://example.com/scheduled.xml' => Http::response(<<<'XML'
+                <?xml version="1.0" encoding="UTF-8"?>
+                <rss version="2.0">
+                    <channel>
+                        <title>Scheduled News</title>
+                        <link>https://example.com</link>
+                        <item>
+                            <guid>scheduled-article-1</guid>
+                            <title>Scheduled story</title>
+                            <link>https://example.com/stories/scheduled</link>
+                            <pubDate>Fri, 07 Aug 2026 14:30:00 GMT</pubDate>
+                        </item>
+                    </channel>
+                </rss>
+                XML),
+        ]);
+
+        NewsFeed::query()->create([
+            'name' => 'Scheduled News',
+            'url' => 'https://example.com/scheduled.xml',
+            'url_hash' => hash('sha256', 'https://example.com/scheduled.xml'),
+            'icon_url' => 'https://example.com/favicon.ico',
+            'is_active' => true,
+        ]);
+        NewsFeed::query()->create([
+            'name' => 'Inactive News',
+            'url' => 'https://example.com/inactive.xml',
+            'url_hash' => hash('sha256', 'https://example.com/inactive.xml'),
+            'is_active' => false,
+        ]);
+
+        $this->assertSame(0, Artisan::call('news:refresh-feeds'));
+
+        $this->assertDatabaseHas('news_articles', [
+            'title' => 'Scheduled story',
+            'url' => 'https://example.com/stories/scheduled',
+        ]);
+        Http::assertNotSent(fn ($request): bool => $request->url() === 'https://example.com/inactive.xml');
+    }
+
+    public function test_article_publication_labels_are_hourly_then_switch_to_the_published_date(): void
+    {
+        $feed = NewsFeed::query()->create([
+            'name' => 'Example News',
+            'url' => 'https://example.com/feed.xml',
+            'url_hash' => hash('sha256', 'https://example.com/feed.xml'),
+        ]);
+        $article = NewsArticle::query()->create([
+            'news_feed_id' => $feed->id,
+            'guid_hash' => hash('sha256', 'hourly-label'),
+            'title' => 'Hourly label article',
+            'url' => 'https://example.com/hourly-label',
+            'published_at' => '2026-08-07 10:00:00',
+        ]);
+
+        Carbon::setTestNow('2026-08-07 15:30:00 UTC');
+        $this->assertSame('5 hours ago', $article->publishedLabel());
+
+        Carbon::setTestNow('2026-08-08 15:30:00 UTC');
+        $this->assertSame('Aug 7, 2026', $article->publishedLabel());
+    }
+
     public function test_an_rss_feed_can_be_added_and_imported(): void
     {
         Http::fake([
