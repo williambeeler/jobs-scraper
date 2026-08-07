@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand bg-white border-bottom shadow-sm">
     <div class="container d-flex gap-4">
-        <a class="navbar-brand fw-bold mb-0" href="{{ route('jobs.index') }}">Jobs</a>
+        <a class="navbar-brand fw-bold mb-0" href="{{ route('jobs.kanban') }}">Jobs</a>
+        <a class="nav-link" href="{{ route('jobs.index') }}">Today's Jobs</a>
         <div class="navbar-nav flex-row gap-3">
             <div class="nav-item dropdown">
                 <button

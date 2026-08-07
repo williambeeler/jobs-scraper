@@ -13,8 +13,8 @@
             </h2>
 
             <p class="mb-2 text-body-secondary">
-                @if ($listing->company_search_url)
-                    <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
+                @if ($listing->company_link_url)
+                    <a href="{{ $listing->company_link_url }}" target="_blank" rel="noopener noreferrer" data-company-link>{{ $listing->company->name }}</a>
                 @else
                     Unknown company
                 @endif

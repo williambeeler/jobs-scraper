@@ -202,8 +202,8 @@
                                         rel="noopener noreferrer"
                                     >{{ $listing->title }}</a></h3>
                                 <p class="text-secondary mb-2">
-                                    @if ($listing->company_search_url)
-                                        <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
+                                    @if ($listing->company_link_url)
+                                        <a href="{{ $listing->company_link_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
                                     @else
                                         Unknown company
                                     @endif

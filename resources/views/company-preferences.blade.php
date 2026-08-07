@@ -29,7 +29,14 @@
                     @foreach ($items as $preference)
                         <div
                             class="list-group-item d-flex align-items-center justify-content-between gap-3">
-                            <span>{{ $preference->company->name }}</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{{ route('jobs.company-preferences.show', $preference->company) }}">
+                                    {{ $preference->company->name }}
+                                </a>
+                                <span class="badge rounded-pill text-bg-secondary">
+                                    {{ trans_choice(':count job|:count jobs', $preference->company->job_listings_count, ['count' => $preference->company->job_listings_count]) }}
+                                </span>
+                            </div>
                             <form method="POST"
                                 action="{{ route('jobs.company-preferences.destroy', $preference) }}">
                                 @csrf

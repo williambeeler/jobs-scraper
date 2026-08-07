@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Cache;
  * @property Carbon|null $posted_at
  * @property-read string|null $posted_age
  * @property-read string|null $company_search_url
+ * @property-read string|null $company_link_url
  * @property string|null $salary
  * @property JobListingStatus|null $status
  * @property Carbon|null $status_changed_at
@@ -142,6 +143,30 @@ class JobListing extends Model
             $query = trim($companyName.' '.($this->location ?? ''));
 
             return 'https://www.google.com/search?q='.urlencode($query);
+        });
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function companyLinkUrl(): Attribute
+    {
+        return Attribute::get(function (): ?string {
+            if ($this->company_id === null) {
+                return null;
+            }
+
+            $hasInternalCompanyLink = (bool) ($this->attributes['is_whitelisted'] ?? false)
+                || (bool) ($this->attributes['is_verified'] ?? false)
+                || ($this->company?->relationLoaded('preference')
+                    && in_array($this->company->preference?->type, [
+                        CompanyPreferenceType::Whitelist,
+                        CompanyPreferenceType::Verified,
+                    ], true));
+
+            return $hasInternalCompanyLink
+                ? route('jobs.company-preferences.show', $this->company_id)
+                : $this->company_search_url;
         });
     }
 

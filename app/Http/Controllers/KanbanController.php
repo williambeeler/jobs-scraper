@@ -34,6 +34,8 @@ class KanbanController extends Controller
                 ->orWhere('status', JobListingStatus::Applied))
             ->withExists(['companyPreference as is_whitelisted' => fn ($query) => $query
                 ->where('type', CompanyPreferenceType::Whitelist)])
+            ->withExists(['companyPreference as is_verified' => fn ($query) => $query
+                ->where('type', CompanyPreferenceType::Verified)])
             ->with('company')
             ->orderByDesc('created_at')
             ->get()

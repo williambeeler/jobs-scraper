@@ -89,8 +89,8 @@
                             </h2>
 
                             <p class="mb-2 text-body-secondary">
-                                @if ($listing->company_search_url)
-                                    <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
+                                @if ($listing->company_link_url)
+                                    <a href="{{ $listing->company_link_url }}" target="_blank" rel="noopener noreferrer" data-company-link>{{ $listing->company->name }}</a>
                                 @else
                                     Unknown company
                                 @endif
@@ -237,8 +237,8 @@
                                 <dd class="col-sm-9">{{ $listing->title }}</dd>
                                 <dt class="col-sm-3">Company</dt>
                                 <dd class="col-sm-9">
-                                    @if ($listing->company_search_url)
-                                        <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
+                                    @if ($listing->company_link_url)
+                                        <a href="{{ $listing->company_link_url }}" target="_blank" rel="noopener noreferrer" data-company-link>{{ $listing->company->name }}</a>
                                     @else
                                         Not provided
                                     @endif
@@ -485,6 +485,9 @@
                     row.classList.toggle('job-row-whitelisted', isWhitelisted);
                     row.classList.toggle('job-row-verified', isVerified);
                     row.querySelector('[data-job-row-star]').classList.toggle('d-none', !isWhitelisted);
+                    row.querySelectorAll('[data-company-link]').forEach((link) => {
+                        link.href = preference.company_url;
+                    });
 
                     whitelistButton.classList.toggle('btn-warning', isWhitelisted);
                     whitelistButton.classList.toggle('btn-outline-warning', !isWhitelisted);

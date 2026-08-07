@@ -11,13 +11,20 @@ class NavigationTest extends FeatureTestCase
             ->assertSee('Job Scraper')
             ->assertSee('navbar navbar-expand bg-white', false)
             ->assertSee('data-bs-toggle="dropdown"', false)
-            ->assertSeeInOrder(['Tools', 'Applied to', 'Settings', 'Companies List', 'Cron', 'Excluded terms'])
+            ->assertSeeInOrder(["Today's Jobs", 'Tools', 'Applied to', 'Settings', 'Companies List', 'Cron', 'Excluded terms'])
+            ->assertSee('class="navbar-brand fw-bold mb-0" href="'.route('jobs.kanban').'"', false)
+            ->assertSee('class="nav-link" href="'.route('jobs.index').'">Today\'s Jobs</a>', false)
             ->assertSee(route('jobs.company-preferences.index'), false)
             ->assertSee('aria-label="Dashboard"', false)
             ->assertSeeInOrder(['Dashboard', 'News', 'Jobs', 'CRM', 'Bible', 'Todo', 'Learning', 'Settings'])
             ->assertSee('class="app-navbar-icon is-active"', false)
             ->assertSee('aria-current="page"', false)
             ->assertSee('aria-label="Settings"', false);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('href="'.route('jobs.kanban').'"', false)
+            ->assertSee('aria-label="Jobs"', false);
 
         $this->get(route('jobs.applied-to'))
             ->assertOk()

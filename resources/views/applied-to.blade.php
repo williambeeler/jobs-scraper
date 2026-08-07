@@ -29,14 +29,14 @@
                     <div class="list-group shadow-sm">
                         @foreach ($group['listings'] as $listing)
                             <article
-                                class="list-group-item p-4 {{ $listing->is_whitelisted ? 'job-row-whitelisted' : '' }}">
+                                class="list-group-item p-4 {{ $listing->is_whitelisted ? 'job-row-whitelisted' : ($listing->is_verified ? 'job-row-verified' : '') }}">
                                 <div
                                     class="d-flex flex-column flex-md-row justify-content-between gap-3">
                                     <div>
                                         <h3 class="h5 mb-2"><a href="{{ $listing->url }}" target="_blank" rel="noopener noreferrer">{{ $listing->title }}</a></h3>
                                         <p class="mb-2 text-body-secondary">
-                                            @if ($listing->company_search_url)
-                                                <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
+                                            @if ($listing->company_link_url)
+                                                <a href="{{ $listing->company_link_url }}" target="_blank" rel="noopener noreferrer">{{ $listing->company->name }}</a>
                                             @else
                                                 Unknown company
                                             @endif

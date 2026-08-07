@@ -55,6 +55,37 @@ class CompanyTest extends FeatureTestCase
         ]);
     }
 
+    public function test_company_preferences_link_to_a_complete_company_job_history(): void
+    {
+        $active = $this->createListing('Active Company Role', 'https://example.com/company-active', now(), now());
+        $ignored = $this->createListing('Ignored Company Role', 'https://example.com/company-ignored', now(), now()->subDay());
+        $ignored->update([
+            'company_id' => $active->company_id,
+            'status' => 'not_interested',
+            'kanban_status' => 'rejected_cleared',
+        ]);
+        CompanyPreference::query()->create([
+            'company_id' => $active->company_id,
+            'type' => 'blacklist',
+        ]);
+
+        $historyUrl = route('jobs.company-preferences.show', $active->company);
+
+        $this->get(route('jobs.company-preferences.index'))
+            ->assertOk()
+            ->assertSee($historyUrl, false)
+            ->assertSee('2 jobs');
+
+        $this->get($historyUrl)
+            ->assertOk()
+            ->assertSee($active->company->name)
+            ->assertSee('Active Company Role')
+            ->assertSee('Ignored Company Role')
+            ->assertSee('Not interested')
+            ->assertSee('Kanban: Rejected Cleared')
+            ->assertSee('Blacklist');
+    }
+
     public function test_company_preference_can_be_updated_asynchronously(): void
     {
         $listing = $this->createListing('Async Company Role', 'https://example.com/async-company', now(), now());
@@ -64,6 +95,7 @@ class CompanyTest extends FeatureTestCase
             ->assertExactJson([
                 'company_id' => $listing->company_id,
                 'type' => 'whitelist',
+                'company_url' => route('jobs.company-preferences.show', $listing->company_id),
             ]);
 
         $this->assertDatabaseHas('company_preferences', [

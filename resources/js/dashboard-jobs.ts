@@ -41,7 +41,7 @@ document.addEventListener('submit', async (event) => {
             throw new Error(`Company preference update failed with HTTP ${response.status}`);
         }
 
-        const preference = await response.json() as { type: string };
+        const preference = await response.json() as { type: string; company_url: string };
 
         if (preference.type === 'blacklist') {
             companyRows.forEach((row) => row.remove());
@@ -62,6 +62,9 @@ document.addEventListener('submit', async (event) => {
             row.classList.toggle('job-row-whitelisted', isWhitelisted);
             row.classList.toggle('job-row-verified', isVerified);
             star?.classList.toggle('d-none', !isWhitelisted);
+            row.querySelectorAll<HTMLAnchorElement>('[data-company-link]').forEach((link) => {
+                link.href = preference.company_url;
+            });
             whitelistButton?.classList.toggle('btn-warning', isWhitelisted);
             whitelistButton?.classList.toggle('btn-outline-warning', !isWhitelisted);
             verifiedButton?.classList.toggle('btn-info', isVerified);

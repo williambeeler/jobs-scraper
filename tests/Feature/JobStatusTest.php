@@ -66,6 +66,26 @@ class JobStatusTest extends FeatureTestCase
         $this->get(route('jobs.applied-to'))->assertDontSee($listing->title);
     }
 
+    public function test_applied_jobs_from_verified_companies_use_the_blue_highlight(): void
+    {
+        $listing = $this->createListing(
+            title: 'Verified Applied Job',
+            url: 'https://example.com/jobs/verified-applied',
+            lastSeenAt: now(),
+            createdAt: now(),
+        );
+        $listing->update(['status' => 'applied', 'status_changed_at' => now()]);
+        CompanyPreference::query()->create([
+            'company_id' => $listing->company_id,
+            'type' => 'verified',
+        ]);
+
+        $this->get(route('jobs.applied-to'))
+            ->assertOk()
+            ->assertSee($listing->title)
+            ->assertSee('list-group-item p-4 job-row-verified', false);
+    }
+
     public function test_applied_jobs_are_grouped_into_lists_by_the_local_application_date(): void
     {
         Carbon::setTestNow('2026-07-20 12:00:00 UTC');

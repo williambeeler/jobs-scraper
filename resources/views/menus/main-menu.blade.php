@@ -43,7 +43,7 @@
         </a>
         <a
             @class(['app-navbar-icon', 'is-active' => request()->routeIs('jobs.*')])
-            href="{{ route('jobs.index') }}"
+            href="{{ route('jobs.kanban') }}"
             @if (request()->routeIs('jobs.*')) aria-current="page" @endif
             aria-label="Jobs"
             title="Jobs">

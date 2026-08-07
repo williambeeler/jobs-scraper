@@ -71,6 +71,27 @@ class KanbanTest extends FeatureTestCase
             ->assertDontSee($hidden->title);
     }
 
+    public function test_kanban_includes_an_asynchronous_job_and_company_search(): void
+    {
+        $listing = $this->createListing(
+            title: 'WordPress Platform Engineer',
+            url: 'https://example.com/jobs/wordpress-platform',
+            lastSeenAt: now(),
+            createdAt: now(),
+        );
+        $listing->company()->associate(Company::findOrCreateByName('Publishing Technology'))->save();
+
+        $this->get(route('jobs.kanban'))
+            ->assertOk()
+            ->assertSee('id="kanban-job-search"', false)
+            ->assertSee('data-kanban-search', false)
+            ->assertSee('placeholder="Search jobs or companies..."', false)
+            ->assertSee('id="kanban-board"', false)
+            ->assertSee('WordPress Platform Engineer')
+            ->assertSee('Publishing Technology')
+            ->assertSee('kanban-', false);
+    }
+
     public function test_moving_a_kanban_job_to_applied_updates_both_statuses(): void
     {
         $listing = $this->createListing(
@@ -136,6 +157,25 @@ class KanbanTest extends FeatureTestCase
         $this->get(route('jobs.kanban'))
             ->assertOk()
             ->assertSeeInOrder([$whitelisted->title, $regular->title]);
+    }
+
+    public function test_verified_company_jobs_use_the_blue_highlight_on_the_kanban(): void
+    {
+        $listing = $this->createListing(
+            title: 'Verified Kanban Job',
+            url: 'https://example.com/jobs/verified-kanban',
+            lastSeenAt: now(),
+            createdAt: now(),
+        );
+        CompanyPreference::query()->create([
+            'company_id' => $listing->company_id,
+            'type' => 'verified',
+        ]);
+
+        $this->get(route('jobs.kanban'))
+            ->assertOk()
+            ->assertSee($listing->title)
+            ->assertSee('kanban-card kanban-card-verified', false);
     }
 
     public function test_custom_jobs_start_interested_and_only_appear_on_the_kanban(): void

@@ -121,6 +121,8 @@ Route::delete('/jobs/{jobListing}/notes/{note}', [JobListingNoteController::clas
 Route::post('/jobs/{jobListing}/company-preference', [CompanyPreferenceController::class, 'store'])
     ->name('jobs.company-preference');
 Route::get('/jobs/company-preferences', [CompanyPreferenceController::class, 'index'])->name('jobs.company-preferences.index');
+Route::get('/jobs/company-preferences/{company}', [CompanyPreferenceController::class, 'show'])
+    ->name('jobs.company-preferences.show');
 Route::delete('/jobs/company-preferences/{companyPreference}', [CompanyPreferenceController::class, 'destroy'])
     ->name('jobs.company-preferences.destroy');
 Route::resource('jobs/excluded-terms', ExcludedTermController::class)

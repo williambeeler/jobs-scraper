@@ -18,11 +18,17 @@ const csrfToken = document
     .querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
     ?.getAttribute('content');
 
+const kanbanSearch = document.querySelector<HTMLInputElement>(
+    '[data-kanban-search]',
+);
+
 const updateColumnCounts = () => {
     document
         .querySelectorAll<HTMLElement>('.kanban-column')
         .forEach((column) => {
-            const count = column.querySelectorAll('[data-job-card]').length;
+            const count = column.querySelectorAll(
+                '[data-job-card]:not(.d-none)',
+            ).length;
             const badge = column.querySelector<HTMLElement>(
                 '[data-column-count]',
             );
@@ -32,6 +38,27 @@ const updateColumnCounts = () => {
             }
         });
 };
+
+const filterKanbanCards = () => {
+    const terms = (kanbanSearch?.value ?? '')
+        .trim()
+        .toLocaleLowerCase()
+        .split(/\s+/)
+        .filter(Boolean);
+
+    document
+        .querySelectorAll<HTMLElement>('[data-job-card]')
+        .forEach((card) => {
+            const searchableText = (card.textContent ?? '').toLocaleLowerCase();
+            const matches = terms.every((term) => searchableText.includes(term));
+
+            card.classList.toggle('d-none', !matches);
+        });
+
+    updateColumnCounts();
+};
+
+kanbanSearch?.addEventListener('input', filterKanbanCards);
 
 const updateCardActions = (card: HTMLElement) => {
     const column = card.closest<HTMLElement>('[data-kanban-column]');
@@ -117,6 +144,7 @@ document
 
                 if (!updateUrl || !kanbanStatus || !csrfToken) {
                     window.location.reload();
+
                     return;
                 }
 

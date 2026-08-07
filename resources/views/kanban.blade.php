@@ -5,9 +5,22 @@
 @section('content')
     <main class="container-fluid px-4 py-5">
         <header class="d-flex align-items-end justify-content-between gap-3 mb-4">
-            <div>
-                <p class="mb-2 text-uppercase text-secondary fw-semibold small">Tools</p>
-                <h1 class="display-5 fw-bold mb-0">Jobs Kanban</h1>
+            <div class="d-flex flex-wrap align-items-end gap-3">
+                <div>
+                    <p class="mb-2 text-uppercase text-secondary fw-semibold small">Tools</p>
+                    <h1 class="display-5 fw-bold mb-0">Jobs Kanban</h1>
+                </div>
+                <div class="kanban-search">
+                    <label class="visually-hidden" for="kanban-job-search">Search Kanban jobs</label>
+                    <input
+                        type="search"
+                        class="form-control"
+                        id="kanban-job-search"
+                        placeholder="Search jobs or companies..."
+                        autocomplete="off"
+                        data-kanban-search
+                        aria-controls="kanban-board">
+                </div>
             </div>
             <button
                 type="button"
@@ -21,7 +34,7 @@
             <div class="alert alert-success" role="status">{{ session('status') }}</div>
         @endif
 
-        <div class="kanban-board pb-3" aria-label="Jobs Kanban board">
+        <div class="kanban-board pb-3" id="kanban-board" aria-label="Jobs Kanban board">
             @foreach ($columns as $column)
                 @php($columnListings = $listingsByStatus->get($column['status']->value, collect()))
                 <section class="kanban-column"
@@ -54,7 +67,7 @@
                         data-column-id="{{ $column['status']->value }}">
                         @foreach ($columnListings as $listing)
                             <article
-                                class="kanban-card {{ $listing->is_whitelisted ? 'kanban-card-whitelisted' : '' }}"
+                                class="kanban-card {{ $listing->is_whitelisted ? 'kanban-card-whitelisted' : ($listing->is_verified ? 'kanban-card-verified' : '') }}"
                                 data-job-card
                                 data-update-url="{{ route('jobs.kanban-status', $listing) }}"
                                 data-status-url="{{ route('jobs.status', $listing) }}"
@@ -68,8 +81,8 @@
                                     >{{ $listing->title }}</a>
                                 </h3>
                                 <p class="small text-body-secondary mb-2">
-                                    @if ($listing->company_search_url)
-                                        <a href="{{ $listing->company_search_url }}" target="_blank" rel="noopener noreferrer" data-no-drag>{{ $listing->company->name }}</a>
+                                    @if ($listing->company_link_url)
+                                        <a href="{{ $listing->company_link_url }}" target="_blank" rel="noopener noreferrer" data-no-drag>{{ $listing->company->name }}</a>
                                     @else
                                         Unknown company
                                     @endif
@@ -239,6 +252,10 @@
             align-items: stretch;
         }
 
+        .kanban-search {
+            width: min(22rem, 75vw);
+        }
+
         .kanban-column {
             display: flex;
             flex: 0 0 18rem;
@@ -282,6 +299,11 @@
         .kanban-card-whitelisted {
             border-left: 4px solid #d5a72e;
             background: linear-gradient(to bottom, #fff 15%, #fff8df 100%);
+        }
+
+        .kanban-card-verified {
+            border-left: 4px solid #63aee8;
+            background: linear-gradient(to bottom, #fff 15%, #e8f5ff 100%);
         }
 
         .kanban-card-ghost {

@@ -20,10 +20,21 @@ class CompanyPreferenceController extends Controller
     {
         return view('company-preferences', [
             'preferences' => CompanyPreference::query()
-                ->with('company')
+                ->with(['company' => fn ($query) => $query->withCount('jobListings')])
                 ->orderBy('type')
                 ->orderBy(Company::query()->select('name')->whereColumn('companies.id', 'company_preferences.company_id'))
                 ->get(),
+        ]);
+    }
+
+    public function show(Company $company): View
+    {
+        return view('company-jobs', [
+            'company' => $company->load('preference'),
+            'listings' => $company->jobListings()
+                ->latest('created_at')
+                ->latest('id')
+                ->paginate(50),
         ]);
     }
 
@@ -54,6 +65,9 @@ class CompanyPreferenceController extends Controller
             return response()->json([
                 'company_id' => $jobListing->company_id,
                 'type' => $type->value,
+                'company_url' => in_array($type, [CompanyPreferenceType::Whitelist, CompanyPreferenceType::Verified], true)
+                    ? route('jobs.company-preferences.show', $jobListing->company_id)
+                    : $jobListing->company_search_url,
             ]);
         }
 
