@@ -41,20 +41,33 @@ class JobListingDetailsTest extends FeatureTestCase
             ->assertSee('href="'.$companyUrl.'"', false);
     }
 
-    public function test_only_the_job_listing_salary_can_be_updated(): void
+    public function test_job_listing_details_can_be_updated(): void
     {
         $listing = $this->createListing('Original Role', 'https://example.com/original-role', now(), now());
 
         $this->put(route('jobs.details.update', $listing), [
+            'listing_id' => $listing->id,
+            'title' => 'Updated Role',
+            'company' => 'Updated Company',
+            'location' => 'Oklahoma City, OK',
+            'url' => 'https://example.com/updated-role',
+            'source' => 'Company Site',
+            'posted_at' => '2026-08-01',
             'salary' => '$140,000',
         ])->assertRedirect()
-            ->assertSessionHas('status', 'Salary updated.');
+            ->assertSessionHas('status', 'Job details updated.');
 
         $this->assertDatabaseHas('job_listings', [
             'id' => $listing->id,
-            'title' => 'Original Role',
+            'title' => 'Updated Role',
+            'location' => 'Oklahoma City, OK',
+            'url' => 'https://example.com/updated-role',
+            'url_hash' => hash('sha256', 'https://example.com/updated-role'),
+            'source' => 'Company Site',
+            'posted_at' => '2026-08-01 00:00:00',
             'salary' => '$140,000',
         ]);
+        $this->assertSame('Updated Company', $listing->fresh()->company?->name);
     }
 
     public function test_polymorphic_notes_can_be_added_to_and_removed_from_a_job_listing(): void

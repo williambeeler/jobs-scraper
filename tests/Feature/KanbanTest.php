@@ -92,6 +92,31 @@ class KanbanTest extends FeatureTestCase
             ->assertSee('kanban-', false);
     }
 
+    public function test_each_kanban_job_has_an_editable_details_modal(): void
+    {
+        $listing = $this->createListing(
+            title: 'Editable Kanban Job',
+            url: 'https://example.com/jobs/editable-kanban',
+            lastSeenAt: now(),
+            createdAt: now(),
+        );
+
+        $this->get(route('jobs.kanban'))
+            ->assertOk()
+            ->assertSee('data-bs-target="#job-details-'.$listing->id.'"', false)
+            ->assertSee('Details &amp; Edit', false)
+            ->assertSee('id="job-details-'.$listing->id.'"', false)
+            ->assertSee('action="'.route('jobs.details.update', $listing).'"', false)
+            ->assertSee('name="title"', false)
+            ->assertSee('name="company"', false)
+            ->assertSee('name="location"', false)
+            ->assertSee('name="url"', false)
+            ->assertSee('name="source"', false)
+            ->assertSee('name="posted_at"', false)
+            ->assertSee('name="salary"', false)
+            ->assertSee('Save changes');
+    }
+
     public function test_moving_a_kanban_job_to_applied_updates_both_statuses(): void
     {
         $listing = $this->createListing(

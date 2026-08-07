@@ -100,6 +100,14 @@
                                         <span>{{ $listing->salary }}</span>
                                     @endif
                                 </div>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-primary w-100 mt-3"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#job-details-{{ $listing->id }}"
+                                    data-no-drag>
+                                    Details &amp; Edit
+                                </button>
                                 @if ($listing->listing_origin->value === 'scraped')
                                     <button
                                         type="button"
@@ -116,6 +124,106 @@
             @endforeach
         </div>
     </main>
+
+    @foreach ($listingsByStatus->flatten(1) as $listing)
+        <div
+            class="modal fade"
+            id="job-details-{{ $listing->id }}"
+            tabindex="-1"
+            aria-labelledby="job-details-{{ $listing->id }}-title"
+            aria-hidden="true"
+            data-open-on-load="{{ $errors->listingDetails->any() && (int) old('listing_id') === $listing->id ? 'true' : 'false' }}">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <form method="POST" action="{{ route('jobs.details.update', $listing) }}">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="listing_id" value="{{ $listing->id }}">
+
+                        <div class="modal-header">
+                            <div>
+                                <p class="small text-uppercase text-secondary fw-semibold mb-1">Job details</p>
+                                <h2 class="modal-title fs-5" id="job-details-{{ $listing->id }}-title">
+                                    {{ $listing->title }}
+                                </h2>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label" for="job-{{ $listing->id }}-title">Job title</label>
+                                    <input
+                                        class="form-control @if ((int) old('listing_id') === $listing->id) @error('title', 'listingDetails') is-invalid @enderror @endif"
+                                        id="job-{{ $listing->id }}-title"
+                                        name="title"
+                                        value="{{ (int) old('listing_id') === $listing->id ? old('title', $listing->title) : $listing->title }}"
+                                        required>
+                                    @if ((int) old('listing_id') === $listing->id)
+                                        @error('title', 'listingDetails') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    @endif
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="job-{{ $listing->id }}-company">Company</label>
+                                    <input class="form-control" id="job-{{ $listing->id }}-company" name="company" value="{{ (int) old('listing_id') === $listing->id ? old('company', $listing->company?->name) : $listing->company?->name }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="job-{{ $listing->id }}-location">Location</label>
+                                    <input class="form-control" id="job-{{ $listing->id }}-location" name="location" value="{{ (int) old('listing_id') === $listing->id ? old('location', $listing->location) : $listing->location }}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label" for="job-{{ $listing->id }}-url">Job URL</label>
+                                    <input
+                                        type="url"
+                                        class="form-control @if ((int) old('listing_id') === $listing->id) @error('url_hash', 'listingDetails') is-invalid @enderror @endif"
+                                        id="job-{{ $listing->id }}-url"
+                                        name="url"
+                                        value="{{ (int) old('listing_id') === $listing->id ? old('url', $listing->url) : $listing->url }}"
+                                        required>
+                                    @if ((int) old('listing_id') === $listing->id)
+                                        @error('url_hash', 'listingDetails') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    @endif
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="job-{{ $listing->id }}-source">Source</label>
+                                    <input class="form-control" id="job-{{ $listing->id }}-source" name="source" maxlength="32" value="{{ (int) old('listing_id') === $listing->id ? old('source', $listing->source) : $listing->source }}" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="job-{{ $listing->id }}-posted-at">Posted date</label>
+                                    <input type="date" class="form-control" id="job-{{ $listing->id }}-posted-at" name="posted_at" value="{{ (int) old('listing_id') === $listing->id ? old('posted_at', $listing->posted_at?->toDateString()) : $listing->posted_at?->toDateString() }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="job-{{ $listing->id }}-salary">Salary</label>
+                                    <input class="form-control" id="job-{{ $listing->id }}-salary" name="salary" value="{{ (int) old('listing_id') === $listing->id ? old('salary', $listing->salary) : $listing->salary }}">
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+                            <dl class="row small mb-0">
+                                <dt class="col-sm-4">Listing origin</dt>
+                                <dd class="col-sm-8">{{ ucfirst($listing->listing_origin->value) }}</dd>
+                                <dt class="col-sm-4">Decision status</dt>
+                                <dd class="col-sm-8">{{ $listing->status?->value ? str($listing->status->value)->replace('_', ' ')->title() : 'No decision' }}</dd>
+                                <dt class="col-sm-4">Kanban stage</dt>
+                                <dd class="col-sm-8">{{ str($listing->kanban_status->value)->replace('_', ' ')->title() }}</dd>
+                                <dt class="col-sm-4">First collected</dt>
+                                <dd class="col-sm-8">{{ $listing->first_seen_at?->format('M j, Y g:i A') }}</dd>
+                                <dt class="col-sm-4">Last seen</dt>
+                                <dd class="col-sm-8">{{ $listing->last_seen_at?->format('M j, Y g:i A') }}</dd>
+                            </dl>
+                        </div>
+
+                        <div class="modal-footer">
+                            <a class="btn btn-outline-secondary me-auto" href="{{ $listing->url }}" target="_blank" rel="noopener noreferrer">Open job posting</a>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
 
     <div
         class="modal fade"

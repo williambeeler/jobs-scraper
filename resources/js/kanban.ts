@@ -8,11 +8,9 @@ type BootstrapModalApi = {
 
 const bootstrap = (window as typeof window & { bootstrap?: BootstrapModalApi })
     .bootstrap;
-const addJobModal = document.querySelector<HTMLElement>('#add-job-modal');
-
-if (addJobModal?.dataset.openOnLoad === 'true') {
-    bootstrap?.Modal.getOrCreateInstance(addJobModal).show();
-}
+document
+    .querySelectorAll<HTMLElement>('[data-open-on-load="true"]')
+    .forEach((modal) => bootstrap?.Modal.getOrCreateInstance(modal).show());
 
 const csrfToken = document
     .querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
