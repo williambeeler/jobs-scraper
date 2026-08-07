@@ -21,6 +21,7 @@ export default defineConfig({
                 'resources/js/dashboard-jobs.ts',
                 'resources/js/kanban.ts',
                 'resources/js/notes.ts',
+                'resources/js/todo-board.ts',
             ],
             refresh: true,
             fonts: [

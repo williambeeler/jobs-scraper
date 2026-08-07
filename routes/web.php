@@ -11,7 +11,13 @@ use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BibleReadingController;
 use App\Http\Controllers\BibleReadingPlanController;
 use App\Http\Controllers\BibleSearchController;
+use App\Http\Controllers\BoardColumnController;
+use App\Http\Controllers\BoardController;
 use App\Http\Controllers\CalendarCountsController;
+use App\Http\Controllers\CardChecklistController;
+use App\Http\Controllers\CardChecklistItemController;
+use App\Http\Controllers\CardCommentController;
+use App\Http\Controllers\CardController;
 use App\Http\Controllers\CareerPathController;
 use App\Http\Controllers\CareerPathFileController;
 use App\Http\Controllers\CertificateController;
@@ -66,7 +72,28 @@ Route::put('/bible/{year}/books/{book}/chapters/{chapter}', [BibleReadingControl
     ->whereNumber('year')
     ->whereNumber('chapter')
     ->name('bible.reading.chapters.update');
-Route::view('/todo', 'coming-soon', ['pageTitle' => 'Todo'])->name('todo');
+Route::get('/todo', [BoardController::class, 'index'])->name('todo');
+Route::post('/todo', [BoardController::class, 'store'])->name('todo.boards.store');
+Route::get('/todo/{board}', [BoardController::class, 'show'])->name('todo.boards.show');
+Route::put('/todo/{board}', [BoardController::class, 'update'])->name('todo.boards.update');
+Route::post('/todo/{board}/columns', [BoardColumnController::class, 'store'])->name('todo.columns.store');
+Route::patch('/todo/{board}/columns/reorder', [BoardColumnController::class, 'reorder'])->name('todo.columns.reorder');
+Route::put('/todo/{board}/columns/{column}', [BoardColumnController::class, 'update'])->name('todo.columns.update');
+Route::post('/todo/{board}/columns/{column}/cards', [CardController::class, 'store'])->name('todo.cards.store');
+Route::patch('/todo/{board}/cards/{card}/move', [CardController::class, 'move'])->name('todo.cards.move');
+Route::put('/todo/{board}/cards/{card}', [CardController::class, 'update'])->name('todo.cards.update');
+Route::patch('/todo/{board}/cards/{card}/complete', [CardController::class, 'complete'])->name('todo.cards.complete');
+Route::delete('/todo/{board}/cards/{card}', [CardController::class, 'destroy'])->name('todo.cards.destroy');
+Route::post('/todo/{board}/cards/{card}/comments', [CardCommentController::class, 'store'])->name('todo.comments.store');
+Route::put('/todo/{board}/cards/{card}/comments/{comment}', [CardCommentController::class, 'update'])->name('todo.comments.update');
+Route::delete('/todo/{board}/cards/{card}/comments/{comment}', [CardCommentController::class, 'destroy'])->name('todo.comments.destroy');
+Route::post('/todo/{board}/cards/{card}/checklists', [CardChecklistController::class, 'store'])->name('todo.checklists.store');
+Route::put('/todo/{board}/cards/{card}/checklists/{checklist}', [CardChecklistController::class, 'update'])->name('todo.checklists.update');
+Route::delete('/todo/{board}/cards/{card}/checklists/{checklist}', [CardChecklistController::class, 'destroy'])->name('todo.checklists.destroy');
+Route::post('/todo/{board}/cards/{card}/checklists/{checklist}/items', [CardChecklistItemController::class, 'store'])->name('todo.checklist-items.store');
+Route::put('/todo/{board}/cards/{card}/checklists/{checklist}/items/{item}', [CardChecklistItemController::class, 'update'])->name('todo.checklist-items.update');
+Route::patch('/todo/{board}/cards/{card}/checklists/{checklist}/items/{item}/toggle', [CardChecklistItemController::class, 'toggle'])->name('todo.checklist-items.toggle');
+Route::delete('/todo/{board}/cards/{card}/checklists/{checklist}/items/{item}', [CardChecklistItemController::class, 'destroy'])->name('todo.checklist-items.destroy');
 Route::view('/learning', 'learning.dashboard')->name('learning');
 Route::prefix('learning/agenda')->name('learning.agenda')->group(function (): void {
     Route::get('/', [LearningTopicController::class, 'index']);

@@ -45,12 +45,13 @@ class NavigationTest extends FeatureTestCase
             ->assertSee('data-kanban-column', false);
     }
 
-    public function test_todo_placeholder_is_available_from_the_main_navigation(): void
+    public function test_todo_boards_are_available_from_the_main_navigation(): void
     {
         $this->get(route('todo'))
             ->assertOk()
             ->assertSee('Todo')
-            ->assertSee('Coming soon.')
+            ->assertSee('Boards')
+            ->assertSee('Start a new board')
             ->assertSee('aria-label="Todo"', false)
             ->assertSee('class="app-navbar-icon is-active"', false)
             ->assertSee('aria-current="page"', false);

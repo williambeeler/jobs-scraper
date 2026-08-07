@@ -1,10 +1,15 @@
-import Highlight from '@tiptap/extension-highlight';
 import { Editor } from '@tiptap/core';
+import Highlight from '@tiptap/extension-highlight';
 import StarterKit from '@tiptap/starter-kit';
 
-document
-    .querySelectorAll<HTMLElement>('[data-note-editor]')
-    .forEach((element) => {
+const editors = new Map<HTMLElement, Editor>();
+
+const initializeEditors = (root: ParentNode = document) => {
+    root.querySelectorAll<HTMLElement>('[data-note-editor]').forEach((element) => {
+        if (editors.has(element)) {
+            return;
+        }
+
         const textarea =
             element.querySelector<HTMLTextAreaElement>('[data-note-input]');
         const surface = element.querySelector<HTMLElement>(
@@ -40,6 +45,8 @@ document
                 textarea.value = updatedEditor.getHTML();
             },
         });
+
+        editors.set(element, editor);
 
         element
             .querySelectorAll<HTMLButtonElement>('[data-note-command]')
@@ -83,13 +90,19 @@ document
                                 previousUrl ?? 'https://',
                             );
 
-                            if (url === null) break;
-                            if (url === '') chain.unsetLink().run();
-                            else
+                            if (url === null) {
+                                break;
+                            }
+
+                            if (url === '') {
+                                chain.unsetLink().run();
+                            } else {
                                 chain
                                     .extendMarkRange('link')
                                     .setLink({ href: url })
                                     .run();
+                            }
+
                             break;
                         }
                         case 'undo':
@@ -106,3 +119,19 @@ document
             textarea.value = editor.getHTML();
         });
     });
+};
+
+initializeEditors();
+
+document.addEventListener('todo:modal-will-refresh', (event) => {
+    const modal = (event as CustomEvent<HTMLElement>).detail;
+
+    modal.querySelectorAll<HTMLElement>('[data-note-editor]').forEach((element) => {
+        editors.get(element)?.destroy();
+        editors.delete(element);
+    });
+});
+
+document.addEventListener('todo:modal-refreshed', (event) => {
+    initializeEditors((event as CustomEvent<HTMLElement>).detail);
+});

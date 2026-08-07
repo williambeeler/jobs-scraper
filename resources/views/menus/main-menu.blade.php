@@ -103,9 +103,9 @@
             <span>Bible</span>
         </a>
         <a
-            @class(['app-navbar-icon', 'is-active' => request()->routeIs('todo')])
+            @class(['app-navbar-icon', 'is-active' => request()->routeIs('todo', 'todo.*')])
             href="{{ route('todo') }}"
-            @if (request()->routeIs('todo')) aria-current="page" @endif
+            @if (request()->routeIs('todo', 'todo.*')) aria-current="page" @endif
             aria-label="Todo"
             title="Todo">
             <svg
