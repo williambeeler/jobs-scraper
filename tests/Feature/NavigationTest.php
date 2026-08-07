@@ -8,7 +8,7 @@ class NavigationTest extends FeatureTestCase
     {
         $this->get(route('jobs.cron'))
             ->assertOk()
-            ->assertSee('Job Scraper')
+            ->assertSee(config('app.name'))
             ->assertSee('navbar navbar-expand bg-white', false)
             ->assertSee('data-bs-toggle="dropdown"', false)
             ->assertSeeInOrder(["Today's Jobs", 'Tools', 'Applied to', 'Settings', 'Companies List', 'Cron', 'Excluded terms'])
@@ -28,7 +28,7 @@ class NavigationTest extends FeatureTestCase
 
         $this->get(route('jobs.applied-to'))
             ->assertOk()
-            ->assertSee('Job Scraper')
+            ->assertSee(config('app.name'))
             ->assertSee('aria-label="Jobs"', false)
             ->assertSee('aria-label="Bible"', false);
 

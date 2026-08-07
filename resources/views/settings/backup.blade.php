@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Backup | Job Scraper')
+@section('title', 'Backup | ' . config('app.name'))
 
 @section('content')
     <main class="container py-5">
