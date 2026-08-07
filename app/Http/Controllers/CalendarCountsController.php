@@ -30,17 +30,25 @@ class CalendarCountsController extends Controller
             ->whereNull('status')
             ->withExists(['companyPreference as is_whitelisted' => fn ($query) => $query
                 ->where('type', CompanyPreferenceType::Whitelist)])
+            ->withExists(['companyPreference as is_verified' => fn ($query) => $query
+                ->where('type', CompanyPreferenceType::Verified)])
             ->where('created_at', '>=', $start->copy()->utc())
             ->where('created_at', '<', $end->copy()->utc())
             ->get(['id', 'company_id', 'created_at'])
             ->groupBy(fn (JobListing $listing) => $listing->created_at
                 ->timezone($displayTimezone)
                 ->toDateString())
-            ->map(fn ($listings, string $date) => [
-                'date' => $date,
-                'total' => $listings->count(),
-                'whitelisted' => $listings->where('is_whitelisted', true)->count(),
-            ])
+            ->map(function ($listings, string $date): array {
+                $whitelisted = $listings->where('is_whitelisted', true)->count();
+                $verified = $listings->where('is_verified', true)->count();
+
+                return [
+                    'date' => $date,
+                    'whitelisted' => $whitelisted,
+                    'verified' => $verified,
+                    'regular' => $listings->count() - $whitelisted - $verified,
+                ];
+            })
             ->values();
 
         return response()->json($counts);

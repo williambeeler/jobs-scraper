@@ -167,6 +167,18 @@ class HomeAndCalendarTest extends FeatureTestCase
             'type' => 'whitelist',
         ]);
 
+        $verified = $this->createListing(
+            title: 'Verified July Job',
+            url: 'https://example.com/jobs/verified-july',
+            lastSeenAt: Carbon::parse('2026-07-14 13:00:00 UTC'),
+            createdAt: Carbon::parse('2026-07-14 13:00:00 UTC'),
+        );
+        $verified->company()->associate(Company::findOrCreateByName('Verified Company'))->save();
+        CompanyPreference::query()->create([
+            'company_id' => $verified->company_id,
+            'type' => 'verified',
+        ]);
+
         $anotherJuly = $this->createListing(
             title: 'Another July Job',
             url: 'https://example.com/jobs/another-july',
@@ -185,7 +197,12 @@ class HomeAndCalendarTest extends FeatureTestCase
             'start' => '2026-07-01',
             'end' => '2026-08-01',
         ]))->assertOk()->assertExactJson([
-            ['date' => '2026-07-14', 'total' => 2, 'whitelisted' => 1],
+            [
+                'date' => '2026-07-14',
+                'whitelisted' => 1,
+                'verified' => 1,
+                'regular' => 1,
+            ],
         ]);
     }
 }

@@ -34,6 +34,7 @@ if (calendarElement) {
 
             if (!countsUrl) {
                 successCallback([]);
+
                 return;
             }
 
@@ -54,8 +55,9 @@ if (calendarElement) {
 
                 const days: Array<{
                     date: string;
-                    total: number;
                     whitelisted: number;
+                    verified: number;
+                    regular: number;
                 }> = await response.json();
 
                 successCallback(
@@ -71,13 +73,28 @@ if (calendarElement) {
                                   },
                               ]
                             : []),
-                        {
-                            title: String(day.total),
-                            start: day.date,
-                            allDay: true,
-                            classNames: ['calendar-total-count'],
-                            order: 2,
-                        },
+                        ...(day.verified > 0
+                            ? [
+                                  {
+                                      title: String(day.verified),
+                                      start: day.date,
+                                      allDay: true,
+                                      classNames: ['calendar-verified-count'],
+                                      order: 2,
+                                  },
+                              ]
+                            : []),
+                        ...(day.regular > 0
+                            ? [
+                                  {
+                                      title: String(day.regular),
+                                      start: day.date,
+                                      allDay: true,
+                                      classNames: ['calendar-regular-count'],
+                                      order: 3,
+                                  },
+                              ]
+                            : []),
                     ]),
                 );
             } catch (error) {

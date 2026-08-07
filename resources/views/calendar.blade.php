@@ -56,8 +56,13 @@
             color: #000;
         }
 
-        #calendar .calendar-total-count {
+        #calendar .calendar-regular-count {
             background: #e9ecef;
+            color: #000;
+        }
+
+        #calendar .calendar-verified-count {
+            background: #cfe2ff;
             color: #000;
         }
 
