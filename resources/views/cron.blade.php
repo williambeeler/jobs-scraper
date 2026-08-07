@@ -12,6 +12,7 @@
             'larajobs' => 'LaraJobs',
             'usajobs' => 'USAJOBS',
             'christian_tech_jobs' => 'Christian Tech Jobs',
+            'caci_careers' => 'CACI Careers',
         ];
         $selectedSources = old('sources', $editingSchedule?->sources ?? []);
     @endphp
@@ -164,6 +165,7 @@
             'larajobs' => 'LaraJobs (all listings)',
             'usajobs' => 'USAJOBS (remote only)',
             'christian_tech_jobs' => 'Christian Tech Jobs (remote only)',
+            'caci_careers' => 'CACI Careers (Oklahoma City area or remote)',
         ] as $value => $label)
                                 <div class="col-sm-6 col-lg-4">
                                     <div class="form-check">

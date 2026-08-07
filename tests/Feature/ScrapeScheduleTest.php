@@ -118,6 +118,21 @@ class ScrapeScheduleTest extends FeatureTestCase
             ->assertSee('Christian Tech Jobs');
     }
 
+    public function test_caci_careers_can_be_saved_as_a_keyword_source(): void
+    {
+        $this->post(route('jobs.cron.store'), [
+            'keywords' => 'support engineer',
+            'sources' => ['caci_careers'],
+            'max_days' => 30,
+            'interval_hours' => 12,
+            'is_active' => true,
+        ])->assertRedirect(route('jobs.cron'));
+
+        $this->get(route('jobs.cron'))
+            ->assertOk()
+            ->assertSee('CACI Careers');
+    }
+
     public function test_cron_page_lists_configurations_before_the_form(): void
     {
         $this->get(route('jobs.cron'))
