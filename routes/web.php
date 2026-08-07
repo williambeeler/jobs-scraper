@@ -66,6 +66,7 @@ Route::put('/bible/{year}/books/{book}/chapters/{chapter}', [BibleReadingControl
     ->whereNumber('year')
     ->whereNumber('chapter')
     ->name('bible.reading.chapters.update');
+Route::view('/todo', 'coming-soon', ['pageTitle' => 'Todo'])->name('todo');
 Route::view('/learning', 'learning.dashboard')->name('learning');
 Route::prefix('learning/agenda')->name('learning.agenda')->group(function (): void {
     Route::get('/', [LearningTopicController::class, 'index']);

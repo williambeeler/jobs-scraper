@@ -14,7 +14,7 @@ class NavigationTest extends FeatureTestCase
             ->assertSeeInOrder(['Tools', 'Applied to', 'Settings', 'Companies List', 'Cron', 'Excluded terms'])
             ->assertSee(route('jobs.company-preferences.index'), false)
             ->assertSee('aria-label="Dashboard"', false)
-            ->assertSeeInOrder(['Dashboard', 'News', 'Jobs', 'CRM', 'Bible', 'Learning', 'Settings'])
+            ->assertSeeInOrder(['Dashboard', 'News', 'Jobs', 'CRM', 'Bible', 'Todo', 'Learning', 'Settings'])
             ->assertSee('class="app-navbar-icon is-active"', false)
             ->assertSee('aria-current="page"', false)
             ->assertSee('aria-label="Settings"', false);
@@ -36,6 +36,17 @@ class NavigationTest extends FeatureTestCase
                 'Rejected',
             ])
             ->assertSee('data-kanban-column', false);
+    }
+
+    public function test_todo_placeholder_is_available_from_the_main_navigation(): void
+    {
+        $this->get(route('todo'))
+            ->assertOk()
+            ->assertSee('Todo')
+            ->assertSee('Coming soon.')
+            ->assertSee('aria-label="Todo"', false)
+            ->assertSee('class="app-navbar-icon is-active"', false)
+            ->assertSee('aria-current="page"', false);
     }
 
     public function test_news_page_displays_the_rss_subnavigation(): void
